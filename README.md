@@ -23,3 +23,9 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### Install Typescript
+
+npm install --save typescript @types/node @types/react @types/react-dom @types/jest
+Change index.js and App.js to \*.tsx
+In index.tsx, replace `createRoot(container)` with `createRoot(container!)`
