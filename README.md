@@ -26,6 +26,7 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 ### Install Typescript
 
-npm install --save typescript @types/node @types/react @types/react-dom @types/jest
-Change index.js and App.js to \*.tsx
-In index.tsx, replace `createRoot(container)` with `createRoot(container!)`
+1. Run
+   `npm install --save typescript @types/node @types/react @types/react-dom @types/jest`
+2. Change index.js and App.js to \*.tsx
+3. In index.tsx, replace `createRoot(container)` with `createRoot(container!)`
