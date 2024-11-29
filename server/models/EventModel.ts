@@ -2,7 +2,7 @@
  * The mongoDB model for the Users collection.
  * This defines the structure and types expected by each field.
  */
-import { InferSchemaType, Schema, model } from "mongoose";
+import { InferSchemaType, Schema, model } from 'mongoose'
 const EventSchema = new Schema({
   title: {
     type: String,
@@ -27,8 +27,8 @@ const EventSchema = new Schema({
     type: [String],
     validate: (arr: string[]) => Array.isArray(arr) && arr.length > 0,
   },
-});
+})
 
-type Event = InferSchemaType<typeof EventSchema>;
+type Event = InferSchemaType<typeof EventSchema>
 
-export default model<Event>("Event", EventSchema);
+export default model<Event>('Event', EventSchema)
