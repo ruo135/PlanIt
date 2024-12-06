@@ -1,16 +1,11 @@
 /* eslint-disable import/no-anonymous-default-export */
 
-const colors = {
-  background: '#1e1e1e',
-
-  white: '#ffffff',
-  lightGray: '#cacfd6',
-  gray: '#525252',
-  whiteGreen: '#F3F7F6',
-  lightGreen: '#51B8A0',
-  green: '#517664',
-
-  purple: '#7851b8',
+const defaultTheme = {
+  header: '#484848',
+  background: '#7671BA',
+  innerBackground: '#9894cb',
+  text: '#FFFFFF',
+  calendar: '#FFFFFF',
 }
 
-export default { colors }
+export default { defaultTheme }

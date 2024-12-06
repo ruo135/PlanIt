@@ -6,15 +6,15 @@ import theme from '../styles/theme'
 import styled from 'styled-components'
 
 // const Page = lazy(() => import("../pages/___"))
-const LandingPage = null
-const LoginPage = null
-const RegisterPage = null
-const CalendarPage = null
-const AddEventPage = null
-const SettingsPage = null
+const LandingPage = lazy(() => import('../pages/LandingPage'))
+const LoginPage = lazy(() => import('../pages/LoginPage'))
+const RegisterPage = lazy(() => import('../pages/RegisterPage'))
+const CalendarPage = lazy(() => import('../pages/CalendarPage'))
+const AddEventPage = lazy(() => import('../pages/AddEventPage'))
+const SettingsPage = lazy(() => import('../pages/SettingsPage'))
 
 const LoadingPage = styled.div`
-  background-color: ${theme.colors.background};
+  background-color: ${theme.defaultTheme.header};
   min-height: 100vh;
   min-width: 100vw;
 
@@ -31,7 +31,7 @@ export default function AppRoutes() {
           <LoadingPage>
             <ReactLoading
               type={'bars'}
-              color={theme.colors.lightGray}
+              color={theme.defaultTheme.background}
               height="20%"
               width="20%"
             />
