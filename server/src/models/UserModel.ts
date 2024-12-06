@@ -23,11 +23,6 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  // ,
-
-  // events: Event,
-
-  // todos: Todo,
 });
 
 type User = InferSchemaType<typeof UserSchema>;

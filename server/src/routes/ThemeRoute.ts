@@ -2,11 +2,12 @@
 // to interact with the db
 
 import express from "express";
-import { registerUser } from "../controllers/UserController";
+import * as ThemeController from "../controllers/ThemeController";
 
 const router = express.Router();
 
 // Routes
-router.post("/register", registerUser);
+router.get("/", ThemeController.getTheme);
+router.patch("/", ThemeController.updateTheme);
 
 export default router;

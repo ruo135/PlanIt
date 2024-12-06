@@ -1,9 +1,14 @@
 /**
- * The mongoDB model for the Users collection.
+ * The mongoDB model for the Events collection.
  * This defines the structure and types expected by each field.
  */
 import { InferSchemaType, Schema, model } from "mongoose";
 const EventSchema = new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+  },
+
   title: {
     type: String,
     required: true,
@@ -23,9 +28,13 @@ const EventSchema = new Schema({
     required: true,
   },
 
-  tags: {
-    type: [String],
-    validate: (arr: string[]) => Array.isArray(arr) && arr.length > 0,
+  monthAndYear: {
+    type: String,
+    required: true,
+  },
+
+  tagId: {
+    type: Schema.Types.ObjectId,
   },
 });
 
