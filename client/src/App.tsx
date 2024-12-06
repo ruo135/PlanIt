@@ -1,11 +1,6 @@
-import { Suspense } from "react";
-
-import React from "react";
+import React from 'react'
+import AppRoutes from './routes'
 
 export default function App() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <p>Hi</p>
-    </Suspense>
-  );
+  return <AppRoutes />
 }

@@ -2,7 +2,7 @@
  * The mongoDB model for the Todos collection.
  * This defines the structure and types expected by each field.
  */
-import { InferSchemaType, Schema, model } from "mongoose";
+import { InferSchemaType, Schema, model } from 'mongoose'
 
 const TodoSchema = new Schema({
   userId: {
@@ -19,8 +19,8 @@ const TodoSchema = new Schema({
     type: Boolean,
     required: true,
   },
-});
+})
 
-type Todo = InferSchemaType<typeof TodoSchema>;
+type Todo = InferSchemaType<typeof TodoSchema>
 
-export default model<Todo>("Todo", TodoSchema);
+export default model<Todo>('Todo', TodoSchema)

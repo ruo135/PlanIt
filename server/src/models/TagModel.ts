@@ -2,7 +2,7 @@
  * The mongoDB model for the Tags collection.
  * This defines the structure and types expected by each field.
  */
-import { InferSchemaType, Schema, model } from "mongoose";
+import { InferSchemaType, Schema, model } from 'mongoose'
 
 const TagSchema = new Schema({
   userId: {
@@ -23,8 +23,8 @@ const TagSchema = new Schema({
     type: Boolean,
     required: true,
   },
-});
+})
 
-type Tag = InferSchemaType<typeof TagSchema>;
+type Tag = InferSchemaType<typeof TagSchema>
 
-export default model<Tag>("Tag", TagSchema);
+export default model<Tag>('Tag', TagSchema)

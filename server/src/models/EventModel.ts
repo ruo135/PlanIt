@@ -2,7 +2,7 @@
  * The mongoDB model for the Events collection.
  * This defines the structure and types expected by each field.
  */
-import { InferSchemaType, Schema, model } from "mongoose";
+import { InferSchemaType, Schema, model } from 'mongoose'
 const EventSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
@@ -36,8 +36,8 @@ const EventSchema = new Schema({
   tagId: {
     type: Schema.Types.ObjectId,
   },
-});
+})
 
-type Event = InferSchemaType<typeof EventSchema>;
+type Event = InferSchemaType<typeof EventSchema>
 
-export default model<Event>("Event", EventSchema);
+export default model<Event>('Event', EventSchema)
