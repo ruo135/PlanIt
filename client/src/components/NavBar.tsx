@@ -1,15 +1,19 @@
 import styled from 'styled-components'
 import theme from '../styles/theme'
-import logo from '../assets/Logo_black.png'
+
+import logo from '../assets/Logo_White.png'
+import logoText from '../assets/Logo_Text.png'
 import { useNavigate } from 'react-router-dom'
+import GearDropdown from './GearDropdown'
 
 export interface NavBarProps {
   type: 'landing' | 'login' | 'back'
   id?: string
+  hideSettings?: boolean
 }
 
 const StyledSpan = styled.span`
-  background-color: ${theme.defaultTheme.header};
+  background-color: ${theme.header};
   display: flex;
   width: auto;
   height: 10vh;
@@ -34,11 +38,11 @@ const LoginButton = styled.button`
   justify-content: center;
   align-items: center;
 
-  color: ${theme.defaultTheme.text};
-  background-color: ${theme.defaultTheme.background};
+  color: ${theme.text};
+  background-color: ${theme.background};
 
   &:hover {
-    background-color: ${theme.defaultTheme.innerBackground};
+    background-color: ${theme.innerBackground};
     cursor: pointer;
   }
 `
@@ -54,15 +58,34 @@ const Logo = styled.img`
 
 export default function NavBar(props: NavBarProps) {
   let navigate = useNavigate()
-  const routeChange = (path: string) => {
+  const pageRouter = (path: string) => {
     navigate(path)
+  }
+
+  var curLogo = null
+  if (props.type === 'landing') {
+    curLogo = logoText
+  } else {
+    curLogo = logo
   }
 
   return (
     <StyledSpan>
-      <Logo src={logo} onClick={() => routeChange('/')} />
+      <Logo
+        src={curLogo}
+        onClick={() =>
+          props.type === 'back' ? pageRouter('/calendar') : pageRouter('/')
+        }
+      />
+
+      {/* Login Button for Landing */}
       {props.type === 'landing' && (
-        <LoginButton onClick={() => routeChange('/login')}>Log In</LoginButton>
+        <LoginButton onClick={() => pageRouter('/login')}>Log In</LoginButton>
+      )}
+
+      {/* Gear Button for Private Pages */}
+      {props.type === 'back' && (
+        <GearDropdown theme={theme} hideSettings={props.hideSettings} />
       )}
     </StyledSpan>
   )
