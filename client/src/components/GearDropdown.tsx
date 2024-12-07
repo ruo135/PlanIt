@@ -30,7 +30,7 @@ export default function GearDropdown(props: GearDropdownProps) {
     border-radius: 5px;
     width: max-content;
     list-style-type: none;
-    background-color: ${props.theme.background};
+    background-color: ${props.theme.indent};
   `
 
   const Option = styled.li`
@@ -40,7 +40,7 @@ export default function GearDropdown(props: GearDropdownProps) {
     color: ${props.theme.text};
 
     &:hover {
-      background-color: ${props.theme.innerBackground};
+      background-color: ${props.theme.secondary};
     }
 
     &:not(:last-child) {

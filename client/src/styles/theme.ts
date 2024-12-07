@@ -2,18 +2,28 @@
 
 export interface Theme {
   header: string
-  background: string
-  innerBackground: string
+  headerIcons: string
+
+  primary: string
+  secondary: string
+  indent: string
+
   text: string
-  calendar: string
+  calendarText: string
+  background: string
 }
 
 const defaultTheme = {
   header: '#484848',
-  background: '#7671BA',
-  innerBackground: '#9894cb',
+  headerIcons: '#FFFFFF',
+
+  primary: '#7671BA',
+  secondary: '#9894cb',
+  indent: '#8682c2',
+
   text: '#FFFFFF',
-  calendar: '#FFFFFF',
+  calendarText: '#4b4b4b',
+  background: '#FFFFFF',
 }
 
 export default defaultTheme
