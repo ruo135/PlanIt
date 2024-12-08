@@ -18,7 +18,7 @@ export default function NavBar(props: NavBarProps) {
     background-color: ${props.theme.header};
     display: flex;
     width: auto;
-    height: 10vh;
+    height: 8vh;
     padding: 0 5vw;
 
     justify-content: center;

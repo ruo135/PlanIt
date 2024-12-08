@@ -22,8 +22,11 @@ export default function GearDropdown(props: GearDropdownProps) {
 
     padding: 5px 0;
     top: 100%;
-    left: 50%; /* Center horizontally relative to the button */
-    transform: translateX(-50%); /* Adjust position back by 50% of its width */
+
+    // The 2 lines below center it
+    left: 50%;
+    transform: translateX(-50%);
+
     margin-top: 2.5vh;
     z-index: 1;
 
