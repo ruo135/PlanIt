@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, JSX, useState } from 'react'
 import NavBar from '../components/NavBar'
 import defaultTheme from '../styles/theme'
 import styled from 'styled-components'
@@ -47,13 +47,17 @@ const CalendarPage: FC = () => {
 
   const DateContainer = styled.span`
     display: flex;
-    color: ${theme.text};
-    font-size: 25px;
-    font-weight: bold;
     width: 20%;
+    min-width: fit-content;
+    padding: 0px min(10px, 5vw);
+
     justify-content: center;
     align-self: center;
     text-align: center;
+
+    color: ${theme.text};
+    font-size: 25px;
+    font-weight: bold;
   `
 
   const ArrowContainers = styled.img`
@@ -81,6 +85,19 @@ const CalendarPage: FC = () => {
     &:hover {
       background-color: ${theme.indent};
     }
+  `
+
+  const DayOfWeekContainer = styled.div`
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background-color: ${theme.secondary};
+    height: fit-content;
+    padding: 5px 0;
+  `
+
+  const DayofWeekCell = styled.div`
+    color: ${theme.text};
+    text-align: center;
   `
 
   const CalendarBody = styled.div`
@@ -122,7 +139,7 @@ const CalendarPage: FC = () => {
     const firstDay = getFirstDayOfMonth(month + 1, year)
     const lastDayOfMonth = new Date(year, month + 1, 0).getDay()
     const days = daysInMonth(month + 1, year)
-    const calendar = []
+    const calendar: JSX.Element[] = []
 
     for (let i = 0; i < firstDay; i++) {
       calendar.push(<CalendarCell key={`prev-${i}`} />)
@@ -137,6 +154,17 @@ const CalendarPage: FC = () => {
     }
 
     return calendar
+  }
+
+  const renderDaysofWeek = () => {
+    const dOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    const res: JSX.Element[] = []
+
+    dOfWeek.forEach((d) => {
+      res.push(<DayofWeekCell key={d}>{d}</DayofWeekCell>)
+    })
+
+    return res
   }
 
   return (
@@ -157,6 +185,7 @@ const CalendarPage: FC = () => {
             </DateContainer>
             <ArrowContainers src={arrowRight} onClick={() => changeMonth(1)} />
           </DateControllerContainer>
+          <DayOfWeekContainer>{renderDaysofWeek()}</DayOfWeekContainer>
           <CalendarBody>{renderDays()}</CalendarBody>
         </CalendarContainer>
       </PageContainer>
