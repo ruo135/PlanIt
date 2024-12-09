@@ -10,7 +10,7 @@ const LandingPage = lazy(() => import('../pages/LandingPage'))
 const LoginPage = lazy(() => import('../pages/LoginPage'))
 const RegisterPage = lazy(() => import('../pages/RegisterPage'))
 const CalendarPage = lazy(() => import('../pages/CalendarPage'))
-const AddEventPage = lazy(() => import('../pages/AddEventPage'))
+const CreateEventPage = lazy(() => import('../pages/CreateEventPage'))
 const SettingsPage = lazy(() => import('../pages/SettingsPage'))
 
 const LoadingPage = styled.div`
@@ -43,7 +43,7 @@ export default function AppRoutes() {
           <Route path="/login" Component={LoginPage} />
           <Route path="/register" Component={RegisterPage} />
           <Route path="/calendar" Component={CalendarPage} />
-          <Route path="/addEvent" Component={AddEventPage} />
+          <Route path="/createEvent" Component={CreateEventPage} />
           <Route path="/settings" Component={SettingsPage} />
           <Route path="*" Component={() => <Navigate to="/" />} />
         </Routes>
