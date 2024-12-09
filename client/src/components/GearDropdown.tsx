@@ -13,8 +13,14 @@ export interface GearDropdownProps {
 export default function GearDropdown(props: GearDropdownProps) {
   const StyledImg = styled(SettingsIcon)`
     display: flex;
-    height: 5vh;
-    width: 100%;
+    height: 4vh;
+    width: auto;
+    transition: all 0.3s;
+
+    &:hover {
+      cursor: pointer;
+      transform: rotate(45deg);
+    }
   `
 
   const OptionContainer = styled.ul`
@@ -27,7 +33,7 @@ export default function GearDropdown(props: GearDropdownProps) {
     left: 50%;
     transform: translateX(-50%);
 
-    margin-top: 2.5vh;
+    margin-top: 2vh;
     z-index: 1;
 
     border-radius: 5px;
@@ -43,6 +49,7 @@ export default function GearDropdown(props: GearDropdownProps) {
     color: ${props.theme.text};
 
     &:hover {
+      cursor: pointer;
       background-color: ${props.theme.secondary};
     }
 

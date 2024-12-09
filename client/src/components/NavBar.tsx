@@ -18,7 +18,7 @@ export default function NavBar(props: NavBarProps) {
     background-color: ${props.theme.header};
     display: flex;
     width: auto;
-    height: 8vh;
+    height: max(8vh, 60px);
     padding: 0 5vw;
 
     justify-content: center;
@@ -63,12 +63,12 @@ export default function NavBar(props: NavBarProps) {
     navigate(path)
   }
 
-  var curLogo = null
-  if (props.type === 'landing') {
-    curLogo = logoText
-  } else {
-    curLogo = logo
-  }
+  var curLogo = logoText
+  // if (props.type === 'landing') {
+  //   curLogo = logoText
+  // } else {
+  //   curLogo = logo
+  // }
 
   return (
     <StyledSpan>

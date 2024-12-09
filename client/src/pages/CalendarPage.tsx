@@ -105,12 +105,14 @@ const CalendarPage: FC = () => {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     align-items: stretch;
+    background-color: ${theme.secondary};
   `
 
   const CalendarCell = styled.div`
     padding: 10px;
     text-align: center;
     border: 1px solid ${theme.secondary};
+    background-color: ${theme.background};
   `
 
   const goToToday = () => {
