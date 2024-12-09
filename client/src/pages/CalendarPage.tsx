@@ -6,6 +6,7 @@ import getMonthName from '../helpers/MonthToString'
 import arrowLeft from '../assets/arrowLeft.svg'
 import arrowRight from '../assets/arrowRight.svg'
 import { useNavigate } from 'react-router-dom'
+import CalendarSideBarBox from '../components/CalendarSideBarBox'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -26,7 +27,7 @@ const SideBarContainer = styled.div`
 `
 
 const AddEventButtonContainer = styled.button`
-  width: fit-content;
+  width: 80%;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -40,14 +41,6 @@ const AddEventButtonContainer = styled.button`
   &:hover {
     background-color: ${(props) => props.theme.indent};
   }
-`
-
-const SideBarBox = styled.div`
-  height: 80%;
-  width: 80%;
-  padding: 10px 20px;
-
-  background-color: ${(props) => props.theme.background};
 `
 
 const CalendarContainer = styled.div`
@@ -65,7 +58,7 @@ const DateControllerContainer = styled.div`
   align-content: center;
 
   height: 7vh;
-  background-color: ${(props) => props.theme.secondary};
+  background-color: ${(props) => props.theme.primary};
 `
 
 const DateContainer = styled.span`
@@ -103,7 +96,7 @@ const TodayButtonContainer = styled.button`
   font-size: 15px;
   font-weight: bold;
   color: ${(props) => props.theme.text};
-  background-color: ${(props) => props.theme.secondary};
+  background-color: ${(props) => props.theme.primary};
 
   &:hover {
     background-color: ${(props) => props.theme.indent};
@@ -146,6 +139,9 @@ const CalendarCellDate = styled.span`
 
 const CalendarPage: FC = () => {
   const [theme, setTheme] = useState(defaultTheme)
+  const [tags, setTags] = useState<string[]>([])
+  const [events, setEvents] = useState([])
+
   const [year, setYear] = useState(new Date().getFullYear())
   // Month is 0 -> 11
   const [month, setMonth] = useState(new Date().getMonth())
@@ -234,16 +230,26 @@ const CalendarPage: FC = () => {
     return res
   }
 
+  const changeTagVisibility = (name: string) => {
+    // check if tag is in tags arr
+    // Change visibility option of that tag
+    // Send update to db
+  }
+
   return (
     <ThemeProvider theme={theme}>
-      <NavBar type={'back'} theme={defaultTheme} />
+      <NavBar type={'back'} theme={theme} />
       <PageContainer>
         {/* Left side of the screen */}
         <SideBarContainer>
           <AddEventButtonContainer onClick={() => pageRouter('/createEvent')}>
             Add Event
           </AddEventButtonContainer>
-          <SideBarBox></SideBarBox>
+          <CalendarSideBarBox
+            theme={theme}
+            tags={tags}
+            changeTagVisibility={changeTagVisibility}
+          />
         </SideBarContainer>
         {/* Right side of the screen */}
         <CalendarContainer>
