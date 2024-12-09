@@ -1,10 +1,148 @@
 import { FC, JSX, useState } from 'react'
 import NavBar from '../components/NavBar'
 import defaultTheme from '../styles/theme'
-import styled from 'styled-components'
+import styled, { ThemeProvider } from 'styled-components'
 import getMonthName from '../helpers/MonthToString'
 import arrowLeft from '../assets/arrowLeft.svg'
 import arrowRight from '../assets/arrowRight.svg'
+import { useNavigate } from 'react-router-dom'
+
+const PageContainer = styled.div`
+  align-items: stretch;
+  width: 100%;
+  height: 92vh;
+  display: flex;
+`
+
+const SideBarContainer = styled.div`
+  flex-direction: column;
+  width: 25%;
+  height: auto;
+  background-color: ${(props) => props.theme.primary};
+  display: flex;
+
+  align-items: center;
+  justify-content: space-around;
+`
+
+const AddEventButtonContainer = styled.button`
+  width: fit-content;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  font-size: 15px;
+  font-weight: bold;
+  color: ${(props) => props.theme.text};
+  background-color: ${(props) => props.theme.secondary};
+
+  &:hover {
+    background-color: ${(props) => props.theme.indent};
+  }
+`
+
+const SideBarBox = styled.div`
+  height: 80%;
+  width: 80%;
+  padding: 10px 20px;
+
+  background-color: ${(props) => props.theme.background};
+`
+
+const CalendarContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 75%;
+  background-color: ${(props) => props.theme.background};
+`
+
+const DateControllerContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+
+  height: 7vh;
+  background-color: ${(props) => props.theme.secondary};
+`
+
+const DateContainer = styled.span`
+  display: flex;
+  width: 20%;
+  min-width: fit-content;
+  padding: 0px min(10px, 5vw);
+
+  justify-content: center;
+  align-self: center;
+  text-align: center;
+
+  color: ${(props) => props.theme.text};
+  font-size: 25px;
+  font-weight: bold;
+`
+
+const ArrowContainers = styled.img`
+  padding: 5px 20px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`
+
+const TodayButtonContainer = styled.button`
+  margin: auto 0;
+
+  width: fit-content;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  font-size: 15px;
+  font-weight: bold;
+  color: ${(props) => props.theme.text};
+  background-color: ${(props) => props.theme.secondary};
+
+  &:hover {
+    background-color: ${(props) => props.theme.indent};
+  }
+`
+
+const DayOfWeekContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background-color: ${(props) => props.theme.secondary};
+  height: fit-content;
+  padding: 5px 0;
+`
+
+const DayofWeekCell = styled.div`
+  color: ${(props) => props.theme.text};
+  text-align: center;
+`
+
+const CalendarBody = styled.div`
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  align-items: stretch;
+  background-color: ${(props) => props.theme.secondary};
+`
+
+const CalendarCell = styled.div`
+  border: 1px solid ${(props) => props.theme.secondary};
+  background-color: ${(props) => props.theme.background};
+  text-align: center;
+  padding: 5px;
+`
+
+const CalendarCellDate = styled.span`
+  font-size: 16px;
+  display: block;
+  color: ${(props) => props.theme.calendarText};
+`
 
 const CalendarPage: FC = () => {
   const [theme, setTheme] = useState(defaultTheme)
@@ -12,108 +150,10 @@ const CalendarPage: FC = () => {
   // Month is 0 -> 11
   const [month, setMonth] = useState(new Date().getMonth())
 
-  const PageContainer = styled.div`
-    align-items: stretch;
-    width: 100%;
-    height: 92vh;
-    display: flex;
-  `
-
-  const SideBarContainer = styled.div`
-    flex: '0 0 25%';
-    flex-direction: column;
-    width: 25%;
-    height: auto;
-    background-color: ${theme.primary};
-  `
-
-  const CalendarContainer = styled.div`
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    width: 75%;
-    background-color: ${theme.background};
-  `
-
-  const DateControllerContainer = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-content: center;
-
-    height: 7vh;
-    background-color: ${theme.secondary};
-  `
-
-  const DateContainer = styled.span`
-    display: flex;
-    width: 20%;
-    min-width: fit-content;
-    padding: 0px min(10px, 5vw);
-
-    justify-content: center;
-    align-self: center;
-    text-align: center;
-
-    color: ${theme.text};
-    font-size: 25px;
-    font-weight: bold;
-  `
-
-  const ArrowContainers = styled.img`
-    padding: 5px 20px;
-
-    &:hover {
-      cursor: pointer;
-    }
-  `
-
-  const TodayButtonContainer = styled.button`
-    margin: auto 0;
-
-    width: fit-content;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-
-    font-size: 15px;
-    font-weight: bold;
-    color: ${theme.text};
-    background-color: ${theme.secondary};
-
-    &:hover {
-      background-color: ${theme.indent};
-    }
-  `
-
-  const DayOfWeekContainer = styled.div`
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    background-color: ${theme.secondary};
-    height: fit-content;
-    padding: 5px 0;
-  `
-
-  const DayofWeekCell = styled.div`
-    color: ${theme.text};
-    text-align: center;
-  `
-
-  const CalendarBody = styled.div`
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    align-items: stretch;
-    background-color: ${theme.secondary};
-  `
-
-  const CalendarCell = styled.div`
-    padding: 10px;
-    text-align: center;
-    border: 1px solid ${theme.secondary};
-    background-color: ${theme.background};
-  `
+  let navigate = useNavigate()
+  const pageRouter = (path: string) => {
+    navigate(path)
+  }
 
   const goToToday = () => {
     setYear(new Date().getFullYear())
@@ -141,6 +181,9 @@ const CalendarPage: FC = () => {
     const firstDay = getFirstDayOfMonth(month + 1, year)
     const lastDayOfMonth = new Date(year, month + 1, 0).getDay()
     const days = daysInMonth(month + 1, year)
+
+    const currentDay = new Date().getDate()
+
     const calendar: JSX.Element[] = []
 
     for (let i = 0; i < firstDay; i++) {
@@ -148,7 +191,27 @@ const CalendarPage: FC = () => {
     }
 
     for (let day = 1; day <= days; day++) {
-      calendar.push(<CalendarCell key={day}>{day}</CalendarCell>)
+      calendar.push(
+        <CalendarCell key={day}>
+          {day === currentDay ? (
+            <CalendarCellDate>
+              <span
+                style={{
+                  backgroundColor: theme.indent,
+                  borderRadius: '5px',
+                  color: theme.text,
+                  width: '25%',
+                  margin: '0 auto',
+                }}
+              >
+                {day}
+              </span>
+            </CalendarCellDate>
+          ) : (
+            <CalendarCellDate>{day}</CalendarCellDate>
+          )}
+        </CalendarCell>
+      )
     }
 
     for (let i = lastDayOfMonth; i < 6; i++) {
@@ -170,11 +233,16 @@ const CalendarPage: FC = () => {
   }
 
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <NavBar type={'back'} theme={defaultTheme} />
       <PageContainer>
         {/* Left side of the screen */}
-        <SideBarContainer></SideBarContainer>
+        <SideBarContainer>
+          <AddEventButtonContainer onClick={() => pageRouter('/createEvent')}>
+            Add Event
+          </AddEventButtonContainer>
+          <SideBarBox></SideBarBox>
+        </SideBarContainer>
         {/* Right side of the screen */}
         <CalendarContainer>
           <DateControllerContainer>
@@ -191,7 +259,7 @@ const CalendarPage: FC = () => {
           <CalendarBody>{renderDays()}</CalendarBody>
         </CalendarContainer>
       </PageContainer>
-    </>
+    </ThemeProvider>
   )
 }
 

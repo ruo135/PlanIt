@@ -1,6 +1,6 @@
-/* eslint-disable import/no-anonymous-default-export */
+import { DefaultTheme } from 'styled-components'
 
-export interface Theme {
+export interface Theme extends DefaultTheme {
   header: string
   headerIcons: string
 

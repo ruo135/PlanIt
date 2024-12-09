@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { ThemeProvider } from 'styled-components'
 import { ReactComponent as SettingsIcon } from '../assets/settings.svg'
 import { useEffect, useRef, useState } from 'react'
 import { Theme } from '../styles/theme'
@@ -10,54 +10,54 @@ export interface GearDropdownProps {
   hideSettings?: boolean
 }
 
+const StyledImg = styled(SettingsIcon)`
+  display: flex;
+  height: 4vh;
+  width: auto;
+  transition: all 0.3s;
+
+  &:hover {
+    cursor: pointer;
+    transform: rotate(45deg);
+  }
+`
+
+const OptionContainer = styled.ul`
+  position: absolute;
+
+  padding: 5px 0;
+  top: 100%;
+
+  // The 2 lines below center it
+  left: 50%;
+  transform: translateX(-50%);
+
+  margin-top: 2vh;
+  z-index: 1;
+
+  border-radius: 5px;
+  width: max-content;
+  list-style-type: none;
+  background-color: ${(props) => props.theme.indent};
+`
+
+const Option = styled.li`
+  padding: 5px 20px;
+  text-align: center;
+  border-radius: 5px;
+  color: ${(props) => props.theme.text};
+
+  &:hover {
+    cursor: pointer;
+    background-color: ${(props) => props.theme.secondary};
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 5px;
+  }
+`
+
 export default function GearDropdown(props: GearDropdownProps) {
-  const StyledImg = styled(SettingsIcon)`
-    display: flex;
-    height: 4vh;
-    width: auto;
-    transition: all 0.3s;
-
-    &:hover {
-      cursor: pointer;
-      transform: rotate(45deg);
-    }
-  `
-
-  const OptionContainer = styled.ul`
-    position: absolute;
-
-    padding: 5px 0;
-    top: 100%;
-
-    // The 2 lines below center it
-    left: 50%;
-    transform: translateX(-50%);
-
-    margin-top: 2vh;
-    z-index: 1;
-
-    border-radius: 5px;
-    width: max-content;
-    list-style-type: none;
-    background-color: ${props.theme.indent};
-  `
-
-  const Option = styled.li`
-    padding: 5px 20px;
-    text-align: center;
-    border-radius: 5px;
-    color: ${props.theme.text};
-
-    &:hover {
-      cursor: pointer;
-      background-color: ${props.theme.secondary};
-    }
-
-    &:not(:last-child) {
-      margin-bottom: 5px;
-    }
-  `
-
   // Dropdown State
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
@@ -86,23 +86,25 @@ export default function GearDropdown(props: GearDropdownProps) {
   }
 
   return (
-    <div
-      style={{ position: 'relative', display: 'inline-block' }}
-      ref={dropdownRef}
-    >
-      <StyledImg
-        fill={props.theme.text}
-        onClick={() => setDropdownOpen(!dropdownOpen)}
-      />
-      {dropdownOpen && (
-        <OptionContainer>
-          {/* Only show if hideSettings is false or undefined */}
-          {!props.hideSettings && (
-            <Option onClick={() => pageRouter('/settings')}>Settings</Option>
-          )}
-          <Option onClick={() => pageRouter('/')}>Log Out</Option>
-        </OptionContainer>
-      )}
-    </div>
+    <ThemeProvider theme={props.theme}>
+      <div
+        style={{ position: 'relative', display: 'inline-block' }}
+        ref={dropdownRef}
+      >
+        <StyledImg
+          fill={props.theme.text}
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+        />
+        {dropdownOpen && (
+          <OptionContainer>
+            {/* Only show if hideSettings is false or undefined */}
+            {!props.hideSettings && (
+              <Option onClick={() => pageRouter('/settings')}>Settings</Option>
+            )}
+            <Option onClick={() => pageRouter('/')}>Log Out</Option>
+          </OptionContainer>
+        )}
+      </div>
+    </ThemeProvider>
   )
 }
