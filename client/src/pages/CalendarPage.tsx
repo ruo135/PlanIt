@@ -197,11 +197,14 @@ const CalendarPage: FC = () => {
             <CalendarCellDate>
               <span
                 style={{
+                  display: 'block',
                   backgroundColor: theme.indent,
                   borderRadius: '5px',
                   color: theme.text,
                   width: '25%',
                   margin: '0 auto',
+                  // TODO: Match this with the font-size of this above
+                  minWidth: '16px',
                 }}
               >
                 {day}
