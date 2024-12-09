@@ -14,7 +14,7 @@ const AddEventPage = lazy(() => import('../pages/AddEventPage'))
 const SettingsPage = lazy(() => import('../pages/SettingsPage'))
 
 const LoadingPage = styled.div`
-  background-color: ${theme.defaultTheme.header};
+  background-color: ${theme.header};
   min-height: 100vh;
   min-width: 100vw;
 
@@ -31,7 +31,7 @@ export default function AppRoutes() {
           <LoadingPage>
             <ReactLoading
               type={'bars'}
-              color={theme.defaultTheme.background}
+              color={theme.background}
               height="20%"
               width="20%"
             />

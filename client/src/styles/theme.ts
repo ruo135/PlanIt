@@ -1,11 +1,29 @@
 /* eslint-disable import/no-anonymous-default-export */
 
-const defaultTheme = {
-  header: '#484848',
-  background: '#7671BA',
-  innerBackground: '#9894cb',
-  text: '#FFFFFF',
-  calendar: '#FFFFFF',
+export interface Theme {
+  header: string
+  headerIcons: string
+
+  primary: string
+  secondary: string
+  indent: string
+
+  text: string
+  calendarText: string
+  background: string
 }
 
-export default { defaultTheme }
+const defaultTheme = {
+  header: '#484848',
+  headerIcons: '#FFFFFF',
+
+  primary: '#7671BA',
+  secondary: '#9894cb',
+  indent: '#8682c2',
+
+  text: '#FFFFFF',
+  calendarText: '#4b4b4b',
+  background: '#FFFFFF',
+}
+
+export default defaultTheme
