@@ -182,33 +182,32 @@ const CalendarPage: FC = () => {
     const lastDayOfMonth = new Date(year, month + 1, 0).getDay()
     const days = daysInMonth(month + 1, year)
 
-    const currentDay = new Date().getDate()
-
     const calendar: JSX.Element[] = []
 
     for (let i = 0; i < firstDay; i++) {
       calendar.push(<CalendarCell key={`prev-${i}`} />)
     }
 
+    const today = new Date()
     for (let day = 1; day <= days; day++) {
       calendar.push(
         <CalendarCell key={day}>
-          {day === currentDay ? (
-            <CalendarCellDate>
-              <span
-                style={{
-                  display: 'block',
-                  backgroundColor: theme.indent,
-                  borderRadius: '5px',
-                  color: theme.text,
-                  width: '25%',
-                  margin: '0 auto',
-                  // TODO: Match this with the font-size of this above
-                  minWidth: '16px',
-                }}
-              >
-                {day}
-              </span>
+          {day === today.getDate() &&
+          month === today.getMonth() &&
+          year === today.getFullYear() ? (
+            <CalendarCellDate
+              style={{
+                display: 'block',
+                backgroundColor: theme.indent,
+                borderRadius: '5px',
+                color: theme.text,
+                width: '25%',
+                margin: '0 auto',
+                // TODO: Match this with the font-size of this above
+                minWidth: '16px',
+              }}
+            >
+              {day}
             </CalendarCellDate>
           ) : (
             <CalendarCellDate>{day}</CalendarCellDate>
