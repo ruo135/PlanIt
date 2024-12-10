@@ -50,6 +50,21 @@ const LoginPage: FC = () => {
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
   const navigate = useNavigate()
 
+  // Check if user is authenticated
+  useEffect(() => {
+    const getAuthenticated = () => {
+      axios
+        .get('/api/user')
+        .then((e) => {
+          navigate('/calendar')
+        })
+        .catch((e) => {})
+    }
+    getAuthenticated()
+  }, [])
+
+  axios.defaults.withCredentials = true
+
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value)
   }

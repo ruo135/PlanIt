@@ -1,4 +1,4 @@
-import { FC, JSX, useState } from 'react'
+import { FC, JSX, useEffect, useState } from 'react'
 import NavBar from '../components/NavBar'
 import defaultTheme, { Theme } from '../styles/theme'
 import styled, { ThemeProvider } from 'styled-components'
@@ -8,6 +8,7 @@ import arrowRight from '../assets/arrowRight.svg'
 import { useNavigate } from 'react-router-dom'
 import CalendarSideBarBox from '../components/CalendarSideBarBox'
 import { Tag } from '../models/Tag'
+import axios from 'axios'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -151,6 +152,16 @@ const CalendarPage: FC = () => {
   const pageRouter = (path: string) => {
     navigate(path)
   }
+
+  // Check if user is authenticated
+  useEffect(() => {
+    const getAuthenticated = () => {
+      axios.get('/api/user').catch((e) => {
+        navigate('/login')
+      })
+    }
+    getAuthenticated()
+  }, [])
 
   const goToToday = () => {
     setYear(new Date().getFullYear())

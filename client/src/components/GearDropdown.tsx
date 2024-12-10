@@ -3,6 +3,7 @@ import { ReactComponent as SettingsIcon } from '../assets/settings.svg'
 import { useEffect, useRef, useState } from 'react'
 import { Theme } from '../styles/theme'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 export interface GearDropdownProps {
   id?: string
@@ -85,6 +86,12 @@ export default function GearDropdown(props: GearDropdownProps) {
     navigate(path)
   }
 
+  const logout = () => {
+    axios.post('/api/user/logout').then(() => {
+      pageRouter('/')
+    })
+  }
+
   return (
     <ThemeProvider theme={props.theme}>
       <div
@@ -101,7 +108,7 @@ export default function GearDropdown(props: GearDropdownProps) {
             {!props.hideSettings && (
               <Option onClick={() => pageRouter('/settings')}>Settings</Option>
             )}
-            <Option onClick={() => pageRouter('/')}>Log Out</Option>
+            <Option onClick={logout}>Log Out</Option>
           </OptionContainer>
         )}
       </div>
