@@ -49,6 +49,7 @@ const LoginPage: FC = () => {
   const [emailErrorMessage, setEmailErrorMessage] = useState('')
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
   const navigate = useNavigate()
+  axios.defaults.withCredentials = true
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value)
