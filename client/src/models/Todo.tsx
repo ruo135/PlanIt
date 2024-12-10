@@ -1,5 +1,5 @@
 export type Todo = {
-  id?: string
+  _id?: string
   userId: string
   todo: string
   isChecked: boolean

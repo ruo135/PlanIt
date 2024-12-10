@@ -1,5 +1,5 @@
 export type Tag = {
-  id?: string
+  _id?: string
   userId: string
   name: string
   color: string

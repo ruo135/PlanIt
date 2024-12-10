@@ -1,12 +1,13 @@
 import { FC, JSX, useState } from 'react'
 import NavBar from '../components/NavBar'
-import defaultTheme from '../styles/theme'
+import defaultTheme, { Theme } from '../styles/theme'
 import styled, { ThemeProvider } from 'styled-components'
 import getMonthName from '../helpers/MonthToString'
 import arrowLeft from '../assets/arrowLeft.svg'
 import arrowRight from '../assets/arrowRight.svg'
 import { useNavigate } from 'react-router-dom'
 import CalendarSideBarBox from '../components/CalendarSideBarBox'
+import { Tag } from '../models/Tag'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -138,9 +139,9 @@ const CalendarCellDate = styled.span`
 `
 
 const CalendarPage: FC = () => {
-  const [theme, setTheme] = useState(defaultTheme)
-  const [tags, setTags] = useState<string[]>([])
-  const [events, setEvents] = useState([])
+  const [theme, setTheme] = useState<Theme>(defaultTheme)
+  const [tags, setTags] = useState<Tag[]>([])
+  const [events, setEvents] = useState<Event[]>([])
 
   const [year, setYear] = useState(new Date().getFullYear())
   // Month is 0 -> 11

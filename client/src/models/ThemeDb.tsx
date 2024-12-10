@@ -1,5 +1,5 @@
 export type ThemeDb = {
-  id?: string
+  _id?: string
   userId: string
   theme: string
 }
