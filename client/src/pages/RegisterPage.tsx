@@ -58,9 +58,12 @@ const RegisterPage: FC = () => {
   // Check if user is authenticated
   useEffect(() => {
     const getAuthenticated = () => {
-      axios.get('/api/user').then((e) => {
-        navigate('/calendar')
-      })
+      axios
+        .get('/api/user')
+        .then((e) => {
+          navigate('/calendar')
+        })
+        .catch((e) => {})
     }
     getAuthenticated()
   }, [])
