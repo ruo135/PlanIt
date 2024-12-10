@@ -25,14 +25,14 @@ const SideBarBoxTitleContainer = styled.div`
   background-color: ${(props) => props.theme.secondary};
 `
 
-const SideBarBoxTitleOption = styled.div`
+const SideBarBoxTitleOption = styled.div<{ selected?: boolean }>`
   padding: 10px;
   flex: 1;
   text-align: center;
   color: ${(props) => props.theme.text};
 
   background-color: ${(props) =>
-    props.id === 'true' ? props.theme.secondary : props.theme.indent};
+    props.selected ? props.theme.secondary : props.theme.indent};
 
   &:hover {
     cursor: ${(props) => (props.id === 'true' ? 'cursor' : 'pointer')};
@@ -47,13 +47,13 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
       <SideBarBox>
         <SideBarBoxTitleContainer>
           <SideBarBoxTitleOption
-            id={isTagOpened.toString()}
+            selected={isTagOpened}
             onClick={() => setTagOpened(true)}
           >
             Tags
           </SideBarBoxTitleOption>
           <SideBarBoxTitleOption
-            id={(!isTagOpened).toString()}
+            selected={!isTagOpened}
             onClick={() => setTagOpened(false)}
           >
             To-Do
