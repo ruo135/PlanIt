@@ -63,7 +63,7 @@ const RegisterPage: FC = () => {
       })
     }
     getAuthenticated()
-  }, [])
+  }, [navigate])
 
   axios.defaults.withCredentials = true
 

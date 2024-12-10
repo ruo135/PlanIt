@@ -31,9 +31,9 @@ export default function AppRoutes() {
           <LoadingPage>
             <ReactLoading
               type={'bars'}
-              color={theme.background}
-              height="20%"
-              width="20%"
+              color={theme.primary}
+              height="50%"
+              width="50%"
             />
           </LoadingPage>
         }

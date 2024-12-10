@@ -8,7 +8,10 @@ import arrowRight from '../assets/arrowRight.svg'
 import { useNavigate } from 'react-router-dom'
 import CalendarSideBarBox from '../components/CalendarSideBarBox'
 import { Tag } from '../models/Tag'
-import axios from 'axios'
+import getAuthenticated from '../api/auth'
+import { getAllTags, toggleTagVisibility } from '../api/tags'
+import { Todo } from '../models/Todo'
+import { getAllTodos } from '../api/todos'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -142,26 +145,49 @@ const CalendarCellDate = styled.span`
 const CalendarPage: FC = () => {
   const [theme, setTheme] = useState<Theme>(defaultTheme)
   const [tags, setTags] = useState<Tag[]>([])
+  const [todos, setTodos] = useState<Todo[]>([])
   const [events, setEvents] = useState<Event[]>([])
 
   const [year, setYear] = useState(new Date().getFullYear())
   // Month is 0 -> 11
   const [month, setMonth] = useState(new Date().getMonth())
 
+  // Setup navigation stack
   let navigate = useNavigate()
   const pageRouter = (path: string) => {
     navigate(path)
   }
 
   // Check if user is authenticated
+  // Gets data for the calendar (Tags, Todos, Events)
   useEffect(() => {
-    const getAuthenticated = () => {
-      axios.get('/api/user').catch((e) => {
-        navigate('/login')
-      })
-    }
-    getAuthenticated()
-  }, [])
+    getAuthenticated().then((r) => {
+      if (!r) navigate('/login')
+    })
+
+    // Get Tags then sort by alphabet
+    getAllTags().then((d) =>
+      setTags(
+        d.sort((a, b) => {
+          return a.name.localeCompare(b.name)
+        })
+      )
+    )
+
+    // Get Todos and Sort by whether it is checked, then by alphabetical
+    getAllTodos().then((d) =>
+      setTodos(
+        d.sort((a, b) => {
+          const checkedCompare = Number(a.isChecked) - Number(b.isChecked)
+          if (checkedCompare !== 0) {
+            return checkedCompare
+          }
+          // If checked status is the same, sort by name (case-insensitive)
+          return a.todo.localeCompare(b.todo)
+        })
+      )
+    )
+  }, [navigate])
 
   const goToToday = () => {
     setYear(new Date().getFullYear())
@@ -242,12 +268,6 @@ const CalendarPage: FC = () => {
     return res
   }
 
-  const changeTagVisibility = (name: string) => {
-    // check if tag is in tags arr
-    // Change visibility option of that tag
-    // Send update to db
-  }
-
   return (
     <ThemeProvider theme={theme}>
       <NavBar type={'back'} theme={theme} />
@@ -260,7 +280,9 @@ const CalendarPage: FC = () => {
           <CalendarSideBarBox
             theme={theme}
             tags={tags}
-            changeTagVisibility={changeTagVisibility}
+            setTags={setTags}
+            todos={todos}
+            setTodos={setTodos}
           />
         </SideBarContainer>
         {/* Right side of the screen */}
