@@ -27,6 +27,7 @@ const FormBody = styled.div`
   padding-left: 60px;
   padding-right: 60px;
   padding-bottom: 20px;
+  border-radius: 15px;
   display: flex;
   flex-direction: column;
   justify-content: top;
