@@ -13,8 +13,8 @@ const AddEventPage: FC = () => {
 
   // Check if user is authenticated
   useEffect(() => {
-    getAuthenticated().then((r) => {
-      if (!r) navigate('/login')
+    getAuthenticated().catch(() => {
+      navigate('/login')
     })
   }, [navigate])
 

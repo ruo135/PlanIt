@@ -161,8 +161,8 @@ const CalendarPage: FC = () => {
   // Check if user is authenticated
   // Gets data for the calendar (Tags, Todos, Events)
   useEffect(() => {
-    getAuthenticated().then((r) => {
-      if (!r) navigate('/login')
+    getAuthenticated().catch(() => {
+      navigate('/login')
     })
 
     // Get Tags then sort by alphabet

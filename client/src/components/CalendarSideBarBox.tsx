@@ -6,9 +6,8 @@ import { ReactComponent as plusIcon } from '../assets/plus.svg'
 import { ReactComponent as circleIcon } from '../assets/circle.svg'
 import { Todo } from '../models/Todo'
 import { toggleTagVisibility } from '../api/tags'
-import Checkbox from './Checkbox'
 import { checkTodo } from '../api/todos'
-
+import EditTag from './EditTag'
 interface CalendarSideBarBoxProps {
   theme: Theme
   tags: Tag[]
@@ -61,14 +60,15 @@ const SideBarBoxBody = styled.div`
   display: block;
 `
 
-const OptionContainer = styled.div`
+const OptionContainer = styled.div<{ $hidehovercolor?: boolean }>`
   padding: 1vh;
   display: flex;
   flex-direction: row;
 
   &:hover {
     cursor: pointer;
-    background-color: ${(props) => props.theme.indent};
+    background-color: ${(props) =>
+      props.$hidehovercolor ? 'none' : props.theme.indent};
   }
 `
 
@@ -83,18 +83,19 @@ const TagColorCircle = styled(circleIcon)``
 
 const TagPlusContainer = styled(plusIcon)``
 
-const OptionText = styled.div<{ crossed?: boolean }>`
+const OptionText = styled.div<{ selected?: boolean }>`
   max-width: 80%;
   color: ${(props) => props.theme.text};
   text-wrap: auto;
   text-overflow: ellipsis;
   overflow: hidden;
 
-  text-decoration: ${(props) => (props.crossed ? 'line-through' : 'none')};
+  text-decoration: ${(props) => (props.selected ? 'line-through' : 'none')};
 `
 
 export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
   const [isTagOpened, setTagOpened] = useState(true)
+  const [isTagDropdownOpened, changeTagDropdown] = useState(false)
 
   const sortTags = (tags: Tag[]) => {
     return tags.sort((a, b) => {
@@ -116,12 +117,31 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
     let curRows = []
 
     curRows.push(
-      <OptionContainer key={'add-new'}>
+      <OptionContainer
+        key={'add-new'}
+        onClick={() => changeTagDropdown(!isTagDropdownOpened)}
+      >
         <OptionImageContainer>
           <TagPlusContainer fill={props.theme.text} />
         </OptionImageContainer>
-        <OptionText>Add New</OptionText>
+        <OptionText>
+          {isTagDropdownOpened ? 'Cancel New' : 'Add New'}
+        </OptionText>
       </OptionContainer>
+    )
+
+    curRows.push(
+      <span key={'add-dropdown'}>
+        {isTagDropdownOpened && (
+          <OptionContainer $hidehovercolor={true}>
+            <EditTag
+              tags={props.tags}
+              setTagState={props.setTags}
+              changeDropdownState={changeTagDropdown}
+            />
+          </OptionContainer>
+        )}
+      </span>
     )
 
     props.tags.forEach((tag) => {
@@ -185,7 +205,9 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
             checkmarkTodo(todo)
           }}
         >
-          <OptionText crossed={todo.isChecked}>{todo.todo}</OptionText>
+          <OptionText selected={todo.isChecked ?? false}>
+            {todo.todo}
+          </OptionText>
         </OptionContainer>
       )
     })
@@ -194,29 +216,27 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
   }
 
   return (
-    <ThemeProvider theme={props.theme}>
-      <SideBarBox>
-        <SideBarBoxTitleContainer>
-          <SideBarBoxTitleOption
-            selected={isTagOpened}
-            onClick={() => setTagOpened(true)}
-            key={'tags'}
-          >
-            Tags
-          </SideBarBoxTitleOption>
-          <SideBarBoxTitleOption
-            selected={!isTagOpened}
-            onClick={() => setTagOpened(false)}
-            key={'todo'}
-          >
-            To-Do
-          </SideBarBoxTitleOption>
-        </SideBarBoxTitleContainer>
-        <SideBarBoxBody>
-          {isTagOpened && renderTags()}
-          {!isTagOpened && renderTodos()}
-        </SideBarBoxBody>
-      </SideBarBox>
-    </ThemeProvider>
+    <SideBarBox>
+      <SideBarBoxTitleContainer>
+        <SideBarBoxTitleOption
+          selected={isTagOpened}
+          onClick={() => setTagOpened(true)}
+          key={'tags'}
+        >
+          Tags
+        </SideBarBoxTitleOption>
+        <SideBarBoxTitleOption
+          selected={!isTagOpened}
+          onClick={() => setTagOpened(false)}
+          key={'todo'}
+        >
+          To-Do
+        </SideBarBoxTitleOption>
+      </SideBarBoxTitleContainer>
+      <SideBarBoxBody>
+        {isTagOpened && renderTags()}
+        {!isTagOpened && renderTodos()}
+      </SideBarBoxBody>
+    </SideBarBox>
   )
 }

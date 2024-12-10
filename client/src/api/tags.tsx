@@ -12,18 +12,18 @@ async function getAllTags(): Promise<Tag[]> {
   }
 }
 
-async function createTag(name: string, color: string, isVisible: boolean) {
+async function createTag(name: string, color: string): Promise<Tag> {
   return await axios
     .post('/api/tag/createTag', {
       name,
       color,
-      isVisible,
+      isVisible: true,
     })
     .catch(() => {
-      return false
+      return null
     })
-    .finally(() => {
-      return true
+    .then((d) => {
+      return d?.data
     })
 }
 
