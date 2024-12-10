@@ -62,7 +62,7 @@ const LoginPage: FC = () => {
         .catch((e) => {})
     }
     getAuthenticated()
-  }, [])
+  }, [navigate])
 
   axios.defaults.withCredentials = true
 

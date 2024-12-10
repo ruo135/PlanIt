@@ -1,12 +1,17 @@
 import { FC, JSX, useEffect, useState } from 'react'
 import NavBar from '../components/NavBar'
-import defaultTheme from '../styles/theme'
+import defaultTheme, { Theme } from '../styles/theme'
 import styled, { ThemeProvider } from 'styled-components'
 import getMonthName from '../helpers/MonthToString'
 import arrowLeft from '../assets/arrowLeft.svg'
 import arrowRight from '../assets/arrowRight.svg'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import CalendarSideBarBox from '../components/CalendarSideBarBox'
+import { Tag } from '../models/Tag'
+import getAuthenticated from '../api/auth'
+import { getAllTags, toggleTagVisibility } from '../api/tags'
+import { Todo } from '../models/Todo'
+import { getAllTodos } from '../api/todos'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -27,7 +32,7 @@ const SideBarContainer = styled.div`
 `
 
 const AddEventButtonContainer = styled.button`
-  width: fit-content;
+  width: 80%;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -41,14 +46,6 @@ const AddEventButtonContainer = styled.button`
   &:hover {
     background-color: ${(props) => props.theme.indent};
   }
-`
-
-const SideBarBox = styled.div`
-  height: 80%;
-  width: 80%;
-  padding: 10px 20px;
-
-  background-color: ${(props) => props.theme.background};
 `
 
 const CalendarContainer = styled.div`
@@ -66,7 +63,7 @@ const DateControllerContainer = styled.div`
   align-content: center;
 
   height: 7vh;
-  background-color: ${(props) => props.theme.secondary};
+  background-color: ${(props) => props.theme.primary};
 `
 
 const DateContainer = styled.span`
@@ -104,7 +101,7 @@ const TodayButtonContainer = styled.button`
   font-size: 15px;
   font-weight: bold;
   color: ${(props) => props.theme.text};
-  background-color: ${(props) => props.theme.secondary};
+  background-color: ${(props) => props.theme.primary};
 
   &:hover {
     background-color: ${(props) => props.theme.indent};
@@ -146,25 +143,51 @@ const CalendarCellDate = styled.span`
 `
 
 const CalendarPage: FC = () => {
-  const [theme, setTheme] = useState(defaultTheme)
+  const [theme, setTheme] = useState<Theme>(defaultTheme)
+  const [tags, setTags] = useState<Tag[]>([])
+  const [todos, setTodos] = useState<Todo[]>([])
+  const [events, setEvents] = useState<Event[]>([])
+
   const [year, setYear] = useState(new Date().getFullYear())
   // Month is 0 -> 11
   const [month, setMonth] = useState(new Date().getMonth())
 
+  // Setup navigation stack
   let navigate = useNavigate()
   const pageRouter = (path: string) => {
     navigate(path)
   }
 
   // Check if user is authenticated
+  // Gets data for the calendar (Tags, Todos, Events)
   useEffect(() => {
-    const getAuthenticated = () => {
-      axios.get('/api/user').catch((e) => {
-        navigate('/login')
-      })
-    }
-    getAuthenticated()
-  }, [])
+    getAuthenticated().catch(() => {
+      navigate('/login')
+    })
+
+    // Get Tags then sort by alphabet
+    getAllTags().then((d) =>
+      setTags(
+        d.sort((a, b) => {
+          return a.name.localeCompare(b.name)
+        })
+      )
+    )
+
+    // Get Todos and Sort by whether it is checked, then by alphabetical
+    getAllTodos().then((d) =>
+      setTodos(
+        d.sort((a, b) => {
+          const checkedCompare = Number(a.isChecked) - Number(b.isChecked)
+          if (checkedCompare !== 0) {
+            return checkedCompare
+          }
+          // If checked status is the same, sort by name (case-insensitive)
+          return a.todo.localeCompare(b.todo)
+        })
+      )
+    )
+  }, [navigate])
 
   const goToToday = () => {
     setYear(new Date().getFullYear())
@@ -193,30 +216,32 @@ const CalendarPage: FC = () => {
     const lastDayOfMonth = new Date(year, month + 1, 0).getDay()
     const days = daysInMonth(month + 1, year)
 
-    const currentDay = new Date().getDate()
-
     const calendar: JSX.Element[] = []
 
     for (let i = 0; i < firstDay; i++) {
       calendar.push(<CalendarCell key={`prev-${i}`} />)
     }
 
+    const today = new Date()
     for (let day = 1; day <= days; day++) {
       calendar.push(
         <CalendarCell key={day}>
-          {day === currentDay ? (
-            <CalendarCellDate>
-              <span
-                style={{
-                  backgroundColor: theme.indent,
-                  borderRadius: '5px',
-                  color: theme.text,
-                  width: '25%',
-                  margin: '0 auto',
-                }}
-              >
-                {day}
-              </span>
+          {day === today.getDate() &&
+          month === today.getMonth() &&
+          year === today.getFullYear() ? (
+            <CalendarCellDate
+              style={{
+                display: 'block',
+                backgroundColor: theme.indent,
+                borderRadius: '5px',
+                color: theme.text,
+                width: '25%',
+                margin: '0 auto',
+                // TODO: Match this with the font-size of this above
+                minWidth: '16px',
+              }}
+            >
+              {day}
             </CalendarCellDate>
           ) : (
             <CalendarCellDate>{day}</CalendarCellDate>
@@ -245,14 +270,20 @@ const CalendarPage: FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <NavBar type={'back'} theme={defaultTheme} />
+      <NavBar type={'back'} theme={theme} />
       <PageContainer>
         {/* Left side of the screen */}
         <SideBarContainer>
           <AddEventButtonContainer onClick={() => pageRouter('/createEvent')}>
             Add Event
           </AddEventButtonContainer>
-          <SideBarBox></SideBarBox>
+          <CalendarSideBarBox
+            theme={theme}
+            tags={tags}
+            setTags={setTags}
+            todos={todos}
+            setTodos={setTodos}
+          />
         </SideBarContainer>
         {/* Right side of the screen */}
         <CalendarContainer>
