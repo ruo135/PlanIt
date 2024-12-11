@@ -12,6 +12,7 @@ import getAuthenticated from '../api/auth'
 import { getAllTags, toggleTagVisibility } from '../api/tags'
 import { Todo } from '../models/Todo'
 import { getAllTodos } from '../api/todos'
+import AnimationComponent from '../components/AnimationComponent'
 
 const PageContainer = styled.div`
   align-items: stretch;
