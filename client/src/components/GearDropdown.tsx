@@ -43,9 +43,12 @@ const OptionContainer = styled.ul`
 `
 
 const Option = styled.li`
-  padding: 5px 20px;
+  padding: 5px 1vw;
   text-align: center;
   border-radius: 5px;
+
+  font-size: max(0.833vw, 12px);
+
   color: ${(props) => props.theme.text};
 
   &:hover {

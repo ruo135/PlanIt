@@ -1,39 +1,81 @@
 import { FC, JSX, useEffect, useState } from 'react'
 import NavBar from '../components/NavBar'
-import defaultTheme from '../styles/theme'
+import defaultTheme, { Theme } from '../styles/theme'
 import styled, { ThemeProvider } from 'styled-components'
 import getMonthName from '../helpers/MonthToString'
 import arrowLeft from '../assets/arrowLeft.svg'
 import arrowRight from '../assets/arrowRight.svg'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import CalendarSideBarBox from '../components/CalendarSideBarBox'
+import { Tag } from '../models/Tag'
+import getAuthenticated from '../api/auth'
+import { getAllTags } from '../api/tags'
+import { Todo } from '../models/Todo'
+import { getAllTodos } from '../api/todos'
+import { ReactComponent as menuIcon } from '../assets/menu.svg'
+import { ReactComponent as exitIcon } from '../assets/plus.svg'
 
 const PageContainer = styled.div`
   align-items: stretch;
   width: 100%;
-  height: 92vh;
+  height: calc(100vh - max(8vh, 60px));
   display: flex;
+  position: relative;
 `
 
-const SideBarContainer = styled.div`
+const SideBarContainer = styled.div<{ open: boolean }>`
   flex-direction: column;
   width: 25%;
-  height: auto;
+  height: 100%;
   background-color: ${(props) => props.theme.primary};
   display: flex;
-
   align-items: center;
   justify-content: space-around;
+
+  @media only screen and (max-width: 1000px) {
+    z-index: 10;
+    display: ${(props) => (props.open ? 'flex' : 'none')};
+    position: absolute;
+    width: 100%;
+  }
+`
+
+const HamburgerMenu = styled(menuIcon)`
+  position: absolute;
+  left: 1vh;
+  top: calc(3.5vh - 10px);
+  fill: ${(props) => props.theme.background};
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+
+  @media only screen and (min-width: 1000px) {
+    display: none;
+  }
+`
+
+const ExitIcon = styled(exitIcon)`
+  width: auto;
+  height: 5vw;
+  aspect-ratio: 1/1;
+  position: absolute;
+  top: 1vh;
+  right: 1vw;
+  fill: ${(props) => props.theme.text};
+  transform: rotate(45deg);
+
+  @media only screen and (min-width: 1000px) {
+    display: none;
+  }
 `
 
 const AddEventButtonContainer = styled.button`
-  width: fit-content;
+  width: 80%;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-
-  font-size: 15px;
+  font-size: max(14px, 1.042vw);
   font-weight: bold;
   color: ${(props) => props.theme.text};
   background-color: ${(props) => props.theme.secondary};
@@ -41,14 +83,6 @@ const AddEventButtonContainer = styled.button`
   &:hover {
     background-color: ${(props) => props.theme.indent};
   }
-`
-
-const SideBarBox = styled.div`
-  height: 80%;
-  width: 80%;
-  padding: 10px 20px;
-
-  background-color: ${(props) => props.theme.background};
 `
 
 const CalendarContainer = styled.div`
@@ -62,11 +96,15 @@ const CalendarContainer = styled.div`
 const DateControllerContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-evenly;
   align-content: center;
 
   height: 7vh;
-  background-color: ${(props) => props.theme.secondary};
+  background-color: ${(props) => props.theme.primary};
+
+  @media only screen and (max-width: 500px) {
+    justify-content: center;
+  }
 `
 
 const DateContainer = styled.span`
@@ -80,12 +118,12 @@ const DateContainer = styled.span`
   text-align: center;
 
   color: ${(props) => props.theme.text};
-  font-size: 25px;
+  font-size: max(16px, 1.302vw);
   font-weight: bold;
 `
 
 const ArrowContainers = styled.img`
-  padding: 5px 20px;
+  padding: 5px 1vw;
 
   &:hover {
     cursor: pointer;
@@ -96,15 +134,15 @@ const TodayButtonContainer = styled.button`
   margin: auto 0;
 
   width: fit-content;
-  padding: 10px 20px;
+  padding: 10px 1vw;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 
-  font-size: 15px;
+  font-size: max(0.781vw, 12px);
   font-weight: bold;
   color: ${(props) => props.theme.text};
-  background-color: ${(props) => props.theme.secondary};
+  background-color: ${(props) => props.theme.primary};
 
   &:hover {
     background-color: ${(props) => props.theme.indent};
@@ -117,6 +155,7 @@ const DayOfWeekContainer = styled.div`
   background-color: ${(props) => props.theme.secondary};
   height: fit-content;
   padding: 5px 0;
+  font-size: max(0.833vw, 12px);
 `
 
 const DayofWeekCell = styled.div`
@@ -140,31 +179,59 @@ const CalendarCell = styled.div`
 `
 
 const CalendarCellDate = styled.span`
-  font-size: 16px;
+  font-size: max(0.833vw, 12px);
   display: block;
   color: ${(props) => props.theme.calendarText};
 `
 
 const CalendarPage: FC = () => {
-  const [theme, setTheme] = useState(defaultTheme)
+  const [theme, setTheme] = useState<Theme>(defaultTheme)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const [tags, setTags] = useState<Tag[]>([])
+  const [todos, setTodos] = useState<Todo[]>([])
+  const [events, setEvents] = useState<Event[]>([])
+
   const [year, setYear] = useState(new Date().getFullYear())
   // Month is 0 -> 11
   const [month, setMonth] = useState(new Date().getMonth())
 
+  // Setup navigation stack
   let navigate = useNavigate()
   const pageRouter = (path: string) => {
     navigate(path)
   }
 
   // Check if user is authenticated
+  // Gets data for the calendar (Tags, Todos, Events)
   useEffect(() => {
-    const getAuthenticated = () => {
-      axios.get('/api/user').catch((e) => {
-        navigate('/login')
-      })
-    }
-    getAuthenticated()
-  }, [])
+    getAuthenticated().catch(() => {
+      navigate('/login')
+    })
+
+    // Get Tags then sort by alphabet
+    getAllTags().then((d) =>
+      setTags(
+        d.sort((a, b) => {
+          return a.name.localeCompare(b.name)
+        })
+      )
+    )
+
+    // Get Todos and Sort by whether it is checked, then by alphabetical
+    getAllTodos().then((d) =>
+      setTodos(
+        d.sort((a, b) => {
+          const checkedCompare = Number(a.isChecked) - Number(b.isChecked)
+          if (checkedCompare !== 0) {
+            return checkedCompare
+          }
+          // If checked status is the same, sort by name (case-insensitive)
+          return a.todo.localeCompare(b.todo)
+        })
+      )
+    )
+  }, [navigate])
 
   const goToToday = () => {
     setYear(new Date().getFullYear())
@@ -193,30 +260,35 @@ const CalendarPage: FC = () => {
     const lastDayOfMonth = new Date(year, month + 1, 0).getDay()
     const days = daysInMonth(month + 1, year)
 
-    const currentDay = new Date().getDate()
-
     const calendar: JSX.Element[] = []
 
     for (let i = 0; i < firstDay; i++) {
       calendar.push(<CalendarCell key={`prev-${i}`} />)
     }
 
+    const today = new Date()
     for (let day = 1; day <= days; day++) {
       calendar.push(
         <CalendarCell key={day}>
-          {day === currentDay ? (
-            <CalendarCellDate>
-              <span
-                style={{
-                  backgroundColor: theme.indent,
-                  borderRadius: '5px',
-                  color: theme.text,
-                  width: '25%',
-                  margin: '0 auto',
-                }}
-              >
-                {day}
-              </span>
+          {day === today.getDate() &&
+          month === today.getMonth() &&
+          year === today.getFullYear() ? (
+            <CalendarCellDate
+              style={{
+                display: 'flex',
+                backgroundColor: theme.indent,
+                borderRadius: '5px',
+                color: theme.text,
+                width: '25%',
+                margin: '0 auto',
+
+                justifyContent: 'center',
+                alignItems: 'center',
+                // TODO: Match this with the font-size of this above
+                minWidth: '16px',
+              }}
+            >
+              {day}
             </CalendarCellDate>
           ) : (
             <CalendarCellDate>{day}</CalendarCellDate>
@@ -245,18 +317,26 @@ const CalendarPage: FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <NavBar type={'back'} theme={defaultTheme} />
+      <NavBar type={'back'} theme={theme} />
       <PageContainer>
         {/* Left side of the screen */}
-        <SideBarContainer>
+        <SideBarContainer open={sidebarOpen}>
+          {sidebarOpen && <ExitIcon onClick={() => setSidebarOpen(false)} />}
           <AddEventButtonContainer onClick={() => pageRouter('/createEvent')}>
             Add Event
           </AddEventButtonContainer>
-          <SideBarBox></SideBarBox>
+          <CalendarSideBarBox
+            theme={theme}
+            tags={tags}
+            setTags={setTags}
+            todos={todos}
+            setTodos={setTodos}
+          />
         </SideBarContainer>
         {/* Right side of the screen */}
         <CalendarContainer>
           <DateControllerContainer>
+            <HamburgerMenu onClick={() => setSidebarOpen(true)} />
             <TodayButtonContainer onClick={() => goToToday()}>
               Today
             </TodayButtonContainer>

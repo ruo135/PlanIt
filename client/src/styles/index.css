@@ -11,3 +11,23 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* TODO: Customize scrollbar */
+@supports (scrollbar-width: auto) {
+  * {
+    scrollbar-width: none;
+  }
+}
+
+/* Legacy browsers with `::-webkit-scrollbar-*` support */
+@supports selector(::-webkit-scrollbar) {
+  *::-webkit-scrollbar-thumb {
+    display: none;
+  }
+  *::-webkit-scrollbar-track {
+    display: none;
+  }
+  *::-webkit-scrollbar {
+    display: none;
+  }
+}

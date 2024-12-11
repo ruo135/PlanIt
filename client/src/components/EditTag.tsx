@@ -1,0 +1,134 @@
+import React, { Dispatch, SetStateAction, useState } from 'react'
+import styled from 'styled-components'
+import InputField from './InputField'
+import { Tag } from '../models/Tag'
+import { createTag, deleteTag, updateTag } from '../api/tags'
+import ColorPicker from './ColorPicker'
+import { colors } from '../helpers/tagColors'
+
+const FormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  padding: 20px;
+  background-color: ${(props) => props.theme.background};
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  width: 80%;
+`
+
+const Label = styled.label`
+  font-size: max(12px, 0.781vw);
+  color: ${(props) => props.theme.calendarText};
+`
+
+const SubmitButton = styled.button`
+  padding: 8px 16px;
+
+  background-color: ${(props) => props.theme.secondary};
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: ${(props) => props.theme.text};
+
+  &:hover {
+    background-color: ${(props) => props.theme.indent};
+  }
+`
+
+interface EditTagProps {
+  currentTag?: Tag
+
+  tags: Tag[]
+  changeDropdownState: Dispatch<SetStateAction<string>>
+  setTagState: Dispatch<SetStateAction<Tag[]>>
+}
+
+export default function EditTag(props: EditTagProps) {
+  const [tagName, setTagName] = useState(props.currentTag?.name ?? '')
+  const [selectedColor, setSelectedColor] = useState<string>(
+    props.currentTag?.color ?? colors[0].color
+  )
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+
+  const sortTags = (tags: Tag[]) => {
+    return tags.sort((a, b) => {
+      return a.name.localeCompare(b.name)
+    })
+  }
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault()
+
+    createTag(tagName, selectedColor).then((t) => {
+      props.tags.push(t)
+      props.setTagState(sortTags(props.tags))
+      props.changeDropdownState('')
+    })
+  }
+
+  const handleUpdate = (tag: Tag | undefined) => {
+    if (tag)
+      updateTag({ ...tag, name: tagName, color: selectedColor }).then(() => {
+        props.setTagState((prev) => {
+          return sortTags(
+            prev.map((item) =>
+              item._id === tag._id
+                ? { ...item, name: tagName, color: selectedColor }
+                : item
+            )
+          )
+        })
+        props.changeDropdownState('')
+      })
+  }
+
+  const handleCancel = () => {
+    props.changeDropdownState('')
+  }
+
+  const handleDelete = (tag: Tag | undefined) => {
+    if (tag)
+      deleteTag(tag).then(() => {
+        props.setTagState((prev) => prev.filter((t) => t._id !== tag._id))
+        props.changeDropdownState('')
+      })
+  }
+
+  return (
+    <FormContainer>
+      <Label>Tag:</Label>
+      <InputField
+        type="text"
+        value={tagName}
+        onChange={(e) => setTagName(e.target.value)}
+        placeholder="Enter tag name"
+        height={'1vh'}
+      />
+
+      <Label>Color:</Label>
+      <ColorPicker
+        selectedColor={selectedColor}
+        colors={colors}
+        toggleDropdown={setIsDropdownOpen}
+        isDropdownOpen={isDropdownOpen}
+        handleColorSelect={setSelectedColor}
+      />
+
+      {props.currentTag && (
+        <>
+          <SubmitButton onClick={() => handleUpdate(props.currentTag)}>
+            Save
+          </SubmitButton>
+          <SubmitButton onClick={() => handleDelete(props.currentTag)}>
+            Delete
+          </SubmitButton>
+          <SubmitButton onClick={handleCancel}>Cancel</SubmitButton>
+        </>
+      )}
+      {!props.currentTag && (
+        <SubmitButton onClick={handleSubmit}>OK</SubmitButton>
+      )}
+    </FormContainer>
+  )
+}

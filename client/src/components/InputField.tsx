@@ -10,18 +10,20 @@ type InputFieldProps = {
   placeholder?: string // Optional placeholder
   error?: boolean
   errorMessage?: string
+  height?: string
 }
 
-const TextField = styled.input<{ error?: boolean }>`
+const TextField = styled.input<{ error?: boolean; height?: string }>`
   padding: 10px;
   width: 90%;
-  height: 35px;
+  height: ${(props) => props.height ?? '35px'};
   border-radius: 10px;
   background-color: ${(props) => props.theme.background};
-  border-size: 1px;
+  border: 1px;
   border-style: solid;
   border-color: ${(props) =>
     props.error ? props.theme.error : props.theme.header};
+  color: ${(props) => props.theme.calendarText};
 
   &:focus {
     outline: none;
@@ -38,6 +40,7 @@ export default function InputField(props: InputFieldProps) {
         onChange={props.onChange}
         placeholder={props.placeholder ?? ''}
         error={props.error}
+        height={props.height}
       />
       {props.error && props.errorMessage && (
         <ErrorMessage message={props.errorMessage} />
