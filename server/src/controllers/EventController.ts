@@ -1,16 +1,16 @@
-import createHttpError from "http-errors";
-import e, { RequestHandler } from "express";
-import EventModel from "../models/EventModel";
-import { assertIsDefined } from "../util/assertIsDefined";
-import mongoose from "mongoose";
-import TagModel from "../models/TagModel";
+import createHttpError from 'http-errors'
+import e, { RequestHandler } from 'express'
+import EventModel from '../models/EventModel'
+import { assertIsDefined } from '../util/assertIsDefined'
+import mongoose from 'mongoose'
+import TagModel from '../models/TagModel'
 
 interface CreateEventBody {
-  title?: string;
-  description?: string;
-  startDate?: Date;
-  endDate?: Date;
-  tagId?: mongoose.Types.ObjectId;
+  title?: string
+  description?: string
+  startDate?: Date
+  endDate?: Date
+  tagId?: mongoose.Types.ObjectId
 }
 // prettier-ignore
 export const createEvent: RequestHandler<unknown,unknown,CreateEventBody,unknown> = async (req, res, next) => {
@@ -51,15 +51,15 @@ export const createEvent: RequestHandler<unknown,unknown,CreateEventBody,unknown
 };
 
 interface UpdateEventParams {
-  eventId: string;
+  eventId: string
 }
 
 interface UpdateEventBody {
-  title?: string;
-  description?: string;
-  startDate?: Date;
-  endDate?: Date;
-  tagId?: mongoose.Types.ObjectId;
+  title?: string
+  description?: string
+  startDate?: Date
+  endDate?: Date
+  tagId?: mongoose.Types.ObjectId
 }
 
 // prettier-ignore
@@ -116,23 +116,39 @@ export const updateEvent: RequestHandler<UpdateEventParams, unknown, UpdateEvent
   }
 };
 
-export const getEventsForMonth: RequestHandler = async (req, res, next) => {
-  const { monthAndYear } = req.params;
-  const authenticatedUserId = req.session.userId;
+export const getAllEvents: RequestHandler = async (req, res, next) => {
+  const authenticatedUserId = req.session.userId
 
   try {
-    assertIsDefined(authenticatedUserId);
+    assertIsDefined(authenticatedUserId)
+
+    const events = await EventModel.find({
+      userId: authenticatedUserId,
+    })
+
+    res.status(200).json(events)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getEventsForMonth: RequestHandler = async (req, res, next) => {
+  const { monthAndYear } = req.params
+  const authenticatedUserId = req.session.userId
+
+  try {
+    assertIsDefined(authenticatedUserId)
 
     const events = await EventModel.find({
       userId: authenticatedUserId,
       monthAndYear: monthAndYear,
-    });
+    })
 
-    res.status(200).json(events);
+    res.status(200).json(events)
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
+}
 
 // prettier-ignore
 export const getAllVisibileEventsForCurrentMonth: RequestHandler = async (req, res, next) => {
@@ -174,29 +190,29 @@ export const getAllVisibileEventsForCurrentMonth: RequestHandler = async (req, r
 };
 
 export const deleteEvent: RequestHandler = async (req, res, next) => {
-  const { eventId } = req.params;
-  const authenticatedUserId = req.session.userId;
+  const { eventId } = req.params
+  const authenticatedUserId = req.session.userId
 
   try {
-    assertIsDefined(authenticatedUserId);
+    assertIsDefined(authenticatedUserId)
 
     if (!mongoose.isValidObjectId(eventId)) {
-      throw createHttpError(400, "Invalid event id");
+      throw createHttpError(400, 'Invalid event id')
     }
 
-    const todo = await EventModel.findById(eventId).exec();
+    const todo = await EventModel.findById(eventId).exec()
 
     if (!todo) {
-      throw createHttpError(404, "Event not found");
+      throw createHttpError(404, 'Event not found')
     }
 
     if (!todo.userId.equals(authenticatedUserId)) {
-      throw createHttpError(401, "You cannot access this event");
+      throw createHttpError(401, 'You cannot access this event')
     }
 
-    await EventModel.findByIdAndDelete(eventId);
-    res.sendStatus(204);
+    await EventModel.findByIdAndDelete(eventId)
+    res.sendStatus(204)
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
+}
