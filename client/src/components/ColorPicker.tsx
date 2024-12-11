@@ -45,6 +45,8 @@ const DropdownItem = styled.li`
   display: flex;
   align-items: center;
   cursor: pointer;
+  background-color: ${(props) => props.theme.backgroundColor};
+  color: ${(props) => props.theme.calendarText};
 
   &:hover {
     background-color: ${(props) => props.theme.indent};

@@ -231,12 +231,15 @@ const CalendarPage: FC = () => {
           year === today.getFullYear() ? (
             <CalendarCellDate
               style={{
-                display: 'block',
+                display: 'flex',
                 backgroundColor: theme.indent,
                 borderRadius: '5px',
                 color: theme.text,
                 width: '25%',
                 margin: '0 auto',
+
+                justifyContent: 'center',
+                alignItems: 'center',
                 // TODO: Match this with the font-size of this above
                 minWidth: '16px',
               }}
