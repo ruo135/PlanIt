@@ -14,6 +14,9 @@ import { Todo } from '../models/Todo'
 import { getAllTodos } from '../api/todos'
 import { ReactComponent as menuIcon } from '../assets/menu.svg'
 import { ReactComponent as exitIcon } from '../assets/plus.svg'
+import { getAllEvents } from '../api/events'
+import { Event } from '../models/Event'
+import CalendarMonthlyEvent from '../components/CalendarMonthlyEvent'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -96,15 +99,11 @@ const CalendarContainer = styled.div`
 const DateControllerContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-evenly;
+  justify-content: center;
   align-content: center;
 
   height: 7vh;
   background-color: ${(props) => props.theme.primary};
-
-  @media only screen and (max-width: 500px) {
-    justify-content: center;
-  }
 `
 
 const DateContainer = styled.span`
@@ -231,6 +230,17 @@ const CalendarPage: FC = () => {
         })
       )
     )
+
+    // Set Events
+    getAllEvents().then((d) =>
+      setEvents(
+        d.map((e) => ({
+          ...e,
+          startDate: new Date(e.startDate),
+          endDate: new Date(e.endDate),
+        }))
+      )
+    )
   }, [navigate])
 
   const goToToday = () => {
@@ -238,7 +248,7 @@ const CalendarPage: FC = () => {
     setMonth(new Date().getMonth())
   }
 
-  const changeMonth = (value: number) => {
+  const changeMonthState = (value: number) => {
     if (month + value > 11) {
       setMonth(0)
       setYear(year + 1)
@@ -268,6 +278,8 @@ const CalendarPage: FC = () => {
 
     const today = new Date()
     for (let day = 1; day <= days; day++) {
+      // Pushes the top date of each calendar cell
+      // If it is current date, then highlight it
       calendar.push(
         <CalendarCell key={day}>
           {day === today.getDate() &&
@@ -293,6 +305,23 @@ const CalendarPage: FC = () => {
           ) : (
             <CalendarCellDate>{day}</CalendarCellDate>
           )}
+          {/* Put each event that matches into the cell */}
+          {events
+            .filter(
+              (e) =>
+                e.startDate.getFullYear() === year &&
+                e.startDate.getMonth() === month &&
+                e.startDate.getDate() === day
+            )
+            .map((e) => {
+              return (
+                <CalendarMonthlyEvent
+                  key={e._id}
+                  event={e}
+                  tagColor={tags.find((t) => t._id === e.tagId)?.color}
+                />
+              )
+            })}
         </CalendarCell>
       )
     }
@@ -314,6 +343,8 @@ const CalendarPage: FC = () => {
 
     return res
   }
+
+  console.log(events)
 
   return (
     <ThemeProvider theme={theme}>
@@ -340,11 +371,17 @@ const CalendarPage: FC = () => {
             <TodayButtonContainer onClick={() => goToToday()}>
               Today
             </TodayButtonContainer>
-            <ArrowContainers src={arrowLeft} onClick={() => changeMonth(-1)} />
+            <ArrowContainers
+              src={arrowLeft}
+              onClick={() => changeMonthState(-1)}
+            />
             <DateContainer>
               {getMonthName(month)} {year}
             </DateContainer>
-            <ArrowContainers src={arrowRight} onClick={() => changeMonth(1)} />
+            <ArrowContainers
+              src={arrowRight}
+              onClick={() => changeMonthState(1)}
+            />
           </DateControllerContainer>
           <DayOfWeekContainer>{renderDaysofWeek()}</DayOfWeekContainer>
           <CalendarBody>{renderDays()}</CalendarBody>
