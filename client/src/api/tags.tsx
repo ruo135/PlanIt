@@ -28,10 +28,10 @@ async function createTag(name: string, color: string): Promise<Tag> {
 }
 
 async function updateTag(tag: Tag) {
-  const { name, color } = tag
+  const { name, color, _id } = tag
 
   return await axios
-    .patch(`/api/tag/updateTag/${tag._id}`, {
+    .patch(`/api/tag/updateTag/${_id}`, {
       name,
       color,
     })

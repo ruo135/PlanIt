@@ -12,16 +12,16 @@ async function getAllTodos(): Promise<Todo[]> {
   }
 }
 
-async function createTodo(name: string) {
+async function createTodo(name: string): Promise<Todo> {
   return await axios
     .post('/api/todo/createTodo', {
-      name,
+      todo: name,
     })
     .catch(() => {
-      return false
+      return null
     })
-    .finally(() => {
-      return true
+    .then((t) => {
+      return t?.data
     })
 }
 
@@ -53,7 +53,7 @@ async function checkTodo(todo: Todo) {
 
 async function deleteTodo(todo: Todo) {
   return await axios
-    .delete(`/api/tag/${todo._id}`)
+    .delete(`/api/todo/${todo._id}`)
     .catch(() => {
       return false
     })

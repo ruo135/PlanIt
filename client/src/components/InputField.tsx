@@ -23,6 +23,7 @@ const TextField = styled.input<{ error?: boolean; height?: string }>`
   border-style: solid;
   border-color: ${(props) =>
     props.error ? props.theme.error : props.theme.header};
+  color: ${(props) => props.theme.calendarText};
 
   &:focus {
     outline: none;

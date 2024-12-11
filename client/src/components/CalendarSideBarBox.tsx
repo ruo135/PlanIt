@@ -1,13 +1,15 @@
-import styled, { ThemeProvider } from 'styled-components'
+import styled from 'styled-components'
 import { Theme } from '../styles/theme'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { Tag } from '../models/Tag'
 import { ReactComponent as plusIcon } from '../assets/plus.svg'
 import { ReactComponent as circleIcon } from '../assets/circle.svg'
+import { ReactComponent as editIcon } from '../assets/edit.svg'
 import { Todo } from '../models/Todo'
 import { toggleTagVisibility } from '../api/tags'
 import { checkTodo } from '../api/todos'
 import EditTag from './EditTag'
+import EditTodo from './EditTodo'
 interface CalendarSideBarBoxProps {
   theme: Theme
   tags: Tag[]
@@ -64,6 +66,9 @@ const OptionContainer = styled.div<{ $hidehovercolor?: boolean }>`
   padding: 1vh;
   display: flex;
   flex-direction: row;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: space-between;
 
   &:hover {
     cursor: pointer;
@@ -72,19 +77,35 @@ const OptionContainer = styled.div<{ $hidehovercolor?: boolean }>`
   }
 `
 
-const OptionImageContainer = styled.div`
-  width: 20%;
+const OptionImageContainer = styled.div<{
+  $hidehovercolor: boolean
+  $justifyContent: string
+}>`
+  width: 10%;
+  aspect-ratio: 1 / 1;
   display: flex;
-  justify-content: start;
+  justify-content: ${(props) => props.$justifyContent};
   align-items: center;
+  border-radius: 15px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: ${(props) =>
+      props.$hidehovercolor ? 'none' : props.theme.secondary};
+  }
 `
 
 const TagColorCircle = styled(circleIcon)``
 
 const TagPlusContainer = styled(plusIcon)``
 
+const TodoEditContainer = styled(editIcon)`
+  stroke: ${(props) => props.theme.background};
+`
+
 const OptionText = styled.div<{ selected?: boolean }>`
-  max-width: 80%;
+  flex: 1;
+  max-width: 85%;
   color: ${(props) => props.theme.text};
   text-wrap: auto;
   text-overflow: ellipsis;
@@ -94,14 +115,12 @@ const OptionText = styled.div<{ selected?: boolean }>`
 `
 
 export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
-  const [isTagOpened, setTagOpened] = useState(true)
-  const [isTagDropdownOpened, changeTagDropdown] = useState(false)
-
-  const sortTags = (tags: Tag[]) => {
-    return tags.sort((a, b) => {
-      return a.name.localeCompare(b.name)
-    })
-  }
+  // Whether I am on the Tags or Todo tab
+  const [isTagTabOpened, setTagTab] = useState(true)
+  // Which tag editor is opened
+  const [tagEditing, setTagEditing] = useState('')
+  // Which todo editor is opened
+  const [todoEditing, setTodoEditing] = useState('')
 
   const changeTagVisibility = (tag: Tag) => {
     props.setTags((prev) =>
@@ -117,27 +136,29 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
     let curRows = []
 
     curRows.push(
-      <OptionContainer
-        key={'add-new'}
-        onClick={() => changeTagDropdown(!isTagDropdownOpened)}
-      >
-        <OptionImageContainer>
-          <TagPlusContainer fill={props.theme.text} />
-        </OptionImageContainer>
-        <OptionText>
-          {isTagDropdownOpened ? 'Cancel New' : 'Add New'}
-        </OptionText>
-      </OptionContainer>
-    )
-
-    curRows.push(
-      <span key={'add-dropdown'}>
-        {isTagDropdownOpened && (
-          <OptionContainer $hidehovercolor={true}>
+      <span key={'add'}>
+        <OptionContainer
+          key={'add-new'}
+          onClick={() => {
+            tagEditing !== 'new' ? setTagEditing('new') : setTagEditing('')
+          }}
+        >
+          <OptionImageContainer
+            $hidehovercolor={true}
+            $justifyContent={'center'}
+          >
+            <TagPlusContainer fill={props.theme.text} />
+          </OptionImageContainer>
+          <OptionText>
+            {tagEditing !== 'new' ? 'Add New' : 'Cancel New'}
+          </OptionText>
+        </OptionContainer>
+        {tagEditing === 'new' && (
+          <OptionContainer key={'add-dropdown'} $hidehovercolor={true}>
             <EditTag
               tags={props.tags}
               setTagState={props.setTags}
-              changeDropdownState={changeTagDropdown}
+              changeDropdownState={setTagEditing}
             />
           </OptionContainer>
         )}
@@ -146,16 +167,40 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
 
     props.tags.forEach((tag) => {
       curRows.push(
-        <OptionContainer key={tag._id} onClick={() => changeTagVisibility(tag)}>
-          <OptionImageContainer>
-            <TagColorCircle
-              fill={tag.isVisible ? tag.color : props.theme.background}
-              stroke={tag.color}
-              strokeWidth={2}
-            />
-          </OptionImageContainer>
-          <OptionText>{tag.name}</OptionText>
-        </OptionContainer>
+        <span key={tag._id}>
+          <OptionContainer key={'data'}>
+            <OptionImageContainer
+              $hidehovercolor={false}
+              onClick={() => changeTagVisibility(tag)}
+              $justifyContent={'center'}
+            >
+              <TagColorCircle
+                fill={tag.isVisible ? tag.color : props.theme.background}
+                stroke={tag.color}
+                strokeWidth={2}
+              />
+            </OptionImageContainer>
+            <OptionText
+              onClick={() =>
+                tagEditing !== tag._id
+                  ? setTagEditing(tag._id ?? '')
+                  : setTagEditing('')
+              }
+            >
+              {tag.name}
+            </OptionText>
+          </OptionContainer>
+          {tagEditing === tag._id && (
+            <OptionContainer key={'add-dropdown'} $hidehovercolor={true}>
+              <EditTag
+                currentTag={tag}
+                tags={props.tags}
+                setTagState={props.setTags}
+                changeDropdownState={setTagEditing}
+              />
+            </OptionContainer>
+          )}
+        </span>
       )
     })
 
@@ -189,26 +234,70 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
     let curRows = []
 
     curRows.push(
-      <OptionContainer key={'add-new'}>
-        <OptionImageContainer>
-          <TagPlusContainer fill={props.theme.text} />
-        </OptionImageContainer>
-        <OptionText>Add New</OptionText>
-      </OptionContainer>
+      <span key={'add-new'}>
+        <OptionContainer
+          key={'add-button'}
+          onClick={() => {
+            todoEditing !== 'new' ? setTodoEditing('new') : setTodoEditing('')
+          }}
+        >
+          <OptionImageContainer
+            $hidehovercolor={true}
+            $justifyContent={'center'}
+          >
+            <TagPlusContainer fill={props.theme.text} />
+          </OptionImageContainer>
+          <OptionText>
+            {todoEditing !== 'new' ? 'Add New' : 'Cancel New'}
+          </OptionText>
+        </OptionContainer>
+        {todoEditing === 'new' && (
+          <OptionContainer key={'add-dropdown'} $hidehovercolor={true}>
+            <EditTodo
+              todos={props.todos}
+              setTodoState={props.setTodos}
+              changeDropdownState={setTodoEditing}
+            />
+          </OptionContainer>
+        )}
+      </span>
     )
 
     props.todos.forEach((todo) => {
       curRows.push(
-        <OptionContainer
-          key={todo._id}
-          onClick={() => {
-            checkmarkTodo(todo)
-          }}
-        >
-          <OptionText selected={todo.isChecked ?? false}>
-            {todo.todo}
-          </OptionText>
-        </OptionContainer>
+        <span key={todo._id}>
+          <OptionContainer key={'data'}>
+            <OptionText
+              selected={todo.isChecked ?? false}
+              onClick={() => {
+                checkmarkTodo(todo)
+              }}
+            >
+              {todo.todo}
+            </OptionText>
+            <OptionImageContainer
+              $hidehovercolor={false}
+              $justifyContent={'center'}
+              onClick={() =>
+                todoEditing !== todo._id
+                  ? setTodoEditing(todo._id ?? '')
+                  : setTodoEditing('')
+              }
+            >
+              <TodoEditContainer />
+            </OptionImageContainer>
+          </OptionContainer>
+          {todoEditing === todo._id && (
+            <OptionContainer key={'edit'} $hidehovercolor={true}>
+              <EditTodo
+                currentTodo={todo}
+                todos={props.todos}
+                setTodoState={props.setTodos}
+                changeDropdownState={setTodoEditing}
+              />
+            </OptionContainer>
+          )}
+        </span>
       )
     })
 
@@ -219,23 +308,23 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
     <SideBarBox>
       <SideBarBoxTitleContainer>
         <SideBarBoxTitleOption
-          selected={isTagOpened}
-          onClick={() => setTagOpened(true)}
+          selected={isTagTabOpened}
+          onClick={() => setTagTab(true)}
           key={'tags'}
         >
           Tags
         </SideBarBoxTitleOption>
         <SideBarBoxTitleOption
-          selected={!isTagOpened}
-          onClick={() => setTagOpened(false)}
+          selected={!isTagTabOpened}
+          onClick={() => setTagTab(false)}
           key={'todo'}
         >
           To-Do
         </SideBarBoxTitleOption>
       </SideBarBoxTitleContainer>
       <SideBarBoxBody>
-        {isTagOpened && renderTags()}
-        {!isTagOpened && renderTodos()}
+        {isTagTabOpened && renderTags()}
+        {!isTagTabOpened && renderTodos()}
       </SideBarBoxBody>
     </SideBarBox>
   )
