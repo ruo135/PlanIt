@@ -15,7 +15,7 @@ code {
 /* TODO: Customize scrollbar */
 @supports (scrollbar-width: auto) {
   * {
-    scrollbar-width: thin;
+    scrollbar-width: none;
   }
 }
 
