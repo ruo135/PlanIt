@@ -9,26 +9,64 @@ import { useNavigate } from 'react-router-dom'
 import CalendarSideBarBox from '../components/CalendarSideBarBox'
 import { Tag } from '../models/Tag'
 import getAuthenticated from '../api/auth'
-import { getAllTags, toggleTagVisibility } from '../api/tags'
+import { getAllTags } from '../api/tags'
 import { Todo } from '../models/Todo'
 import { getAllTodos } from '../api/todos'
+import { ReactComponent as menuIcon } from '../assets/menu.svg'
+import { ReactComponent as exitIcon } from '../assets/plus.svg'
 
 const PageContainer = styled.div`
   align-items: stretch;
   width: 100%;
-  height: 92vh;
+  height: calc(100vh - max(8vh, 60px));
   display: flex;
+  position: relative;
 `
 
-const SideBarContainer = styled.div`
+const SideBarContainer = styled.div<{ open: boolean }>`
   flex-direction: column;
   width: 25%;
-  height: auto;
+  height: 100%;
   background-color: ${(props) => props.theme.primary};
   display: flex;
-
   align-items: center;
   justify-content: space-around;
+
+  @media only screen and (max-width: 1000px) {
+    z-index: 10;
+    display: ${(props) => (props.open ? 'flex' : 'none')};
+    position: absolute;
+    width: 100%;
+  }
+`
+
+const HamburgerMenu = styled(menuIcon)`
+  position: absolute;
+  left: 1vh;
+  top: calc(3.5vh - 10px);
+  fill: ${(props) => props.theme.background};
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+
+  @media only screen and (min-width: 1000px) {
+    display: none;
+  }
+`
+
+const ExitIcon = styled(exitIcon)`
+  width: auto;
+  height: 5vw;
+  aspect-ratio: 1/1;
+  position: absolute;
+  top: 1vh;
+  right: 1vw;
+  fill: ${(props) => props.theme.text};
+  transform: rotate(45deg);
+
+  @media only screen and (min-width: 1000px) {
+    display: none;
+  }
 `
 
 const AddEventButtonContainer = styled.button`
@@ -37,8 +75,7 @@ const AddEventButtonContainer = styled.button`
   border: none;
   border-radius: 5px;
   cursor: pointer;
-
-  font-size: 15px;
+  font-size: max(14px, 1.042vw);
   font-weight: bold;
   color: ${(props) => props.theme.text};
   background-color: ${(props) => props.theme.secondary};
@@ -59,11 +96,15 @@ const CalendarContainer = styled.div`
 const DateControllerContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-evenly;
   align-content: center;
 
   height: 7vh;
   background-color: ${(props) => props.theme.primary};
+
+  @media only screen and (max-width: 500px) {
+    justify-content: center;
+  }
 `
 
 const DateContainer = styled.span`
@@ -77,12 +118,12 @@ const DateContainer = styled.span`
   text-align: center;
 
   color: ${(props) => props.theme.text};
-  font-size: 25px;
+  font-size: max(16px, 1.302vw);
   font-weight: bold;
 `
 
 const ArrowContainers = styled.img`
-  padding: 5px 20px;
+  padding: 5px 1vw;
 
   &:hover {
     cursor: pointer;
@@ -93,12 +134,12 @@ const TodayButtonContainer = styled.button`
   margin: auto 0;
 
   width: fit-content;
-  padding: 10px 20px;
+  padding: 10px 1vw;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 
-  font-size: 15px;
+  font-size: max(0.781vw, 12px);
   font-weight: bold;
   color: ${(props) => props.theme.text};
   background-color: ${(props) => props.theme.primary};
@@ -114,6 +155,7 @@ const DayOfWeekContainer = styled.div`
   background-color: ${(props) => props.theme.secondary};
   height: fit-content;
   padding: 5px 0;
+  font-size: max(0.833vw, 12px);
 `
 
 const DayofWeekCell = styled.div`
@@ -137,13 +179,15 @@ const CalendarCell = styled.div`
 `
 
 const CalendarCellDate = styled.span`
-  font-size: 16px;
+  font-size: max(0.833vw, 12px);
   display: block;
   color: ${(props) => props.theme.calendarText};
 `
 
 const CalendarPage: FC = () => {
   const [theme, setTheme] = useState<Theme>(defaultTheme)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
   const [tags, setTags] = useState<Tag[]>([])
   const [todos, setTodos] = useState<Todo[]>([])
   const [events, setEvents] = useState<Event[]>([])
@@ -276,7 +320,8 @@ const CalendarPage: FC = () => {
       <NavBar type={'back'} theme={theme} />
       <PageContainer>
         {/* Left side of the screen */}
-        <SideBarContainer>
+        <SideBarContainer open={sidebarOpen}>
+          {sidebarOpen && <ExitIcon onClick={() => setSidebarOpen(false)} />}
           <AddEventButtonContainer onClick={() => pageRouter('/createEvent')}>
             Add Event
           </AddEventButtonContainer>
@@ -291,6 +336,7 @@ const CalendarPage: FC = () => {
         {/* Right side of the screen */}
         <CalendarContainer>
           <DateControllerContainer>
+            <HamburgerMenu onClick={() => setSidebarOpen(true)} />
             <TodayButtonContainer onClick={() => goToToday()}>
               Today
             </TodayButtonContainer>

@@ -16,7 +16,7 @@ const FormContainer = styled.div`
 `
 
 const Label = styled.label`
-  font-size: 14px;
+  font-size: max(12px, 0.781vw);
   color: ${(props) => props.theme.calendarText};
 `
 
