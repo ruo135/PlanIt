@@ -13,7 +13,7 @@ const DropdownContainer = styled.div`
 const DropdownButton = styled.div<{ color: string }>`
   display: flex;
   display: inline-block;
-  height: 45px;
+  height: 40px;
   justify-content: flex-start;
   align-items: center;
   padding: 8px;
@@ -73,7 +73,11 @@ const ColorDot = styled.span`
   margin-right: 10px;
 `
 
-const ArrowDownContainer = styled(arrowDown)<{ isDropdownOpen: boolean }>`
+const ArrowDownContainer = styled(arrowDown).attrs<{ isDropdownOpen: boolean }>(
+  (props) => ({
+    isDropdownOpen: undefined, // Prevents `isDropdownOpen` from being passed to the DOM
+  })
+)<{ isDropdownOpen: boolean }>`
   width: 25px;
   height: 25px;
   fill: ${(props) => props.theme.calendarText};

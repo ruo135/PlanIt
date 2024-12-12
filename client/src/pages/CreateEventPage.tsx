@@ -23,7 +23,7 @@ const PageContainer = styled.div`
   width: 100%;
   height: 92vh;
   display: flex;
-  background-color: ${(props) => props.theme.secondary};
+  background-color: ${(props) => props.theme.primary};
 `
 
 const AddEventForm = styled.div`
@@ -38,11 +38,13 @@ const AddEventForm = styled.div`
   border-radius: 15px;
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
 
-  @media (max-width: 700px) {
+  @media (max-width: 900px) {
+    margin-top: auto;
     align-items: flex-start;
     width: 100%;
     height: 90%;
     border-radius: 15px 15px 0 0;
+    animation: slideUp 0.2s ease-in-out forwards;
   }
 
   @media (max-width: 400px) {
@@ -50,6 +52,15 @@ const AddEventForm = styled.div`
     width: 100%;
     height: 90%;
     border-radius: 15px 15px 0 0;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
   }
 `
 const CloseIconContainer = styled.img`
@@ -79,15 +90,15 @@ const ClockIconContainer = styled(clockIcons)`
 `
 
 const DescriptionIconContainer = styled(DescriptionIcon)`
-  width: 38px;
-  height: 38px;
+  width: 35px;
+  height: 35px;
   fill: ${(props) => props.theme.calendarText};
   padding-right: 30px;
 `
 
 const TagIconContainer = styled(tagIcon)`
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
   fill: ${(props) => props.theme.calendarText};
   padding-right: 30px;
 `
@@ -140,7 +151,6 @@ const AddEventPage: FC = () => {
 
     const getTags = () => {
       axios.get('/api/tag/getAlltags').then((res) => {
-        console.log(res.data)
         let colorList: Color[] = res.data.map(
           (tag: { _id: string; name: string; color: string }) => {
             return { tagId: tag._id, name: tag.name, color: tag.color }
@@ -152,11 +162,6 @@ const AddEventPage: FC = () => {
 
     getAuthenticated()
   }, [])
-
-  // Check if user is authenticated
-  useEffect(() => {
-    console.log(tagId)
-  }, [tagId])
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value)
@@ -190,7 +195,6 @@ const AddEventPage: FC = () => {
       await axios
         .post('/api/event/createEvent', event)
         .then((res) => {
-          console.log(res.data)
           navigate('/calendar')
         })
         .catch((e) => {
@@ -245,7 +249,7 @@ const AddEventPage: FC = () => {
             to
           </HorizontalContainer>
           {/* Pick end date*/}
-          <HorizontalContainer style={{ paddingBottom: '25px' }}>
+          <HorizontalContainer style={{ paddingBottom: '30px' }}>
             {/* Clock Icon*/}
             <ClockIconContainer style={{ fill: theme.background }} />
             {/* Start date picker Icon*/}
@@ -261,7 +265,7 @@ const AddEventPage: FC = () => {
           <HorizontalContainer>
             <DescriptionIconContainer />
             <InputField
-              style={{ width: '60%' }}
+              style={{ width: '60%', fontSize: '15px' }}
               theme={theme}
               value={description}
               placeholder="Add a description"

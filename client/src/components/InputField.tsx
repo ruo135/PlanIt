@@ -19,6 +19,7 @@ type InputFieldProps = {
 const TextField = styled.input<{ $error?: boolean; height?: string }>`
   padding: 10px;
   width: 90%;
+  font-size: 15px;
   height: ${(props) => props.height ?? '35px'};
   border-radius: 10px;
   background-color: ${(props) => props.theme.background};
