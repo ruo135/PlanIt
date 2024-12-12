@@ -33,7 +33,7 @@ const FormBody = styled.div`
   justify-content: top;
   align-items: left;
   width: 500px;
-  height: 700px;
+  height: 80%;
   background-color: ${defaultTheme.background};
 `
 const Label = styled.p`

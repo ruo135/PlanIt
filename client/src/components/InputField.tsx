@@ -33,6 +33,10 @@ const TextField = styled.input<{ error?: boolean; height?: string }>`
     outline: none;
     border-color: ${(props) => props.theme.primary};
   }
+
+  @media (max-width: 700px) {
+    width: 100%;
+  }
 `
 
 export default function InputField(props: InputFieldProps) {

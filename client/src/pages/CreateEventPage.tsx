@@ -12,6 +12,9 @@ import { ReactComponent as clockIcons } from '../assets/clockIcon.svg'
 import { ReactComponent as tagIcon } from '../assets/tagIcon.svg'
 import { Color } from '../models/Color'
 import TagPicker from '../components/TagPicker'
+import getStartDate from '../helpers/getStarDate'
+import getEndDate from '../helpers/getEndDate'
+import SubmitButton from '../components/SubmitButton'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -27,7 +30,7 @@ const AddEventForm = styled.div`
   background-color: ${(props) => props.theme.background};
   padding: 30px;
   width: 50%;
-  height: 70%;
+  height: 80%;
   display: flex;
   flex-direction: column;
   justify-content: top;
@@ -37,7 +40,7 @@ const AddEventForm = styled.div`
 
   @media (max-width: 700px) {
     align-items: flex-start;
-    width: 90%;
+    width: 100%;
     height: 90%;
     border-radius: 15px 15px 0 0;
   }
@@ -45,7 +48,7 @@ const AddEventForm = styled.div`
   @media (max-width: 400px) {
     align-items: flex-start;
     width: 100%;
-    height: 100%;
+    height: 90%;
     border-radius: 15px 15px 0 0;
   }
 `
@@ -94,6 +97,8 @@ const HorizontalContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
+  width: 100%;
+  box-sizing: border-box;
 `
 
 const AddEventPage: FC = () => {
@@ -101,21 +106,29 @@ const AddEventPage: FC = () => {
   const [title, setTitle] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
-  const [isChecked, setIsChekced] = useState(false)
   const [description, setDescription] = useState('')
   const [tagId, setTagId] = useState('')
   const [tagList, setTagList] = useState<Color[]>([])
   const [isDropdownOpen, setDropdownOpen] = useState(false)
-  const [titleError, setErrorTitle] = useState(false)
+  const [titleError, setTitleError] = useState(false)
+  const [titleErrorMessage, setTitleErrorMessage] = useState('')
 
   let navigate = useNavigate()
 
   // Check if user is authenticated
   useEffect(() => {
     const getAuthenticated = () => {
-      axios.get('/api/user').catch((e) => {
-        navigate('/login')
-      })
+      axios
+        .get('/api/user')
+        .then(() => {
+          getTheme()
+          getTags()
+          setStartDate(getStartDate())
+          setEndDate(getEndDate())
+        })
+        .catch(() => {
+          navigate('/login')
+        })
     }
 
     const getTheme = () => {
@@ -138,11 +151,6 @@ const AddEventPage: FC = () => {
     }
 
     getAuthenticated()
-    getTheme()
-    getTags()
-
-    let today = new Date().toISOString().slice(0, 16)
-    setStartDate(today)
   }, [])
 
   // Check if user is authenticated
@@ -158,10 +166,6 @@ const AddEventPage: FC = () => {
     setStartDate(event.target.value)
   }
 
-  const handleCheckedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChekced(event.target.checked)
-  }
-
   const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEndDate(event.target.value)
   }
@@ -170,6 +174,30 @@ const AddEventPage: FC = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setDescription(event.target.value)
+  }
+
+  const handleCreateNewEvent = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault()
+    setTitleError(false)
+
+    if (!title) {
+      setTitleError(true)
+      setTitleErrorMessage('Event must have a title')
+    } else {
+      const event = { title, startDate, endDate, description, tagId }
+      await axios
+        .post('/api/event/createEvent', event)
+        .then((res) => {
+          console.log(res.data)
+          navigate('/calendar')
+        })
+        .catch((e) => {
+          setTitleError(true)
+          setTitleErrorMessage('Create event failed')
+        })
+    }
   }
 
   return (
@@ -196,7 +224,7 @@ const AddEventPage: FC = () => {
             onChange={handleTitleChange}
             placeholder="Add a title"
             error={titleError}
-            errorMessage="ya"
+            errorMessage={titleErrorMessage}
           />
           {/* Pick date*/}
           <HorizontalContainer style={{ paddingTop: '30px' }}>
@@ -204,6 +232,7 @@ const AddEventPage: FC = () => {
             <ClockIconContainer />
             {/* Start date picker Icon*/}
             <InputField
+              style={{ width: '60%' }}
               type="datetime-local"
               theme={theme}
               value={startDate}
@@ -211,46 +240,38 @@ const AddEventPage: FC = () => {
             />
           </HorizontalContainer>
           {/* Checkbox*/}
-          <HorizontalContainer>
-            <LeftIconContainer style={{ width: '60px' }} />
-            <InputField
-              style={{ height: '20px' }}
-              type="checkbox"
-              theme={theme}
-              checked={isChecked}
-              onChange={handleCheckedChange}
-            />
-            <p>&gt;24h</p>
+          <HorizontalContainer style={{ padding: '10px', paddingLeft: '0' }}>
+            <LeftIconContainer />
+            to
           </HorizontalContainer>
           {/* Pick end date*/}
-          {/* TODO: PERHAPS FIX THE END DATE THINGER IDK */}
-          {isChecked && (
-            <HorizontalContainer style={{ paddingBottom: '25px' }}>
-              {/* Clock Icon*/}
-              <ClockIconContainer style={{ fill: theme.background }} />
-              {/* Start date picker Icon*/}
-              <InputField
-                type="datetime-local"
-                theme={theme}
-                value={endDate}
-                onChange={handleEndDateChange}
-              />
-            </HorizontalContainer>
-          )}
-
+          <HorizontalContainer style={{ paddingBottom: '25px' }}>
+            {/* Clock Icon*/}
+            <ClockIconContainer style={{ fill: theme.background }} />
+            {/* Start date picker Icon*/}
+            <InputField
+              style={{ width: '60%' }}
+              type="datetime-local"
+              theme={theme}
+              value={endDate}
+              onChange={handleEndDateChange}
+            />
+          </HorizontalContainer>
           {/* Description*/}
           <HorizontalContainer>
             <DescriptionIconContainer />
             <InputField
+              style={{ width: '60%' }}
               theme={theme}
               value={description}
               placeholder="Add a description"
               onChange={handleDescriptionChange}
             />
           </HorizontalContainer>
-
           {/* Tag picker*/}
-          <HorizontalContainer style={{ paddingTop: '30px' }}>
+          <HorizontalContainer
+            style={{ paddingTop: '30px', paddingBottom: '30px' }}
+          >
             <TagIconContainer />
             <TagPicker
               selectedId={tagId}
@@ -258,6 +279,15 @@ const AddEventPage: FC = () => {
               isDropdownOpen={isDropdownOpen}
               toggleDropdown={setDropdownOpen}
               handleIdSelect={setTagId}
+            />
+          </HorizontalContainer>
+          <HorizontalContainer
+            style={{ paddingLeft: '60px', paddingRight: '60px' }}
+          >
+            <SubmitButton
+              title="Save"
+              theme={theme}
+              handleClick={handleCreateNewEvent}
             />
           </HorizontalContainer>
         </AddEventForm>

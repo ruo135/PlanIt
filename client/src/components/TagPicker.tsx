@@ -11,15 +11,15 @@ const DropdownContainer = styled.div`
 `
 
 const DropdownButton = styled.div<{ color: string }>`
-  classname: 'hihi';
   display: flex;
-  width: 200px;
+  display: inline-block;
   height: 45px;
-  border-radius: 10px;
   justify-content: flex-start;
   align-items: center;
   padding: 8px;
+  padding-right: 50px;
 
+  border-radius: 10px;
   border: 1px solid ${(props) => props.theme.header};
   background-color: ${(props) => props.color};
 
