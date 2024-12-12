@@ -1,31 +1,36 @@
 import { Dispatch, SetStateAction } from 'react'
 import styled, { ThemeProvider } from 'styled-components'
 import { Color } from '../models/Color'
-import { ReactComponent as arrowDown } from '../assets/arrowDownIcon.svg'
 import defaultTheme, { Theme } from '../styles/theme'
+import { ReactComponent as arrowDown } from '../assets/arrowDownIcon.svg'
+import { ReactComponent as closeIcon } from '../assets/closeIcon.svg'
 
 const DropdownContainer = styled.div`
   position: relative;
   width: 100%;
 `
-const DropdownButtonContent = styled.div`
-  display: flex;
-  align-items: center;
-`
 
 const DropdownButton = styled.div<{ color: string }>`
   display: flex;
-  justify-content: normal;
+  display: inline-block;
+  height: 40px;
+  justify-content: flex-start;
   align-items: center;
   padding: 8px;
-  height: 20px;
+  padding-right: 50px;
 
+  border-radius: 10px;
   border: 1px solid ${(props) => props.theme.header};
-  border-radius: 5px;
   background-color: ${(props) => props.color};
 
   cursor: pointer;
-  font-size: max(12px, 0.781vw);
+  font-size: 14px;
+  position: relative;
+`
+
+const DropdownButtonContent = styled.div`
+  display: flex;
+  align-items: center;
 `
 
 const DropdownList = styled.ul`
@@ -48,7 +53,7 @@ const DropdownList = styled.ul`
 
 const DropdownItem = styled.li`
   padding: 8px;
-  font-size: max(12px, 0.781vw);
+  font-size: 14px;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -56,9 +61,18 @@ const DropdownItem = styled.li`
   color: ${(props) => props.theme.calendarText};
 
   &:hover {
-    background-color: ${(props) => props.theme.indent};
+    background-color: ${(props) => props.theme.secondary};
   }
 `
+
+const ColorDot = styled.span`
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: ${(props) => props.color};
+  margin-right: 10px;
+`
+
 const ArrowDownContainer = styled(arrowDown).attrs<{ isDropdownOpen: boolean }>(
   (props) => ({
     isDropdownOpen: undefined, // Prevents `isDropdownOpen` from being passed to the DOM
@@ -74,28 +88,34 @@ const ArrowDownContainer = styled(arrowDown).attrs<{ isDropdownOpen: boolean }>(
     props.isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)'};
 `
 
-const ColorDot = styled.span`
-  width: 12px;
-  height: 12px;
+const CloseIconContainer = styled(closeIcon)<{ selectedId: string }>`
+  padding: 5px;
   border-radius: 50%;
-  background-color: ${(props) => props.color};
-  margin-right: 10px;
+  width: 15px;
+  height: 15px;
+  fill: ${(props) => props.theme.calendarText};
+  display: ${(props) => (props.selectedId ? 'block' : 'none')};
+
+  &:hover {
+    background-color: ${(props) => props.theme.secondary};
+  }
 `
+
 const Text = styled.p`
   color: ${(props) => props.theme.calendarText};
 `
 
 interface ColorPickerProps {
-  selectedColor: string
+  selectedId: string
   theme?: Theme
-  colors: Color[]
+  tags: Color[]
   toggleDropdown: Dispatch<SetStateAction<boolean>>
   isDropdownOpen: boolean
-  handleColorSelect: Dispatch<SetStateAction<string>>
+  handleIdSelect: Dispatch<SetStateAction<string>>
 }
 
-export default function ColorPicker(props: ColorPickerProps) {
-  const selectedColor = props.selectedColor
+export default function TagPicker(props: ColorPickerProps) {
+  const selectedTag = props.tags.find((c) => c.tagId === props.selectedId)
 
   return (
     <ThemeProvider theme={props.theme ?? defaultTheme}>
@@ -105,13 +125,15 @@ export default function ColorPicker(props: ColorPickerProps) {
           onClick={() => props.toggleDropdown(!props.isDropdownOpen)}
         >
           <DropdownButtonContent>
-            {!selectedColor && <Text>Select a color</Text>}
-            {selectedColor && (
+            {!selectedTag && <Text>Select a tag</Text>}
+            {selectedTag && (
               <>
-                <ColorDot color={selectedColor} />
-                <Text style={{ paddingRight: '5px' }}>
-                  {props.colors.find((c) => c.color === selectedColor)?.name}
-                </Text>
+                <ColorDot color={selectedTag.color} />
+                <Text style={{ paddingRight: '5px' }}>{selectedTag.name}</Text>
+                <CloseIconContainer
+                  selectedId={props.selectedId}
+                  onClick={() => props.handleIdSelect('')}
+                />
               </>
             )}
 
@@ -121,11 +143,11 @@ export default function ColorPicker(props: ColorPickerProps) {
 
         {props.isDropdownOpen && (
           <DropdownList>
-            {props.colors.map((c) => (
+            {props.tags.map((c) => (
               <DropdownItem
-                key={c.color}
+                key={c.tagId}
                 onClick={() => {
-                  props.handleColorSelect(c.color)
+                  props.handleIdSelect(c.tagId!)
                   props.toggleDropdown(false)
                 }}
               >

@@ -27,12 +27,13 @@ const FormBody = styled.div`
   padding-left: 60px;
   padding-right: 60px;
   padding-bottom: 20px;
+  border-radius: 15px;
   display: flex;
   flex-direction: column;
   justify-content: top;
   align-items: left;
   width: 500px;
-  height: 700px;
+  height: 80%;
   background-color: ${defaultTheme.background};
 `
 const Label = styled.p`
@@ -58,9 +59,12 @@ const RegisterPage: FC = () => {
   // Check if user is authenticated
   useEffect(() => {
     const getAuthenticated = () => {
-      axios.get('/api/user').then((e) => {
-        navigate('/calendar')
-      })
+      axios
+        .get('/api/user')
+        .then((e) => {
+          navigate('/calendar')
+        })
+        .catch((e) => {})
     }
     getAuthenticated()
   }, [navigate])
