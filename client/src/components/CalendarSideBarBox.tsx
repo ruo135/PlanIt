@@ -10,6 +10,7 @@ import { toggleTagVisibility } from '../api/tags'
 import { checkTodo } from '../api/todos'
 import EditTag from './EditTag'
 import EditTodo from './EditTodo'
+
 interface CalendarSideBarBoxProps {
   theme: Theme
   tags: Tag[]

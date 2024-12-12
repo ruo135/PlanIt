@@ -13,7 +13,7 @@ const PageContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 92vh;
+  height: calc(100vh - max(8vh, 60px));
   background-color: ${defaultTheme.primary};
 
   @media (max-width: 400px) {

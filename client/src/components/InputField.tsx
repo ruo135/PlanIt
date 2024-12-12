@@ -16,7 +16,7 @@ type InputFieldProps = {
   height?: string
 }
 
-const TextField = styled.input<{ error?: boolean; height?: string }>`
+const TextField = styled.input<{ $error?: boolean; height?: string }>`
   padding: 10px;
   width: 90%;
   height: ${(props) => props.height ?? '35px'};
@@ -26,7 +26,7 @@ const TextField = styled.input<{ error?: boolean; height?: string }>`
   border: 1px;
   border-style: solid;
   border-color: ${(props) =>
-    props.error ? props.theme.error : props.theme.header};
+    props.$error ? props.theme.error : props.theme.header};
   color: ${(props) => props.theme.calendarText};
 
   &:focus {
@@ -47,7 +47,7 @@ export default function InputField(props: InputFieldProps) {
         value={props.value}
         onChange={props.onChange}
         placeholder={props.placeholder ?? ''}
-        error={props.error}
+        $error={props.error}
         style={props.style}
         name={props.name ?? ''}
         checked={props.checked ?? false}

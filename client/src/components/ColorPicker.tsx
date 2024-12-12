@@ -18,7 +18,7 @@ const DropdownButton = styled.div<{ color: string }>`
   background-color: ${(props) => props.color};
 
   cursor: pointer;
-  font-size: 14px;
+  font-size: max(12px, 0.781vw);
 `
 
 const DropdownList = styled.ul`
@@ -41,7 +41,7 @@ const DropdownList = styled.ul`
 
 const DropdownItem = styled.li`
   padding: 8px;
-  font-size: 14px;
+  font-size: max(12px, 0.781vw);
   display: flex;
   align-items: center;
   cursor: pointer;
