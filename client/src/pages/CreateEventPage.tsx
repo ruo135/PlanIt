@@ -2,19 +2,19 @@ import { FC, useEffect, useState } from 'react'
 import NavBar from '../components/NavBar'
 import defaultTheme, { Theme } from '../styles/theme'
 import styled, { ThemeProvider } from 'styled-components'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import closeIcon from '../assets/closeIcon.svg'
-import clockIcon from '../assets/clockIcon.svg'
 import InputField from '../components/InputField'
 import { ReactComponent as DescriptionIcon } from '../assets/descriptionIcon.svg'
 import { ReactComponent as clockIcons } from '../assets/clockIcon.svg'
 import { ReactComponent as tagIcon } from '../assets/tagIcon.svg'
 import { Color } from '../models/Color'
 import TagPicker from '../components/TagPicker'
-import getStartDate from '../helpers/getStarDate'
+import getStartDate from '../helpers/getStartDate'
 import getEndDate from '../helpers/getEndDate'
 import SubmitButton from '../components/SubmitButton'
+import fixTimeOffetset from '../helpers/fixTimeOffset'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -113,12 +113,29 @@ const HorizontalContainer = styled.div`
 `
 
 const AddEventPage: FC = () => {
-  const [theme, setTheme] = useState(defaultTheme)
-  const [title, setTitle] = useState('')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
-  const [description, setDescription] = useState('')
-  const [tagId, setTagId] = useState('')
+  // Get state from calendar page for editing events
+  const { state } = useLocation()
+
+  const [theme, setTheme] = useState<Theme>(defaultTheme)
+  const [title, setTitle] = useState(state?.prevEvent?.title ?? '')
+  const [startDate, setStartDate] = useState(
+    state?.prevEvent?.startDate
+      ? fixTimeOffetset(state.prevEvent.startDate, false)
+          .toISOString()
+          .slice(0, 16)
+      : getStartDate()
+  )
+  const [endDate, setEndDate] = useState(
+    state?.prevEvent?.endDate
+      ? fixTimeOffetset(state.prevEvent.endDate, false)
+          .toISOString()
+          .slice(0, 16)
+      : getEndDate()
+  )
+  const [description, setDescription] = useState(
+    state?.prevEvent?.description ?? ''
+  )
+  const [tagId, setTagId] = useState(state?.prevEvent?.tagId ?? '')
   const [tagList, setTagList] = useState<Color[]>([])
   const [isDropdownOpen, setDropdownOpen] = useState(false)
   const [titleError, setTitleError] = useState(false)
@@ -134,8 +151,6 @@ const AddEventPage: FC = () => {
         .then(() => {
           getTheme()
           getTags()
-          setStartDate(getStartDate())
-          setEndDate(getEndDate())
         })
         .catch(() => {
           navigate('/login')
@@ -191,13 +206,48 @@ const AddEventPage: FC = () => {
       setTitleError(true)
       setTitleErrorMessage('Event must have a title')
     } else {
-      const event = { title, startDate, endDate, description, tagId }
+      const event = {
+        title,
+        startDate: fixTimeOffetset(new Date(startDate), true).toISOString(),
+        endDate: fixTimeOffetset(new Date(endDate), true).toISOString(),
+        description,
+        tagId,
+      }
       await axios
         .post('/api/event/createEvent', event)
         .then((res) => {
           navigate('/calendar')
         })
         .catch((e) => {
+          setTitleError(true)
+          setTitleErrorMessage('Create event failed')
+        })
+    }
+  }
+
+  const handleUpdateEvent = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault()
+    setTitleError(false)
+
+    if (!title) {
+      setTitleError(true)
+      setTitleErrorMessage('Event must have a title')
+    } else {
+      const event = {
+        title,
+        startDate: fixTimeOffetset(new Date(startDate), true).toISOString(),
+        endDate: fixTimeOffetset(new Date(endDate), true).toISOString(),
+        description,
+        tagId,
+      }
+      await axios
+        .patch(`/api/event/updateEvent/${state.prevEvent._id}`, event)
+        .then(() => {
+          navigate('/calendar')
+        })
+        .catch(() => {
           setTitleError(true)
           setTitleErrorMessage('Create event failed')
         })
@@ -291,7 +341,9 @@ const AddEventPage: FC = () => {
             <SubmitButton
               title="Save"
               theme={theme}
-              handleClick={handleCreateNewEvent}
+              handleClick={
+                state?.prevEvent ? handleUpdateEvent : handleCreateNewEvent
+              }
             />
           </HorizontalContainer>
         </AddEventForm>

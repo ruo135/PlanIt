@@ -18,6 +18,7 @@ import { ReactComponent as exitIcon } from '../assets/plus.svg'
 import { getAllEvents } from '../api/events'
 import { Event } from '../models/Event'
 import CalendarMonthlyEvent from '../components/CalendarMonthlyEvent'
+import fixTimeOffset from '../helpers/fixTimeOffset'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -233,15 +234,16 @@ const CalendarPage: FC = () => {
     )
 
     // Set Events
-    getAllEvents().then((d) =>
+    getAllEvents().then((d) => {
+      console.log(d)
       setEvents(
         d.map((e) => ({
           ...e,
-          startDate: new Date(e.startDate),
-          endDate: new Date(e.endDate),
+          startDate: fixTimeOffset(new Date(e.startDate), false),
+          endDate: fixTimeOffset(new Date(e.endDate), false),
         }))
       )
-    )
+    })
   }, [navigate])
 
   const goToToday = () => {

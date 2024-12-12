@@ -1,7 +1,7 @@
+import fixTimeOffset from './fixTimeOffset'
+
 export default function getEndDate() {
-  const today = new Date()
-  const offset = today.getTimezoneOffset() * 60000 // Time zone offset in milliseconds
-  const localToday = new Date(today.getTime() - offset)
+  const localToday = fixTimeOffset(new Date(), false)
 
   const minutes = localToday.getMinutes()
 

@@ -4,6 +4,7 @@ import defaultTheme from '../styles/theme'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { Tag } from '../models/Tag'
 import { deleteEvent } from '../api/events'
+import { useNavigate } from 'react-router-dom'
 
 const EventContainer = styled.div<{ $backgroundColor: string }>`
   display: flex;
@@ -117,6 +118,11 @@ interface CalendarMonthlyEventProps {
 export default function CalendarMonthlyEvent(props: CalendarMonthlyEventProps) {
   const [isPopupVisible, setPopupVisible] = useState(false)
 
+  let navigate = useNavigate()
+  const pageRouter = (path: string) => {
+    navigate(path, { state: { prevEvent: props.event } })
+  }
+
   const handleDelete = (event: Event) => {
     deleteEvent(event).then(() => {
       props.setEventState((prev) => prev.filter((e) => e._id !== event._id))
@@ -176,7 +182,9 @@ export default function CalendarMonthlyEvent(props: CalendarMonthlyEventProps) {
               )}
 
               <div>
-                <PopupButton>Edit</PopupButton>
+                <PopupButton onClick={() => pageRouter('/createEvent')}>
+                  Edit
+                </PopupButton>
                 <PopupButton onClick={() => handleDelete(props.event)}>
                   Delete
                 </PopupButton>
