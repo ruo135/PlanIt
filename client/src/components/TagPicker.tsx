@@ -88,13 +88,13 @@ const ArrowDownContainer = styled(arrowDown).attrs<{ isDropdownOpen: boolean }>(
     props.isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)'};
 `
 
-const CloseIconContainer = styled(closeIcon)<{ selectedId: string }>`
+const CloseIconContainer = styled(closeIcon)<{ $selectedId: string }>`
   padding: 5px;
   border-radius: 50%;
   width: 15px;
   height: 15px;
   fill: ${(props) => props.theme.calendarText};
-  display: ${(props) => (props.selectedId ? 'block' : 'none')};
+  display: ${(props) => (props.$selectedId ? 'block' : 'none')};
 
   &:hover {
     background-color: ${(props) => props.theme.secondary};
@@ -131,7 +131,7 @@ export default function TagPicker(props: ColorPickerProps) {
                 <ColorDot color={selectedTag.color} />
                 <Text style={{ paddingRight: '5px' }}>{selectedTag.name}</Text>
                 <CloseIconContainer
-                  selectedId={props.selectedId}
+                  $selectedId={props.selectedId}
                   onClick={() => props.handleIdSelect('')}
                 />
               </>
