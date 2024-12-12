@@ -44,6 +44,7 @@ interface EditTodoProps {
 
 export default function EditTodo(props: EditTodoProps) {
   const [todoString, setTodoString] = useState(props.currentTodo?.todo ?? '')
+  const [error, setError] = useState(false)
 
   const sortTodos = (todos: Todo[]) => {
     return todos.sort((a, b) => {
@@ -59,6 +60,13 @@ export default function EditTodo(props: EditTodoProps) {
   const handleSubmit = (e: any) => {
     e.preventDefault()
 
+    if (todoString === '') {
+      setError(true)
+      return
+    }
+
+    setError(false)
+
     createTodo(todoString).then((t) => {
       props.todos.push(t)
       props.setTodoState(sortTodos(props.todos))
@@ -67,7 +75,13 @@ export default function EditTodo(props: EditTodoProps) {
   }
 
   const handleUpdate = (todo: Todo | undefined) => {
-    if (todo)
+    if (todo) {
+      if (todoString === '') {
+        setError(true)
+        return
+      }
+
+      setError(false)
       updateTodo({ ...todo, todo: todoString }).then(() => {
         props.setTodoState((prev) => {
           return sortTodos(
@@ -78,6 +92,7 @@ export default function EditTodo(props: EditTodoProps) {
         })
         props.changeDropdownState('')
       })
+    }
   }
 
   const handleCancel = () => {
@@ -100,6 +115,8 @@ export default function EditTodo(props: EditTodoProps) {
         value={todoString}
         onChange={(e) => setTodoString(e.target.value)}
         placeholder="Enter todo here"
+        error={error}
+        errorMessage={'Tag Name Required'}
         height={'1vh'}
       />
 

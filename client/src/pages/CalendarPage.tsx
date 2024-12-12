@@ -73,8 +73,8 @@ const ExitIcon = styled(exitIcon)`
 `
 
 const AddEventButtonContainer = styled.button`
-  width: 80%;
-  padding: 10px 20px;
+  width: 50%;
+  padding: 2vh 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -318,7 +318,8 @@ const CalendarPage: FC = () => {
                 <CalendarMonthlyEvent
                   key={e._id}
                   event={e}
-                  tagColor={tags.find((t) => t._id === e.tagId)?.color}
+                  tag={tags.find((t) => t._id === e.tagId)}
+                  setEventState={setEvents}
                 />
               )
             })}
@@ -343,8 +344,6 @@ const CalendarPage: FC = () => {
 
     return res
   }
-
-  console.log(events)
 
   return (
     <ThemeProvider theme={theme}>
