@@ -235,7 +235,6 @@ const CalendarPage: FC = () => {
 
     // Set Events
     getAllEvents().then((d) => {
-      console.log(d)
       setEvents(
         d.map((e) => ({
           ...e,
