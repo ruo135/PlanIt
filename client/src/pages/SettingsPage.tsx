@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import getAuthenticated from '../api/auth'
 import styled, { ThemeProvider } from 'styled-components'
 import axios from 'axios'
+import LoadingComponent from '../components/LoadingComponent'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -32,6 +33,7 @@ const Grid = styled.div`
 `
 
 const SettingsPage: FC = () => {
+  const [isLoading, setIsLoading] = useState(false)
   const [theme, setTheme] = useState(defaultTheme)
   const theme1 = defaultTheme
   const theme2 = testTheme
@@ -58,39 +60,48 @@ const SettingsPage: FC = () => {
   }
 
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === defaultTheme ? testTheme : defaultTheme));
-  };
+    setTheme((prevTheme) =>
+      prevTheme === defaultTheme ? testTheme : defaultTheme
+    )
+  }
 
-  const changeTheme = async ( 
-    event: React.MouseEvent<HTMLButtonElement>, 
+  const changeTheme = async (
+    event: React.MouseEvent<HTMLButtonElement>,
     newtheme: String
   ) => {
-      if ( newtheme === 'light' ) setTheme(defaultTheme); 
-      if ( newtheme === 'dark' ) setTheme(testTheme); 
-      await axios
-      .patch ('/api/theme/', {theme: newtheme} )
-      .then (() => { navigate('/calendar') })
-      .catch ((e) => {
-      setTitleError(true);
-      setTitleErrorMessage('Theme could not be changed');
+    if (newtheme === 'light') setTheme(defaultTheme)
+    if (newtheme === 'dark') setTheme(testTheme)
+    await axios
+      .patch('/api/theme/', { theme: newtheme })
+      .then(() => {
+        navigate('/calendar')
       })
-    }
-
+      .catch((e) => {
+        setTitleError(true)
+        setTitleErrorMessage('Theme could not be changed')
+      })
+  }
 
   return (
     <ThemeProvider theme={theme}>
+      {isLoading && <LoadingComponent />}
+
       <NavBar type={'back'} theme={theme} hideSettings={true} />
       <PageContainer>
         <Grid>
-          <button onClick={(event) => changeTheme (event, 'light')}>Theme 1</button>
+          <button onClick={(event) => changeTheme(event, 'light')}>
+            Theme 1
+          </button>
         </Grid>
         <br></br>
         <Grid>
-        <button onClick={(event) => changeTheme (event, 'dark')}>Theme 2</button>
+          <button onClick={(event) => changeTheme(event, 'dark')}>
+            Theme 2
+          </button>
         </Grid>
         <br></br>
         <Grid>
-        <button onClick={toggleTheme}>Toggle</button>
+          <button onClick={toggleTheme}>Toggle</button>
         </Grid>
       </PageContainer>
     </ThemeProvider>

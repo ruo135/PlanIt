@@ -310,14 +310,22 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
       <SideBarBoxTitleContainer>
         <SideBarBoxTitleOption
           selected={isTagTabOpened}
-          onClick={() => setTagTab(true)}
+          onClick={() => {
+            setTagEditing('')
+            setTodoEditing('')
+            setTagTab(true)
+          }}
           key={'tags'}
         >
           Tags
         </SideBarBoxTitleOption>
         <SideBarBoxTitleOption
           selected={!isTagTabOpened}
-          onClick={() => setTagTab(false)}
+          onClick={() => {
+            setTagEditing('')
+            setTodoEditing('')
+            setTagTab(false)
+          }}
           key={'todo'}
         >
           To-Do
