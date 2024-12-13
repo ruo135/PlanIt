@@ -12,7 +12,7 @@ import { ReactComponent as clockIcons } from '../assets/clockIcon.svg'
 import { ReactComponent as tagIcon } from '../assets/tagIcon.svg'
 import { Color } from '../models/Color'
 import TagPicker from '../components/TagPicker'
-import getStartDate from '../helpers/getStarDate'
+import getStartDate from '../helpers/getStartDate'
 import getEndDate from '../helpers/getEndDate'
 import SubmitButton from '../components/SubmitButton'
 
@@ -30,7 +30,7 @@ const AddEventForm = styled.div`
   background-color: ${(props) => props.theme.background};
   padding: 30px;
   width: 50%;
-  height: 80%;
+  height: 85%;
   display: flex;
   flex-direction: column;
   justify-content: top;
@@ -76,12 +76,6 @@ const CloseIconContainer = styled.img`
   }
 `
 
-const LeftIconContainer = styled.img`
-  width: 35px;
-  fill: ${(props) => props.theme.calendarText};
-  padding-right: 30px;
-`
-
 const ClockIconContainer = styled(clockIcons)`
   width: 35px;
   height: 35px;
@@ -111,6 +105,15 @@ const HorizontalContainer = styled.div`
   width: 100%;
   box-sizing: border-box;
 `
+const VerticalContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+  flex: 1;
+`
 
 const AddEventPage: FC = () => {
   const [theme, setTheme] = useState(defaultTheme)
@@ -123,6 +126,8 @@ const AddEventPage: FC = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false)
   const [titleError, setTitleError] = useState(false)
   const [titleErrorMessage, setTitleErrorMessage] = useState('')
+  const [endDateError, setEndDateError] = useState(false)
+  const [endDateErrorMessage, setEndDateErrorMessage] = useState('')
 
   let navigate = useNavigate()
 
@@ -135,7 +140,6 @@ const AddEventPage: FC = () => {
           getTheme()
           getTags()
           setStartDate(getStartDate())
-          setEndDate(getEndDate())
         })
         .catch(() => {
           navigate('/login')
@@ -163,6 +167,22 @@ const AddEventPage: FC = () => {
     getAuthenticated()
   }, [])
 
+  useEffect(() => {
+    if (startDate) {
+      setEndDate(getEndDate(startDate))
+    }
+  }, [startDate])
+
+  useEffect(() => {
+    if (new Date(endDate) < new Date(startDate)) {
+      setEndDateError(true)
+      setEndDateErrorMessage('Event must end after its start date')
+    } else {
+      setEndDateError(false)
+      setEndDateErrorMessage('')
+    }
+  }, [endDate])
+
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value)
   }
@@ -186,12 +206,15 @@ const AddEventPage: FC = () => {
   ) => {
     event.preventDefault()
     setTitleError(false)
+    setTitleErrorMessage('')
 
     if (!title) {
       setTitleError(true)
       setTitleErrorMessage('Event must have a title')
+    } else if (endDateError) {
     } else {
-      const event = { title, startDate, endDate, description, tagId }
+      let id = tagId ? tagId : null
+      const event = { title, startDate, endDate, description, id }
       await axios
         .post('/api/event/createEvent', event)
         .then((res) => {
@@ -230,7 +253,7 @@ const AddEventPage: FC = () => {
             error={titleError}
             errorMessage={titleErrorMessage}
           />
-          {/* Pick date*/}
+          {/* Pick dates*/}
           <HorizontalContainer style={{ paddingTop: '30px' }}>
             {/* Clock Icon*/}
             <ClockIconContainer />
@@ -245,21 +268,30 @@ const AddEventPage: FC = () => {
           </HorizontalContainer>
           {/* Checkbox*/}
           <HorizontalContainer style={{ padding: '10px', paddingLeft: '0' }}>
-            <LeftIconContainer />
+            <ClockIconContainer style={{ fill: theme.background }} />
             to
           </HorizontalContainer>
           {/* Pick end date*/}
-          <HorizontalContainer style={{ paddingBottom: '30px' }}>
+          <HorizontalContainer style={{ flex: '0 1', paddingBottom: '30px' }}>
             {/* Clock Icon*/}
-            <ClockIconContainer style={{ fill: theme.background }} />
-            {/* Start date picker Icon*/}
-            <InputField
-              style={{ width: '60%' }}
-              type="datetime-local"
-              theme={theme}
-              value={endDate}
-              onChange={handleEndDateChange}
+            <ClockIconContainer
+              style={{ height: '35px', fill: theme.background }}
             />
+            {/* End date picker */}
+            <VerticalContainer>
+              <InputField
+                style={{
+                  flexDirection: 'column',
+                  width: 'calc((100% + 30px + 35px) * 0.6)',
+                }}
+                type="datetime-local"
+                theme={theme}
+                value={endDate}
+                onChange={handleEndDateChange}
+                error={endDateError}
+                errorMessage={endDateErrorMessage}
+              />
+            </VerticalContainer>
           </HorizontalContainer>
           {/* Description*/}
           <HorizontalContainer>

@@ -1,5 +1,5 @@
-export default function getEndDate() {
-  const today = new Date()
+export default function getEndDate(startDate: string) {
+  const today = new Date(startDate)
   const offset = today.getTimezoneOffset() * 60000 // Time zone offset in milliseconds
   const localToday = new Date(today.getTime() - offset)
 
