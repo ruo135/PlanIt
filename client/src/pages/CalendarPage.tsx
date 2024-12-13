@@ -20,6 +20,7 @@ import { Event } from '../models/Event'
 import CalendarMonthlyEvent from '../components/CalendarMonthlyEvent'
 import fixTimeOffset from '../helpers/fixTimeOffset'
 import getTheme from '../api/themes'
+import LoadingComponent from '../components/LoadingComponent'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -188,6 +189,8 @@ const CalendarCellDate = styled.span`
 
 const CalendarPage: FC = () => {
   const [theme, setTheme] = useState<Theme>(defaultTheme)
+  const [isLoading, setIsLoading] = useState(true)
+
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const [tags, setTags] = useState<Tag[]>([])
@@ -207,6 +210,8 @@ const CalendarPage: FC = () => {
   // Check if user is authenticated
   // Gets data for the calendar (Tags, Todos, Events)
   useEffect(() => {
+    setIsLoading(true)
+
     getAuthenticated()
       .catch(() => {
         navigate('/login')
@@ -249,6 +254,8 @@ const CalendarPage: FC = () => {
             }))
           )
         })
+
+        setIsLoading(false)
       })
   }, [navigate])
 
@@ -356,6 +363,7 @@ const CalendarPage: FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      {isLoading && <LoadingComponent />}
       <NavBar type={'back'} theme={theme} />
       <PageContainer>
         {/* Left side of the screen */}

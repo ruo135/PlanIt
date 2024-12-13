@@ -1,9 +1,9 @@
 import React, { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
-import ReactLoading from 'react-loading'
 import theme from '../styles/theme'
 import styled from 'styled-components'
+import LoadingComponent from '../components/LoadingComponent'
 
 // const Page = lazy(() => import("../pages/___"))
 const LandingPage = lazy(() => import('../pages/LandingPage'))
@@ -26,18 +26,7 @@ const LoadingPage = styled.div`
 export default function AppRoutes() {
   return (
     <BrowserRouter>
-      <Suspense
-        fallback={
-          <LoadingPage>
-            <ReactLoading
-              type={'bars'}
-              color={theme.primary}
-              height="50%"
-              width="50%"
-            />
-          </LoadingPage>
-        }
-      >
+      <Suspense fallback={<LoadingComponent />}>
         <Routes>
           <Route path="/" Component={LandingPage} />
           <Route path="/login" Component={LoginPage} />

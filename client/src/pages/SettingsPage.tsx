@@ -4,12 +4,17 @@ import defaultTheme from '../styles/theme'
 import { useNavigate } from 'react-router-dom'
 import getAuthenticated from '../api/auth'
 import getTheme from '../api/themes'
+import { ThemeProvider } from 'styled-components'
+import LoadingComponent from '../components/LoadingComponent'
 
 const SettingsPage: FC = () => {
   const [theme, setTheme] = useState(defaultTheme)
+  const [isLoading, setIsLoading] = useState(true)
   // Check if user is authenticated
+  let navigate = useNavigate()
+
   useEffect(() => {
-    let navigate = useNavigate()
+    setIsLoading(true)
 
     getAuthenticated()
       .catch(() => {
@@ -19,10 +24,17 @@ const SettingsPage: FC = () => {
         getTheme().then((t) => {
           setTheme(t)
         })
+
+        setIsLoading(false)
       })
   }, [])
 
-  return <NavBar type={'back'} theme={defaultTheme} hideSettings={true} />
+  return (
+    <ThemeProvider theme={theme}>
+      {isLoading && <LoadingComponent />}
+      <NavBar type={'back'} theme={defaultTheme} hideSettings={true} />
+    </ThemeProvider>
+  )
 }
 
 export default SettingsPage

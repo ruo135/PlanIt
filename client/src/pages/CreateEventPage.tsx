@@ -16,6 +16,7 @@ import getEndDate from '../helpers/getEndDate'
 import SubmitButton from '../components/SubmitButton'
 import fixTimeOffetset from '../helpers/fixTimeOffset'
 import getTheme from '../api/themes'
+import LoadingComponent from '../components/LoadingComponent'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -142,10 +143,14 @@ const AddEventPage: FC = () => {
   const [titleError, setTitleError] = useState(false)
   const [titleErrorMessage, setTitleErrorMessage] = useState('')
 
+  const [isLoading, setIsLoading] = useState(true)
+
   let navigate = useNavigate()
 
   // Check if user is authenticated
   useEffect(() => {
+    setIsLoading(true)
+
     const getAuthenticated = () => {
       axios
         .get('/api/user')
@@ -154,6 +159,8 @@ const AddEventPage: FC = () => {
             setTheme(t)
           })
           getTags()
+
+          setIsLoading(false)
         })
         .catch(() => {
           navigate('/login')
@@ -252,6 +259,7 @@ const AddEventPage: FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      {isLoading && <LoadingComponent />}
       <NavBar type={'back'} theme={theme} />
       <PageContainer>
         <AddEventForm>
