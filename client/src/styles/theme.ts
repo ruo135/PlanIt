@@ -28,4 +28,19 @@ const defaultTheme = {
   background: '#FFFFFF',
 }
 
+const testTheme = {
+  header: '#484848',
+  headerIcons: '#FFFFFF',
+
+  primary: '#FFFFFF', // og purple
+  secondary: '#FFFFFF', // lighter purple
+  indent: '#FFFFFF', // darker purple
+  error: '#FFFFFF', // red
+
+  text: '#FFFFFF', //white
+  calendarText: '#FFFFFF', //grey
+  background: '#000000',
+}
+
+export { testTheme }
 export default defaultTheme
