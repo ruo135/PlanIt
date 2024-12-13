@@ -6,6 +6,7 @@ import InputField from '../components/InputField'
 import SubmitButton from '../components/SubmitButton'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import checkValidity from '../helpers/checkValidity'
 
 // CSS styled components
 const PageContainer = styled.div`
@@ -99,8 +100,8 @@ const RegisterPage: FC = () => {
     setPasswordErrorMessage('')
     setConfirmPasswordErrorMessage('')
 
-    if (!email || !password || !confirmPassword) {
-      if (!email) {
+    if (!email || !checkValidity(email) || !password || !confirmPassword) {
+      if (!email || !checkValidity(email)) {
         setEmailError(true)
         setEmailErrorMessage('Please enter a valid email')
       }
@@ -142,6 +143,7 @@ const RegisterPage: FC = () => {
           <h1 style={{ color: '#484848' }}>Register</h1>
           <Label>Email</Label>
           <InputField
+            type="email"
             value={email}
             onChange={handleEmailChange}
             error={emailError}

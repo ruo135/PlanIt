@@ -121,6 +121,7 @@ const LoginPage: FC = () => {
           <h1 style={{ color: '#484848' }}>Login</h1>
           <Label>Email</Label>
           <InputField
+            type="email"
             value={email}
             onChange={handleEmailChange}
             error={emailError}
