@@ -1,3 +1,6 @@
+/**
+ * Author: Ruo Yang Jiang
+ */
 import { FC, useEffect, useState } from 'react'
 import NavBar from '../components/NavBar'
 import defaultTheme, { Theme } from '../styles/theme'
@@ -214,7 +217,7 @@ const AddEventPage: FC = () => {
     } else if (endDateError) {
     } else {
       let id = tagId ? tagId : null
-      const event = { title, startDate, endDate, description, id }
+      const event = { title, startDate, endDate, description, tagId: id }
       await axios
         .post('/api/event/createEvent', event)
         .then((res) => {
