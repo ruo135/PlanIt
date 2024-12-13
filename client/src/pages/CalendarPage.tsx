@@ -19,6 +19,7 @@ import { getAllEvents } from '../api/events'
 import { Event } from '../models/Event'
 import CalendarMonthlyEvent from '../components/CalendarMonthlyEvent'
 import fixTimeOffset from '../helpers/fixTimeOffset'
+import getTheme from '../api/themes'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -206,43 +207,49 @@ const CalendarPage: FC = () => {
   // Check if user is authenticated
   // Gets data for the calendar (Tags, Todos, Events)
   useEffect(() => {
-    getAuthenticated().catch(() => {
-      navigate('/login')
-    })
-
-    // Get Tags then sort by alphabet
-    getAllTags().then((d) =>
-      setTags(
-        d.sort((a, b) => {
-          return a.name.localeCompare(b.name)
+    getAuthenticated()
+      .catch(() => {
+        navigate('/login')
+      })
+      .then(() => {
+        getTheme().then((t) => {
+          setTheme(t)
         })
-      )
-    )
 
-    // Get Todos and Sort by whether it is checked, then by alphabetical
-    getAllTodos().then((d) =>
-      setTodos(
-        d.sort((a, b) => {
-          const checkedCompare = Number(a.isChecked) - Number(b.isChecked)
-          if (checkedCompare !== 0) {
-            return checkedCompare
-          }
-          // If checked status is the same, sort by name (case-insensitive)
-          return a.todo.localeCompare(b.todo)
+        // Get Tags then sort by alphabet
+        getAllTags().then((d) =>
+          setTags(
+            d.sort((a, b) => {
+              return a.name.localeCompare(b.name)
+            })
+          )
+        )
+
+        // Get Todos and Sort by whether it is checked, then by alphabetical
+        getAllTodos().then((d) =>
+          setTodos(
+            d.sort((a, b) => {
+              const checkedCompare = Number(a.isChecked) - Number(b.isChecked)
+              if (checkedCompare !== 0) {
+                return checkedCompare
+              }
+              // If checked status is the same, sort by name (case-insensitive)
+              return a.todo.localeCompare(b.todo)
+            })
+          )
+        )
+
+        // Set Events
+        getAllEvents().then((d) => {
+          setEvents(
+            d.map((e) => ({
+              ...e,
+              startDate: fixTimeOffset(new Date(e.startDate), false),
+              endDate: fixTimeOffset(new Date(e.endDate), false),
+            }))
+          )
         })
-      )
-    )
-
-    // Set Events
-    getAllEvents().then((d) => {
-      setEvents(
-        d.map((e) => ({
-          ...e,
-          startDate: fixTimeOffset(new Date(e.startDate), false),
-          endDate: fixTimeOffset(new Date(e.endDate), false),
-        }))
-      )
-    })
+      })
   }, [navigate])
 
   const goToToday = () => {

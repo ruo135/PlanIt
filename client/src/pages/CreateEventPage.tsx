@@ -15,6 +15,7 @@ import getStartDate from '../helpers/getStartDate'
 import getEndDate from '../helpers/getEndDate'
 import SubmitButton from '../components/SubmitButton'
 import fixTimeOffetset from '../helpers/fixTimeOffset'
+import getTheme from '../api/themes'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -149,19 +150,14 @@ const AddEventPage: FC = () => {
       axios
         .get('/api/user')
         .then(() => {
-          getTheme()
+          getTheme().then((t) => {
+            setTheme(t)
+          })
           getTags()
         })
         .catch(() => {
           navigate('/login')
         })
-    }
-
-    const getTheme = () => {
-      axios.get('/api/theme').then((res) => {
-        const theme = res.data.theme
-        if (theme == 'light') setTheme(defaultTheme)
-      })
     }
 
     const getTags = () => {
