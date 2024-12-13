@@ -193,6 +193,7 @@ const CalendarCellDate = styled.span`
   background-color: ${(props) => props.theme.background};
   color: ${(props) => props.theme.calendarText};
 
+  padding: 2px 0;
   position: sticky;
   top: 0;
 `
@@ -257,11 +258,17 @@ const CalendarPage: FC = () => {
         // Set Events
         getAllEvents().then((d) => {
           setEvents(
-            d.map((e) => ({
-              ...e,
-              startDate: fixTimeOffset(new Date(e.startDate), false),
-              endDate: fixTimeOffset(new Date(e.endDate), false),
-            }))
+            d
+              .map((e) => ({
+                ...e,
+                startDate: fixTimeOffset(new Date(e.startDate), false),
+                endDate: fixTimeOffset(new Date(e.endDate), false),
+              }))
+              .sort((a, b) => {
+                return a.startDate
+                  .toISOString()
+                  .localeCompare(b.startDate.toISOString())
+              })
           )
         })
 
@@ -343,9 +350,17 @@ const CalendarPage: FC = () => {
           {/* Put each event that matches into the cell */}
           {events
             .filter((e) => {
-              let currentDate = new Date(year, month, day)
+              const startBeforeOrToday =
+                e.startDate.getFullYear() <= year &&
+                e.startDate.getMonth() <= month &&
+                e.startDate.getDate() <= day
 
-              return e.startDate <= currentDate && e.endDate >= currentDate
+              const endAfterOrToday =
+                e.endDate.getFullYear() >= year &&
+                e.endDate.getMonth() >= month &&
+                e.endDate.getDate() >= day
+
+              return startBeforeOrToday && endAfterOrToday
             })
             .map((e) => {
               return (
@@ -354,6 +369,7 @@ const CalendarPage: FC = () => {
                   event={e}
                   tag={tags.find((t) => t._id === e.tagId)}
                   setEventState={setEvents}
+                  currentDate={new Date(year, month, day)}
                 />
               )
             })}

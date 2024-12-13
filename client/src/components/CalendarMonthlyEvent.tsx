@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom'
 const EventContainer = styled.div<{ $backgroundColor: string }>`
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: space-around;
 
   background-color: ${(props) => props.$backgroundColor};
   border-radius: 1vh;
@@ -21,23 +21,27 @@ const EventContainer = styled.div<{ $backgroundColor: string }>`
   text-overflow: ellipsis;
   text-align: center;
 
+  cursor: pointer;
+
   @media only screen and (max-width: 500px) {
     justify-content: center;
   }
 `
 
 const Time = styled.div`
-  font-size: 10px;
+  font-size: 0.625rem;
   min-width: 25%;
-  padding-right: 3%;
 
-  @media only screen and (max-width: 500px) {
+  @media only screen and (max-width: 700px) {
     display: none;
   }
 `
 
 const Title = styled.div`
-  flex-grow: 1;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const Overlay = styled.div`
@@ -113,10 +117,21 @@ interface CalendarMonthlyEventProps {
   event: Event
   tag: Tag | undefined
   setEventState: Dispatch<SetStateAction<Event[]>>
+  currentDate: Date
 }
 
 export default function CalendarMonthlyEvent(props: CalendarMonthlyEventProps) {
   const [isPopupVisible, setPopupVisible] = useState(false)
+
+  const startedToday =
+    props.currentDate.getFullYear() === props.event.startDate.getFullYear() &&
+    props.currentDate.getMonth() === props.event.startDate.getMonth() &&
+    props.currentDate.getDate() === props.event.startDate.getDate()
+
+  const endedToday =
+    props.currentDate.getFullYear() === props.event.endDate.getFullYear() &&
+    props.currentDate.getMonth() === props.event.endDate.getMonth() &&
+    props.currentDate.getDate() === props.event.endDate.getDate()
 
   let navigate = useNavigate()
   const pageRouter = (path: string) => {
@@ -136,14 +151,25 @@ export default function CalendarMonthlyEvent(props: CalendarMonthlyEventProps) {
         $backgroundColor={props.tag?.color ?? defaultTheme.header}
         onClick={() => setPopupVisible(true)}
       >
-        <Time>
-          {props.event.startDate.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-          })}
-        </Time>
+        {startedToday && (
+          <Time style={{ paddingRight: '3%' }}>
+            {props.event.startDate.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })}
+          </Time>
+        )}
         <Title>{props.event.title}</Title>
+        {!startedToday && endedToday && (
+          <Time style={{ paddingLeft: '3%' }}>
+            {props.event.endDate.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })}
+          </Time>
+        )}
       </EventContainer>
       {isPopupVisible && (
         <Overlay onClick={() => setPopupVisible(false)}>
