@@ -50,6 +50,7 @@ export default function EditTag(props: EditTagProps) {
     props.currentTag?.color ?? colors[0].color
   )
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [error, setError] = useState(false)
 
   const sortTags = (tags: Tag[]) => {
     return tags.sort((a, b) => {
@@ -60,6 +61,13 @@ export default function EditTag(props: EditTagProps) {
   const handleSubmit = (e: any) => {
     e.preventDefault()
 
+    if (tagName === '') {
+      setError(true)
+      return
+    }
+
+    setError(false)
+
     createTag(tagName, selectedColor).then((t) => {
       props.tags.push(t)
       props.setTagState(sortTags(props.tags))
@@ -68,7 +76,14 @@ export default function EditTag(props: EditTagProps) {
   }
 
   const handleUpdate = (tag: Tag | undefined) => {
-    if (tag)
+    if (tag) {
+      if (tagName === '') {
+        setError(true)
+        return
+      }
+
+      setError(false)
+
       updateTag({ ...tag, name: tagName, color: selectedColor }).then(() => {
         props.setTagState((prev) => {
           return sortTags(
@@ -81,6 +96,7 @@ export default function EditTag(props: EditTagProps) {
         })
         props.changeDropdownState('')
       })
+    }
   }
 
   const handleCancel = () => {
@@ -103,6 +119,8 @@ export default function EditTag(props: EditTagProps) {
         value={tagName}
         onChange={(e) => setTagName(e.target.value)}
         placeholder="Enter tag name"
+        error={error}
+        errorMessage={'Tag Name Required'}
         height={'1vh'}
       />
 

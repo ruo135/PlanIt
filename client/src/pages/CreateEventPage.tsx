@@ -5,10 +5,9 @@ import { FC, useEffect, useState } from 'react'
 import NavBar from '../components/NavBar'
 import defaultTheme, { Theme } from '../styles/theme'
 import styled, { ThemeProvider } from 'styled-components'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import closeIcon from '../assets/closeIcon.svg'
-import clockIcon from '../assets/clockIcon.svg'
 import InputField from '../components/InputField'
 import { ReactComponent as DescriptionIcon } from '../assets/descriptionIcon.svg'
 import { ReactComponent as clockIcons } from '../assets/clockIcon.svg'
@@ -18,6 +17,9 @@ import TagPicker from '../components/TagPicker'
 import getStartDate from '../helpers/getStartDate'
 import getEndDate from '../helpers/getEndDate'
 import SubmitButton from '../components/SubmitButton'
+import fixTimeOffetset from '../helpers/fixTimeOffset'
+import getTheme from '../api/themes'
+import LoadingComponent from '../components/LoadingComponent'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -119,12 +121,29 @@ const VerticalContainer = styled.div`
 `
 
 const AddEventPage: FC = () => {
-  const [theme, setTheme] = useState(defaultTheme)
-  const [title, setTitle] = useState('')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
-  const [description, setDescription] = useState('')
-  const [tagId, setTagId] = useState('')
+  // Get state from calendar page for editing events
+  const { state } = useLocation()
+
+  const [theme, setTheme] = useState<Theme>(defaultTheme)
+  const [title, setTitle] = useState(state?.prevEvent?.title ?? '')
+  const [startDate, setStartDate] = useState(
+    state?.prevEvent?.startDate
+      ? fixTimeOffetset(state.prevEvent.startDate, false)
+          .toISOString()
+          .slice(0, 16)
+      : getStartDate()
+  )
+  const [endDate, setEndDate] = useState(
+    state?.prevEvent?.endDate
+      ? fixTimeOffetset(state.prevEvent.endDate, false)
+          .toISOString()
+          .slice(0, 16)
+      : getEndDate()
+  )
+  const [description, setDescription] = useState(
+    state?.prevEvent?.description ?? ''
+  )
+  const [tagId, setTagId] = useState(state?.prevEvent?.tagId ?? '')
   const [tagList, setTagList] = useState<Color[]>([])
   const [isDropdownOpen, setDropdownOpen] = useState(false)
   const [titleError, setTitleError] = useState(false)
@@ -132,28 +151,28 @@ const AddEventPage: FC = () => {
   const [endDateError, setEndDateError] = useState(false)
   const [endDateErrorMessage, setEndDateErrorMessage] = useState('')
 
+  const [isLoading, setIsLoading] = useState(true)
+
   let navigate = useNavigate()
 
   // Check if user is authenticated
   useEffect(() => {
+    setIsLoading(true)
+
     const getAuthenticated = () => {
       axios
         .get('/api/user')
         .then(() => {
-          getTheme()
+          getTheme().then((t) => {
+            setTheme(t)
+          })
           getTags()
-          setStartDate(getStartDate())
+
+          setIsLoading(false)
         })
         .catch(() => {
           navigate('/login')
         })
-    }
-
-    const getTheme = () => {
-      axios.get('/api/theme').then((res) => {
-        const theme = res.data.theme
-        if (theme == 'light') setTheme(defaultTheme)
-      })
     }
 
     const getTags = () => {
@@ -216,8 +235,13 @@ const AddEventPage: FC = () => {
       setTitleErrorMessage('Event must have a title')
     } else if (endDateError) {
     } else {
-      let id = tagId ? tagId : null
-      const event = { title, startDate, endDate, description, tagId: id }
+      const event = {
+        title,
+        startDate: fixTimeOffetset(new Date(startDate), true).toISOString(),
+        endDate: fixTimeOffetset(new Date(endDate), true).toISOString(),
+        description,
+        tagId: tagId ? tagId : null,
+      }
       await axios
         .post('/api/event/createEvent', event)
         .then((res) => {
@@ -230,8 +254,38 @@ const AddEventPage: FC = () => {
     }
   }
 
+  const handleUpdateEvent = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault()
+    setTitleError(false)
+
+    if (!title) {
+      setTitleError(true)
+      setTitleErrorMessage('Event must have a title')
+    } else {
+      const event = {
+        title,
+        startDate: fixTimeOffetset(new Date(startDate), true).toISOString(),
+        endDate: fixTimeOffetset(new Date(endDate), true).toISOString(),
+        description,
+        tagId,
+      }
+      await axios
+        .patch(`/api/event/updateEvent/${state.prevEvent._id}`, event)
+        .then(() => {
+          navigate('/calendar')
+        })
+        .catch(() => {
+          setTitleError(true)
+          setTitleErrorMessage('Create event failed')
+        })
+    }
+  }
+
   return (
     <ThemeProvider theme={theme}>
+      {isLoading && <LoadingComponent />}
       <NavBar type={'back'} theme={theme} />
       <PageContainer>
         <AddEventForm>
@@ -326,7 +380,9 @@ const AddEventPage: FC = () => {
             <SubmitButton
               title="Save"
               theme={theme}
-              handleClick={handleCreateNewEvent}
+              handleClick={
+                state?.prevEvent ? handleUpdateEvent : handleCreateNewEvent
+              }
             />
           </HorizontalContainer>
         </AddEventForm>

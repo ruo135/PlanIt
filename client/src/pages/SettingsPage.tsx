@@ -1,24 +1,40 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import NavBar from '../components/NavBar'
 import defaultTheme from '../styles/theme'
 import { useNavigate } from 'react-router-dom'
 import getAuthenticated from '../api/auth'
+import getTheme from '../api/themes'
+import { ThemeProvider } from 'styled-components'
+import LoadingComponent from '../components/LoadingComponent'
 
 const SettingsPage: FC = () => {
-  // Setup navigation stack
-  let navigate = useNavigate()
-  const pageRouter = (path: string) => {
-    navigate(path)
-  }
-
+  const [theme, setTheme] = useState(defaultTheme)
+  const [isLoading, setIsLoading] = useState(true)
   // Check if user is authenticated
-  useEffect(() => {
-    getAuthenticated().catch(() => {
-      navigate('/login')
-    })
-  }, [navigate])
+  let navigate = useNavigate()
 
-  return <NavBar type={'back'} theme={defaultTheme} hideSettings={true} />
+  useEffect(() => {
+    setIsLoading(true)
+
+    getAuthenticated()
+      .catch(() => {
+        navigate('/login')
+      })
+      .then(() => {
+        getTheme().then((t) => {
+          setTheme(t)
+        })
+
+        setIsLoading(false)
+      })
+  }, [])
+
+  return (
+    <ThemeProvider theme={theme}>
+      {isLoading && <LoadingComponent />}
+      <NavBar type={'back'} theme={defaultTheme} hideSettings={true} />
+    </ThemeProvider>
+  )
 }
 
 export default SettingsPage

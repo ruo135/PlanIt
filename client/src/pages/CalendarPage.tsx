@@ -18,6 +18,9 @@ import { ReactComponent as exitIcon } from '../assets/plus.svg'
 import { getAllEvents } from '../api/events'
 import { Event } from '../models/Event'
 import CalendarMonthlyEvent from '../components/CalendarMonthlyEvent'
+import fixTimeOffset from '../helpers/fixTimeOffset'
+import getTheme from '../api/themes'
+import LoadingComponent from '../components/LoadingComponent'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -74,8 +77,8 @@ const ExitIcon = styled(exitIcon)`
 `
 
 const AddEventButtonContainer = styled.button`
-  width: 80%;
-  padding: 10px 20px;
+  width: 50%;
+  padding: 2vh 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -134,7 +137,7 @@ const TodayButtonContainer = styled.button`
   margin: auto 0;
 
   width: fit-content;
-  padding: 10px 1vw;
+  padding: 0.3vh 1vw;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -163,10 +166,12 @@ const DayofWeekCell = styled.div`
   text-align: center;
 `
 
-const CalendarBody = styled.div`
+const CalendarBody = styled.div<{ $weeks: number }>`
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template: repeat(${(props) => props.$weeks}, 1fr) / repeat(7, 1fr);
+  min-height: 0;
+  min-width: 0;
   align-items: stretch;
   background-color: ${(props) => props.theme.secondary};
 `
@@ -176,16 +181,27 @@ const CalendarCell = styled.div`
   background-color: ${(props) => props.theme.background};
   text-align: center;
   padding: 5px;
+  padding-top: 0px;
+
+  overflow-x: hidden;
 `
 
 const CalendarCellDate = styled.span`
   font-size: max(0.833vw, 12px);
   display: block;
+  width: 100%;
+  background-color: ${(props) => props.theme.background};
   color: ${(props) => props.theme.calendarText};
+
+  padding: 2px 0;
+  position: sticky;
+  top: 0;
 `
 
 const CalendarPage: FC = () => {
   const [theme, setTheme] = useState<Theme>(defaultTheme)
+  const [isLoading, setIsLoading] = useState(true)
+
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const [tags, setTags] = useState<Tag[]>([])
@@ -205,43 +221,59 @@ const CalendarPage: FC = () => {
   // Check if user is authenticated
   // Gets data for the calendar (Tags, Todos, Events)
   useEffect(() => {
-    getAuthenticated().catch(() => {
-      navigate('/login')
-    })
+    setIsLoading(true)
 
-    // Get Tags then sort by alphabet
-    getAllTags().then((d) =>
-      setTags(
-        d.sort((a, b) => {
-          return a.name.localeCompare(b.name)
+    getAuthenticated()
+      .catch(() => {
+        navigate('/login')
+      })
+      .then(() => {
+        getTheme().then((t) => {
+          setTheme(t)
         })
-      )
-    )
 
-    // Get Todos and Sort by whether it is checked, then by alphabetical
-    getAllTodos().then((d) =>
-      setTodos(
-        d.sort((a, b) => {
-          const checkedCompare = Number(a.isChecked) - Number(b.isChecked)
-          if (checkedCompare !== 0) {
-            return checkedCompare
-          }
-          // If checked status is the same, sort by name (case-insensitive)
-          return a.todo.localeCompare(b.todo)
+        // Get Tags then sort by alphabet
+        getAllTags().then((d) =>
+          setTags(
+            d.sort((a, b) => {
+              return a.name.localeCompare(b.name)
+            })
+          )
+        )
+
+        // Get Todos and Sort by whether it is checked, then by alphabetical
+        getAllTodos().then((d) =>
+          setTodos(
+            d.sort((a, b) => {
+              const checkedCompare = Number(a.isChecked) - Number(b.isChecked)
+              if (checkedCompare !== 0) {
+                return checkedCompare
+              }
+              // If checked status is the same, sort by name (case-insensitive)
+              return a.todo.localeCompare(b.todo)
+            })
+          )
+        )
+
+        // Set Events
+        getAllEvents().then((d) => {
+          setEvents(
+            d
+              .map((e) => ({
+                ...e,
+                startDate: fixTimeOffset(new Date(e.startDate), false),
+                endDate: fixTimeOffset(new Date(e.endDate), false),
+              }))
+              .sort((a, b) => {
+                return a.startDate
+                  .toISOString()
+                  .localeCompare(b.startDate.toISOString())
+              })
+          )
         })
-      )
-    )
 
-    // Set Events
-    getAllEvents().then((d) =>
-      setEvents(
-        d.map((e) => ({
-          ...e,
-          startDate: new Date(e.startDate),
-          endDate: new Date(e.endDate),
-        }))
-      )
-    )
+        setIsLoading(false)
+      })
   }, [navigate])
 
   const goToToday = () => {
@@ -259,6 +291,15 @@ const CalendarPage: FC = () => {
     } else {
       setMonth(month + value)
     }
+  }
+
+  const weeksPerMonth = () => {
+    const firstDayOfMonth = new Date(year, month, 1).getDay()
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate()
+
+    const totalDays = daysInMonth + firstDayOfMonth
+    return Math.ceil(totalDays / 7)
   }
 
   const renderDays = () => {
@@ -308,18 +349,27 @@ const CalendarPage: FC = () => {
           )}
           {/* Put each event that matches into the cell */}
           {events
-            .filter(
-              (e) =>
-                e.startDate.getFullYear() === year &&
-                e.startDate.getMonth() === month &&
-                e.startDate.getDate() === day
-            )
+            .filter((e) => {
+              const startBeforeOrToday =
+                e.startDate.getFullYear() <= year &&
+                e.startDate.getMonth() <= month &&
+                e.startDate.getDate() <= day
+
+              const endAfterOrToday =
+                e.endDate.getFullYear() >= year &&
+                e.endDate.getMonth() >= month &&
+                e.endDate.getDate() >= day
+
+              return startBeforeOrToday && endAfterOrToday
+            })
             .map((e) => {
               return (
                 <CalendarMonthlyEvent
                   key={e._id}
                   event={e}
-                  tagColor={tags.find((t) => t._id === e.tagId)?.color}
+                  tag={tags.find((t) => t._id === e.tagId)}
+                  setEventState={setEvents}
+                  currentDate={new Date(year, month, day)}
                 />
               )
             })}
@@ -345,10 +395,9 @@ const CalendarPage: FC = () => {
     return res
   }
 
-  console.log(events)
-
   return (
     <ThemeProvider theme={theme}>
+      {isLoading && <LoadingComponent />}
       <NavBar type={'back'} theme={theme} />
       <PageContainer>
         {/* Left side of the screen */}
@@ -385,7 +434,7 @@ const CalendarPage: FC = () => {
             />
           </DateControllerContainer>
           <DayOfWeekContainer>{renderDaysofWeek()}</DayOfWeekContainer>
-          <CalendarBody>{renderDays()}</CalendarBody>
+          <CalendarBody $weeks={weeksPerMonth()}>{renderDays()}</CalendarBody>
         </CalendarContainer>
       </PageContainer>
     </ThemeProvider>

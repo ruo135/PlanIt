@@ -1,7 +1,10 @@
-export default function getEndDate(startDate: string) {
-  const today = new Date(startDate)
-  const offset = today.getTimezoneOffset() * 60000 // Time zone offset in milliseconds
-  const localToday = new Date(today.getTime() - offset)
+import fixTimeOffset from './fixTimeOffset'
+
+export default function getEndDate(startDate?: string) {
+  const localToday = fixTimeOffset(
+    startDate ? new Date(startDate) : new Date(),
+    false
+  )
 
   const minutes = localToday.getMinutes()
 
