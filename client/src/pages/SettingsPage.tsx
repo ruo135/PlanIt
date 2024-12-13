@@ -7,6 +7,7 @@ import getAuthenticated from '../api/auth'
 import styled, { ThemeProvider } from 'styled-components'
 import axios from 'axios'
 import LoadingComponent from '../components/LoadingComponent'
+import getTheme from '../api/themes'
 
 const PageContainer = styled.div`
   align-items: stretch;
@@ -42,22 +43,21 @@ const SettingsPage: FC = () => {
 
   // Setup navigation stack
   let navigate = useNavigate()
-  const pageRouter = (path: string) => {
-    navigate(path)
-  }
 
   useEffect(() => {
-    getAuthenticated().catch(() => {
-      navigate('/login')
-    })
-  }, [navigate])
+    setIsLoading(true)
 
-  const getTheme = () => {
-    axios.get('/api/theme').then((res) => {
-      const theme = res.data.theme
-      if (theme == 'light') setTheme(defaultTheme)
-    })
-  }
+    getAuthenticated()
+      .catch(() => {
+        navigate('/login')
+      })
+      .then(() => {
+        getTheme().then((t) => {
+          setTheme(t)
+          setIsLoading(false)
+        })
+      })
+  }, [navigate])
 
   const toggleTheme = () => {
     setTheme((prevTheme) =>
@@ -65,13 +65,10 @@ const SettingsPage: FC = () => {
     )
   }
 
-  const changeTheme = async (
-    event: React.MouseEvent<HTMLButtonElement>,
-    newtheme: String
-  ) => {
+  const changeTheme = (newtheme: string) => {
     if (newtheme === 'light') setTheme(defaultTheme)
     if (newtheme === 'dark') setTheme(testTheme)
-    await axios
+    axios
       .patch('/api/theme/', { theme: newtheme })
       .then(() => {
         navigate('/calendar')
@@ -89,15 +86,11 @@ const SettingsPage: FC = () => {
       <NavBar type={'back'} theme={theme} hideSettings={true} />
       <PageContainer>
         <Grid>
-          <button onClick={(event) => changeTheme(event, 'light')}>
-            Theme 1
-          </button>
+          <button onClick={() => changeTheme('light')}>Theme 1</button>
         </Grid>
         <br></br>
         <Grid>
-          <button onClick={(event) => changeTheme(event, 'dark')}>
-            Theme 2
-          </button>
+          <button onClick={() => changeTheme('dark')}>Theme 2</button>
         </Grid>
         <br></br>
         <Grid>
