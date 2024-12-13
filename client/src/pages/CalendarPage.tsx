@@ -137,7 +137,7 @@ const TodayButtonContainer = styled.button`
   margin: auto 0;
 
   width: fit-content;
-  padding: 10px 1vw;
+  padding: 0.3vh 1vw;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -166,10 +166,12 @@ const DayofWeekCell = styled.div`
   text-align: center;
 `
 
-const CalendarBody = styled.div`
+const CalendarBody = styled.div<{ $weeks: number }>`
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template: repeat(${(props) => props.$weeks}, 1fr) / repeat(7, 1fr);
+  min-height: 0;
+  min-width: 0;
   align-items: stretch;
   background-color: ${(props) => props.theme.secondary};
 `
@@ -179,12 +181,20 @@ const CalendarCell = styled.div`
   background-color: ${(props) => props.theme.background};
   text-align: center;
   padding: 5px;
+  padding-top: 0px;
+
+  overflow-x: hidden;
 `
 
 const CalendarCellDate = styled.span`
   font-size: max(0.833vw, 12px);
   display: block;
+  width: 100%;
+  background-color: ${(props) => props.theme.background};
   color: ${(props) => props.theme.calendarText};
+
+  position: sticky;
+  top: 0;
 `
 
 const CalendarPage: FC = () => {
@@ -276,6 +286,15 @@ const CalendarPage: FC = () => {
     }
   }
 
+  const weeksPerMonth = () => {
+    const firstDayOfMonth = new Date(year, month, 1).getDay()
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate()
+
+    const totalDays = daysInMonth + firstDayOfMonth
+    return Math.ceil(totalDays / 7)
+  }
+
   const renderDays = () => {
     const daysInMonth = (month: number, year: number) =>
       new Date(year, month, 0).getDate()
@@ -323,12 +342,11 @@ const CalendarPage: FC = () => {
           )}
           {/* Put each event that matches into the cell */}
           {events
-            .filter(
-              (e) =>
-                e.startDate.getFullYear() === year &&
-                e.startDate.getMonth() === month &&
-                e.startDate.getDate() === day
-            )
+            .filter((e) => {
+              let currentDate = new Date(year, month, day)
+
+              return e.startDate <= currentDate && e.endDate >= currentDate
+            })
             .map((e) => {
               return (
                 <CalendarMonthlyEvent
@@ -400,7 +418,7 @@ const CalendarPage: FC = () => {
             />
           </DateControllerContainer>
           <DayOfWeekContainer>{renderDaysofWeek()}</DayOfWeekContainer>
-          <CalendarBody>{renderDays()}</CalendarBody>
+          <CalendarBody $weeks={weeksPerMonth()}>{renderDays()}</CalendarBody>
         </CalendarContainer>
       </PageContainer>
     </ThemeProvider>
