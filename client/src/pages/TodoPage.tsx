@@ -226,7 +226,7 @@ function TodoApp() {
                     <TodoImageContainer>
                       <TagColorCircle
                         fill={theme.background}
-                        stroke={theme.primary}
+                        stroke={theme.calendarText}
                         strokeWidth={2}
                       />
                     </TodoImageContainer>
@@ -268,12 +268,15 @@ function TodoApp() {
                   >
                     <TodoImageContainer>
                       <TagColorCircle
-                        fill={theme.primary}
-                        stroke={theme.primary}
+                        fill={theme.calendarText}
+                        stroke={theme.calendarText}
                         strokeWidth={2}
+                        style={{ opacity: 0.5 }}
                       />
                     </TodoImageContainer>
-                    <TodoText selected={true}>{todo.todo}</TodoText>
+                    <TodoText style={{ opacity: 0.5 }} selected={true}>
+                      {todo.todo}
+                    </TodoText>
                   </TodoTextAndButtonWrapper>
                   <TodoImageContainer
                     onClick={() =>
