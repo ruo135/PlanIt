@@ -101,7 +101,7 @@ const TagColorCircle = styled(circleIcon)``
 const TagPlusContainer = styled(plusIcon)``
 
 const TodoEditContainer = styled(editIcon)`
-  stroke: ${(props) => props.theme.background};
+  stroke: ${(props) => props.theme.calendarText};
 `
 
 const OptionText = styled.div<{ selected?: boolean }>`
