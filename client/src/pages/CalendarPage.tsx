@@ -360,7 +360,11 @@ const CalendarPage: FC = () => {
                 e.endDate.getMonth() >= month &&
                 e.endDate.getDate() >= day
 
-              return startBeforeOrToday && endAfterOrToday
+              const isVisible = tags.find(
+                (tag) => tag._id === e.tagId
+              )?.isVisible
+
+              return isVisible && startBeforeOrToday && endAfterOrToday
             })
             .map((e) => {
               return (
