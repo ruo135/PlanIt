@@ -49,6 +49,12 @@ export const registerUser: RequestHandler<unknown,unknown,CreateUserBody,unknown
 
     //set theme to default
     await ThemeModel.create({userId: req.session.userId, theme: "light"})
+
+    req.session.destroy((error) => {
+      if (error) {
+        next(error)
+      }
+    })
     
     res.status(201).json(newUser);
   } catch (error) {
@@ -117,8 +123,11 @@ export const updatePassword: RequestHandler<unknown, unknown, UpdatePasswordBody
     if (!user) {
       throw createHttpError(401, "No User Found");
     }
-    if (user._id !== req.session!.userId) {
-      throw createHttpError(400, "Email does not match current logged-in session")
+    if (authenticatedUserId !== req.session!.userId) {
+      throw createHttpError(
+        400,
+        'Email does not match current logged-in session'
+      )
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
@@ -154,6 +163,12 @@ export const deleteUser: RequestHandler = async (req, res, next) => {
     await ThemeModel.deleteMany({ userId: authenticatedUserId })
 
     await UserModel.findByIdAndDelete(authenticatedUserId)
+
+    req.session.destroy((error) => {
+      if (error) {
+        next(error)
+      }
+    })
     res.sendStatus(204)
   } catch (error) {
     next(error)

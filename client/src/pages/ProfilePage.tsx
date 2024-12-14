@@ -8,6 +8,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import checkValidity from '../helpers/checkValidity'
 import getTheme from '../api/themes'
+import SuccessMessage from '../components/SuccessMessage'
 
 // CSS styled components
 const PageContainer = styled.div`
@@ -15,11 +16,10 @@ const PageContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: calc(100vh - max(8vh, 60px));
-  background-color: ${defaultTheme.primary};
+  height: 100%;
+  background-color: ${(props) => props.theme.background};
 
   @media (max-width: 400px) {
-    background-color: ${defaultTheme.background};
     align-items: flex-start;
   }
 `
@@ -32,29 +32,107 @@ const FormBody = styled.div`
   border-radius: 15px;
   display: flex;
   flex-direction: column;
-  justify-content: top;
+  justify-content: start;
   align-items: left;
   width: 500px;
-  height: 80%;
-  background-color: ${defaultTheme.background};
+  background-color: ${(props) => props.theme.background};
+  @media (max-width: 400px) {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 `
-const Label = styled.h1`
-  margin-bottom: 5px;
+const Title = styled.h2`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 10px;
   color: ${(props) => props.theme.calendarText};
+  border-bottom: 1px solid ${(props) => props.theme.calendarText};
+`
+
+const Label = styled.p`
+  margin-bottom: 10px;
+  color: ${(props) => props.theme.calendarText};
+`
+
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`
+
+const PopupContainer = styled.div`
+  width: 400px;
+  padding: 20px;
+  background-color: ${(props) => props.theme.background};
+  color: ${(props) => props.theme.calendarText};
+  border-radius: 8px;
+  box-shadow: 0 10px 20px ${(props) => props.theme.primary};
+  border: 5px;
+  border-color: ${(props) => props.theme.primary};
+`
+
+const PopupTitle = styled.h2`
+  margin: 0;
+  margin-bottom: 20px;
+  font-size: 20px;
+  text-align: center;
+`
+
+const PopupBodyContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  align-content: center;
+`
+
+const PopupBodyContainerRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  gap: 10px;
+`
+
+const PopupButton = styled.button`
+  padding: 10px 15px;
+  font-size: 14px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  flex: 1;
+
+  background-color: ${(props) => props.theme.primary};
+  color: ${(props) => props.theme.text};
+
+  &:hover {
+    background-color: ${(props) => props.theme.indent};
+  }
 `
 
 const ProfilePage: FC = () => {
   const [theme, setTheme] = useState<Theme>(defaultTheme)
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [changePassword, setChangePassword] = useState(false)
+  const [oldPassword, setOldPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [emailError, setEmailError] = useState(Boolean)
-  const [passwordError, setPasswordError] = useState(Boolean)
+  const [oldPasswordError, setOldPasswordError] = useState(Boolean)
+  const [newPasswordError, setNewPasswordError] = useState(Boolean)
   const [confirmPasswordError, setConfirmPasswordError] = useState(Boolean)
-  const [emailErrorMessage, setEmailErrorMessage] = useState('')
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
+  const [oldPasswordErrorMessage, setOldPasswordErrorMessage] = useState('')
+  const [newPasswordErrorMessage, setNewPasswordErrorMessage] = useState('')
+  const [success, setSuccess] = useState(false)
   const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] =
     useState('')
+  const [deleteAccount, setDeleteAccount] = useState(false)
 
   const navigate = useNavigate()
 
@@ -78,73 +156,87 @@ const ProfilePage: FC = () => {
 
   axios.defaults.withCredentials = true
 
-  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value)
+  const handleOldPasswordChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setOldPassword(event.target.value)
   }
-  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value)
+
+  const handleNewPasswordChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setNewPassword(event.target.value)
   }
+
   const handleConfirmPasswordChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setConfirmPassword(event.target.value)
   }
 
-  const handleRedirectToLogin = (
-    event: React.MouseEvent<HTMLAnchorElement>
-  ) => {
+  const handleDeleteAccount = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
-    navigate('/login')
+    axios.delete('api/user/delete').then(() => {
+      navigate('/')
+    })
   }
 
-  const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleChangePassword = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     event.preventDefault()
-    setEmailError(false)
-    setPasswordError(false)
+
+    setOldPasswordError(false)
+    setNewPasswordError(false)
     setConfirmPasswordError(false)
-    setEmailErrorMessage('')
-    setPasswordErrorMessage('')
+    setOldPasswordErrorMessage('')
+    setNewPasswordErrorMessage('')
     setConfirmPasswordErrorMessage('')
 
-    if (!email || !checkValidity(email) || !password || !confirmPassword) {
-      if (!email || !checkValidity(email)) {
-        setEmailError(true)
-        setEmailErrorMessage('Please enter a valid email')
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      if (!oldPassword) {
+        setOldPasswordError(true)
+        setOldPasswordErrorMessage('Please enter your old password')
       }
-      if (!password) {
-        setPasswordError(true)
-        setPasswordErrorMessage('Please enter your password')
+      if (!newPassword) {
+        setNewPasswordError(true)
+        setNewPasswordErrorMessage('Please enter a new password')
       }
       if (!confirmPassword) {
         setConfirmPasswordError(true)
         setConfirmPasswordErrorMessage('Please confirm your password')
       }
-    } else if (password !== confirmPassword) {
+    } else if (newPassword !== confirmPassword) {
       setConfirmPasswordError(true)
       setConfirmPasswordErrorMessage("Passwords don't match")
     } else {
-      const loginCredentials = { email, password }
+      const newLoginCredentials = { email, password: oldPassword, newPassword }
 
       await axios
-        .post('/api/user/signup', loginCredentials)
+        .patch('/api/user/updatePassword', newLoginCredentials)
         .then(() => {
-          navigate('/login')
+          setSuccess(true)
         })
         .catch((e) => {
-          setEmailError(true)
-          setPasswordError(false)
-          setEmailErrorMessage(
-            'A user with this email already exists. Please log in instead'
-          )
-          setPasswordErrorMessage('')
+          console.log(e.message)
+          setOldPasswordError(true)
+          setOldPasswordErrorMessage('Invalid old password')
         })
     }
   }
 
   const handleEnterPress = (e: any) => {
     if (e.key === 'Enter') {
-      handleSubmit(e)
+      handleChangePassword(e)
     }
+  }
+
+  const toggleChangePassword = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setChangePassword((prev) => !prev)
+    setSuccess(false)
+    setOldPassword('')
+    setNewPassword('')
+    setConfirmPassword('')
   }
 
   return (
@@ -153,44 +245,92 @@ const ProfilePage: FC = () => {
       <PageContainer>
         <FormBody>
           <h1 style={{ color: '#484848' }}>Profile</h1>
-          <Label>Email</Label>
-          <InputField
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-            error={emailError}
-            errorMessage={emailErrorMessage}
-            handleKeyDown={handleEnterPress}
-          />
+          <Title>Email</Title>
+          {email}
+          <Title>
+            Password
+            <SubmitButton
+              style={{ minHeight: '8px', whiteSpace: 'nowrap' }}
+              title="Change password"
+              theme={theme}
+              handleClick={toggleChangePassword}
+            />
+          </Title>
+          {changePassword && (
+            <>
+              <Label>Old password</Label>
+              <InputField
+                type="password"
+                value={oldPassword}
+                onChange={handleOldPasswordChange}
+                error={oldPasswordError}
+                errorMessage={oldPasswordErrorMessage}
+                handleKeyDown={handleEnterPress}
+                height={'15px'}
+              />
 
-          <Label>Password</Label>
-          <InputField
-            type="password"
-            value={password}
-            onChange={handlePasswordChange}
-            error={passwordError}
-            errorMessage={passwordErrorMessage}
-            handleKeyDown={handleEnterPress}
-          />
+              <Label>New password</Label>
+              <InputField
+                type="password"
+                value={newPassword}
+                onChange={handleNewPasswordChange}
+                error={newPasswordError}
+                errorMessage={newPasswordErrorMessage}
+                handleKeyDown={handleEnterPress}
+                height={'15px'}
+              />
 
-          <Label>Confirm password</Label>
-          <InputField
-            type="password"
-            value={confirmPassword}
-            onChange={handleConfirmPasswordChange}
-            error={confirmPasswordError}
-            errorMessage={confirmPasswordErrorMessage}
-            handleKeyDown={handleEnterPress}
-          />
+              <Label>Confirm password</Label>
+              <InputField
+                type="password"
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
+                error={confirmPasswordError}
+                errorMessage={confirmPasswordErrorMessage}
+                handleKeyDown={handleEnterPress}
+                height={'15px'}
+              />
+              <br />
 
-          <Label>
-            Already have an account?{' '}
-            <a href="/login" onClick={handleRedirectToLogin}>
-              Log in!
-            </a>
-          </Label>
+              <SubmitButton
+                style={{
+                  minHeight: '50px',
+                  whiteSpace: 'nowrap',
+                  width: '50%',
+                }}
+                title="Update password"
+                theme={theme}
+                handleClick={handleChangePassword}
+              />
+              {success && <SuccessMessage message="Password changed!" />}
+            </>
+          )}
+          <Title>Delete account </Title>
+          This action cannot be reversed
           <br />
-          <SubmitButton title="REGISTER" handleClick={handleSubmit} />
+          <br />
+          <SubmitButton
+            theme={theme}
+            style={{ minHeight: '50px', width: '50%' }}
+            title="DELETE ACCOUNT"
+            handleClick={(e) => setDeleteAccount(true)}
+          />
+          {deleteAccount && (
+            <Overlay>
+              <PopupContainer>
+                <PopupTitle>Are you sure?</PopupTitle>
+                <PopupBodyContainer>
+                  <PopupBodyContainerRow>
+                    <PopupButton onClick={handleDeleteAccount}>Yes</PopupButton>
+                    <PopupButton onClick={() => setDeleteAccount(false)}>
+                      No
+                    </PopupButton>
+                  </PopupBodyContainerRow>
+                </PopupBodyContainer>
+              </PopupContainer>
+            </Overlay>
+          )}
+          <br />
         </FormBody>
       </PageContainer>
     </ThemeProvider>
