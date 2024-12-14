@@ -16,7 +16,7 @@ const PageContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
+  height: calc(100vh - max(8vh, 60px));
   background-color: ${(props) => props.theme.background};
 
   @media (max-width: 400px) {
@@ -25,17 +25,14 @@ const PageContainer = styled.div`
 `
 
 const FormBody = styled.div`
-  padding-top: 20px;
-  padding-left: 60px;
-  padding-right: 60px;
-  padding-bottom: 20px;
+  padding: 0 60px;
   border-radius: 15px;
   display: flex;
   flex-direction: column;
   justify-content: start;
-  align-items: left;
   width: 500px;
   background-color: ${(props) => props.theme.background};
+  color: ${(props) => props.theme.calendarText};
   @media (max-width: 400px) {
     padding-left: 10px;
     padding-right: 10px;
@@ -244,7 +241,7 @@ const ProfilePage: FC = () => {
       <NavBar type={'back'} theme={theme} hideProfile={true} />
       <PageContainer>
         <FormBody>
-          <h1 style={{ color: '#484848' }}>Profile</h1>
+          <h1 style={{ color: theme.calendarText }}>Profile</h1>
           <Title>Email</Title>
           {email}
           <Title>
