@@ -56,9 +56,10 @@ const TodoContainer = styled.div<{ $hidehovercolor?: boolean }>`
 `
 
 const TodoText = styled.div<{ selected?: boolean }>`
-  display: flex;
+  display: inline-block;
   flex: 1;
   height: 100%;
+
   text-wrap: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -76,9 +77,10 @@ const TodoTextAndButtonWrapper = styled.div`
   align-items: center;
   border-radius: 10px;
 
+  overflow: hidden;
+
   &:hover {
     cursor: pointer;
-    background-color: ${(props) => props.theme.indent};
   }
 `
 

@@ -25,11 +25,15 @@ const DropdownButton = styled.div`
   cursor: pointer;
   font-size: 14px;
   position: relative;
+
+  max-width: 55%;
 `
 
 const DropdownButtonContent = styled.div`
   display: flex;
   align-items: center;
+
+  overflow: hidden;
 `
 
 const DropdownList = styled.ul`
@@ -102,8 +106,11 @@ const CloseIconContainer = styled(closeIcon)<{ $selectedId: string }>`
   }
 `
 
-const Text = styled.p`
+const Text = styled.div`
   color: ${(props) => props.theme.calendarText};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-wrap: nowrap;
 `
 
 interface ColorPickerProps {
