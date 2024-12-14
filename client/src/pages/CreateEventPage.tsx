@@ -82,6 +82,7 @@ const CloseIconContainer = styled(closeIcon)`
 `
 
 const ClockIconContainer = styled(clockIcons)`
+  min-width: 35px;
   width: 35px;
   height: 35px;
   fill: ${(props) => props.theme.calendarText};
@@ -89,6 +90,7 @@ const ClockIconContainer = styled(clockIcons)`
 `
 
 const DescriptionIconContainer = styled(DescriptionIcon)`
+  min-width: 35px;
   width: 35px;
   height: 35px;
   fill: ${(props) => props.theme.calendarText};
