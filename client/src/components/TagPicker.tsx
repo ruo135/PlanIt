@@ -117,6 +117,11 @@ interface ColorPickerProps {
 export default function TagPicker(props: ColorPickerProps) {
   const selectedTag = props.tags.find((c) => c.tagId === props.selectedId)
 
+  const checkLength = (name: string) => {
+    if (name.length > 15) return name.slice(0, 15) + '...'
+    else return name
+  }
+
   return (
     <DropdownContainer>
       <DropdownButton
@@ -127,7 +132,9 @@ export default function TagPicker(props: ColorPickerProps) {
           {selectedTag && (
             <>
               <ColorDot color={selectedTag.color} />
-              <Text style={{ paddingRight: '5px' }}>{selectedTag.name}</Text>
+              <Text style={{ paddingRight: '5px' }}>
+                {checkLength(selectedTag.name)}
+              </Text>
               <CloseIconContainer
                 $selectedId={props.selectedId}
                 onClick={() => props.handleIdSelect('')}
