@@ -1,5 +1,5 @@
 import createHttpError from 'http-errors'
-import e, { RequestHandler } from 'express'
+import { RequestHandler } from 'express'
 import EventModel from '../models/EventModel'
 import { assertIsDefined } from '../util/assertIsDefined'
 import mongoose from 'mongoose'

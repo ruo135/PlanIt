@@ -1,25 +1,23 @@
-import createHttpError from "http-errors";
-import { RequestHandler } from "express";
-import TodoModel from "../models/TodoModel";
-import { assertIsDefined } from "../util/assertIsDefined";
-import mongoose from "mongoose";
-import ThemeModel from "../models/ThemeModel";
+import createHttpError from 'http-errors'
+import { RequestHandler } from 'express'
+import { assertIsDefined } from '../util/assertIsDefined'
+import ThemeModel from '../models/ThemeModel'
 
 export const getTheme: RequestHandler = async (req, res, next) => {
-  const authenticatedUserId = req.session.userId;
+  const authenticatedUserId = req.session.userId
 
   try {
-    assertIsDefined(authenticatedUserId);
+    assertIsDefined(authenticatedUserId)
 
-    const theme = await ThemeModel.findOne({ userId: authenticatedUserId });
-    res.status(200).json(theme);
+    const theme = await ThemeModel.findOne({ userId: authenticatedUserId })
+    res.status(200).json(theme)
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
+}
 
 interface updateThemeBody {
-  theme?: "light" | "dark" | undefined;
+  theme?: 'light' | 'dark' | undefined
 }
 //prettier-ignore
 export const updateTheme: RequestHandler<unknown, unknown, updateThemeBody, unknown> = async (req, res, next) => {
