@@ -144,6 +144,7 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
   const renderTags = () => {
     let curRows = []
 
+    // Add tag
     curRows.push(
       <span key={'add'}>
         <OptionContainer
@@ -174,6 +175,7 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
       </span>
     )
 
+    // Each tag
     props.tags.forEach((tag) => {
       curRows.push(
         <span key={tag._id}>
@@ -244,6 +246,7 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
   const renderTodos = () => {
     let curRows = []
 
+    // View All
     curRows.push(
       <OptionContainer
         key={'view-all'}
@@ -262,6 +265,7 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
       </OptionContainer>
     )
 
+    // Add New
     curRows.push(
       <span key={'add-new'}>
         <OptionContainer
@@ -292,6 +296,7 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
       </span>
     )
 
+    // Each Todo
     props.todos.forEach((todo) => {
       curRows.push(
         <span key={todo._id}>
