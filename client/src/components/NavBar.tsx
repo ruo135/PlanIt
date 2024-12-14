@@ -10,6 +10,7 @@ export interface NavBarProps {
   type: 'landing' | 'login' | 'back'
   id?: string
   hideSettings?: boolean
+  hideProfile?: boolean
   theme: Theme
 }
 
@@ -87,7 +88,11 @@ export default function NavBar(props: NavBarProps) {
 
         {/* Gear Button for Private Pages */}
         {props.type === 'back' && (
-          <GearDropdown theme={props.theme} hideSettings={props.hideSettings} />
+          <GearDropdown
+            theme={props.theme}
+            hideSettings={props.hideSettings}
+            hideProfile={props.hideProfile}
+          />
         )}
       </StyledSpan>
     </ThemeProvider>

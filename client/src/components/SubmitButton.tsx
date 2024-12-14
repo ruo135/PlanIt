@@ -5,6 +5,7 @@ type ButtonProps = {
   title: string
   theme?: Theme
   handleClick: (event: React.MouseEvent<HTMLButtonElement>) => void // Change handler
+  style?: React.CSSProperties
 }
 
 const Button = styled.button`
@@ -26,7 +27,9 @@ const Button = styled.button`
 export default function SubmitButton(props: ButtonProps) {
   return (
     <ThemeProvider theme={props.theme ?? defaultTheme}>
-      <Button onClick={props.handleClick}>{props.title}</Button>
+      <Button style={props.style} onClick={props.handleClick}>
+        {props.title}
+      </Button>
     </ThemeProvider>
   )
 }

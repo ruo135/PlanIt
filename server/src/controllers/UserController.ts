@@ -3,6 +3,10 @@ import bcrypt from 'bcrypt'
 import { RequestHandler } from 'express'
 import createHttpError from 'http-errors'
 import ThemeModel from '../models/ThemeModel'
+import { assertIsDefined } from '../util/assertIsDefined'
+import EventModel from '../models/EventModel'
+import TagModel from '../models/TagModel'
+import TodoModel from '../models/TodoModel'
 
 export const getAuthenticatedUser: RequestHandler = async (req, res, next) => {
   try {
@@ -45,6 +49,12 @@ export const registerUser: RequestHandler<unknown,unknown,CreateUserBody,unknown
 
     //set theme to default
     await ThemeModel.create({userId: req.session.userId, theme: "light"})
+
+    req.session.destroy((error) => {
+      if (error) {
+        next(error)
+      }
+    })
     
     res.status(201).json(newUser);
   } catch (error) {
@@ -90,4 +100,77 @@ export const logout: RequestHandler = (req, res, next) => {
       res.sendStatus(200)
     }
   })
+}
+
+interface UpdatePasswordBody {
+  email?: string
+  password?: string
+  newPassword?: string
+}
+//prettier-ignore
+export const updatePassword: RequestHandler<unknown, unknown, UpdatePasswordBody, unknown> = async (req, res, next) => {
+  const { email, password, newPassword } = req.body
+  const authenticatedUserId = req.session.userId
+  
+  try {
+    assertIsDefined(authenticatedUserId)
+
+    if (!email || !password || !newPassword) {
+      throw(createHttpError(400, "Parameters missing."))
+    }
+  
+    const user = await UserModel.findOne({ email: email }).select("+password +email").exec()
+    if (!user) {
+      throw createHttpError(401, "No User Found");
+    }
+    if (authenticatedUserId !== req.session!.userId) {
+      throw createHttpError(
+        400,
+        'Email does not match current logged-in session'
+      )
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      throw createHttpError(401, "Invalid Previous Password");
+    }
+    
+    const hashedPassword = await bcrypt.hash(newPassword!, 10);
+    const updateUser = await UserModel.findByIdAndUpdate(user._id, { password: hashedPassword }, {new: true});
+    
+    res.status(200).json(updateUser);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const deleteUser: RequestHandler = async (req, res, next) => {
+  const authenticatedUserId = req.session.userId
+
+  try {
+    assertIsDefined(authenticatedUserId)
+
+    // Delete Events
+    await EventModel.deleteMany({ userId: authenticatedUserId })
+
+    // Delete Tags
+    await TagModel.deleteMany({ userId: authenticatedUserId })
+
+    // Delete Todo
+    await TodoModel.deleteMany({ userId: authenticatedUserId })
+
+    // Delete Theme
+    await ThemeModel.deleteMany({ userId: authenticatedUserId })
+
+    await UserModel.findByIdAndDelete(authenticatedUserId)
+
+    req.session.destroy((error) => {
+      if (error) {
+        next(error)
+      }
+    })
+    res.sendStatus(204)
+  } catch (error) {
+    next(error)
+  }
 }

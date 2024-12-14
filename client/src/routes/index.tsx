@@ -11,6 +11,7 @@ const CalendarPage = lazy(() => import('../pages/CalendarPage'))
 const CreateEventPage = lazy(() => import('../pages/CreateEventPage'))
 const SettingsPage = lazy(() => import('../pages/SettingsPage'))
 const TodoPage = lazy(() => import('../pages/TodoPage'))
+const ProfilePage = lazy(() => import('../pages/ProfilePage'))
 
 export default function AppRoutes() {
   return (
@@ -24,6 +25,7 @@ export default function AppRoutes() {
           <Route path="/createEvent" Component={CreateEventPage} />
           <Route path="/settings" Component={SettingsPage} />
           <Route path="/todo" Component={TodoPage} />
+          <Route path="/profile" Component={ProfilePage} />
           <Route path="*" Component={() => <Navigate to="/" />} />
         </Routes>
       </Suspense>

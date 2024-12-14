@@ -9,6 +9,7 @@ export interface GearDropdownProps {
   id?: string
   theme: Theme
   hideSettings?: boolean
+  hideProfile?: boolean
 }
 
 const StyledImg = styled(SettingsIcon)`
@@ -110,6 +111,9 @@ export default function GearDropdown(props: GearDropdownProps) {
             {/* Only show if hideSettings is false or undefined */}
             {!props.hideSettings && (
               <Option onClick={() => pageRouter('/settings')}>Settings</Option>
+            )}
+            {!props.hideProfile && (
+              <Option onClick={() => pageRouter('/profile')}>Profile</Option>
             )}
             <Option onClick={logout}>Log Out</Option>
           </OptionContainer>
