@@ -51,7 +51,7 @@ const HamburgerMenu = styled(menuIcon)`
   position: absolute;
   left: 1vh;
   top: calc(3.5vh - 10px);
-  fill: ${(props) => props.theme.background};
+  fill: ${(props) => props.theme.text};
   width: 20px;
   height: 20px;
   cursor: pointer;
