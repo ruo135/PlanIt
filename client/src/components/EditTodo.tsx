@@ -118,7 +118,7 @@ export default function EditTodo(props: EditTodoProps) {
         onChange={(e) => setTodoString(e.target.value)}
         placeholder="Enter todo here"
         error={error}
-        errorMessage={'Tag Name Required'}
+        errorMessage={'To-do Message Required'}
         height={'1vh'}
       />
 
