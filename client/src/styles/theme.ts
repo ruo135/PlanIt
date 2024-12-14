@@ -1,4 +1,7 @@
 import { DefaultTheme } from 'styled-components'
+import { ReactComponent as circleIcon } from '../assets/circle.svg'
+import { ReactComponent as winterIcon } from '../assets/winter.svg'
+import { SVGProps } from 'react'
 
 export interface Theme extends DefaultTheme {
   header: string
@@ -12,6 +15,7 @@ export interface Theme extends DefaultTheme {
   text: string
   calendarText: string
   background: string
+  icon: React.FC<SVGProps<SVGSVGElement>>
 }
 
 //Light themes
@@ -27,6 +31,7 @@ const defaultTheme = {
   text: '#FFFFFF', //white
   calendarText: '#484848', //grey
   background: '#FFFFFF',
+  icon: circleIcon,
 }
 
 const defaultThemeHS = {
@@ -98,6 +103,7 @@ const darkTheme = {
   text: '#FFFFFF', //white
   calendarText: '#FFFFFF', //white
   background: '#353535',
+  icon: winterIcon,
 }
 
 const allDarkTheme = {

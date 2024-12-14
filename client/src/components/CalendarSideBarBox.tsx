@@ -1,9 +1,10 @@
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { Theme } from '../styles/theme'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { Tag } from '../models/Tag'
 import { ReactComponent as plusIcon } from '../assets/plus.svg'
 import { ReactComponent as circleIcon } from '../assets/circle.svg'
+import { ReactComponent as winterIcon } from '../assets/winter.svg'
 import { ReactComponent as editIcon } from '../assets/edit.svg'
 import { Todo } from '../models/Todo'
 import { toggleTagVisibility } from '../api/tags'
@@ -96,7 +97,10 @@ const OptionImageContainer = styled.div<{
   }
 `
 
-const TagColorCircle = styled(circleIcon)``
+const TagColorCircle = styled(winterIcon)`
+  width: 16px;
+  height: 16px;
+`
 
 const TagPlusContainer = styled(plusIcon)``
 
@@ -122,6 +126,7 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
   const [tagEditing, setTagEditing] = useState('')
   // Which todo editor is opened
   const [todoEditing, setTodoEditing] = useState('')
+  const theme = useTheme()
 
   const changeTagVisibility = (tag: Tag) => {
     props.setTags((prev) =>
@@ -175,7 +180,9 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
               onClick={() => changeTagVisibility(tag)}
               $justifyContent={'center'}
             >
-              <TagColorCircle
+              <theme.icon
+                width="16px"
+                height="16px"
                 fill={tag.isVisible ? tag.color : props.theme.background}
                 stroke={tag.color}
                 strokeWidth={2}
