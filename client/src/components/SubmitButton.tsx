@@ -8,9 +8,10 @@ type ButtonProps = {
 }
 
 const Button = styled.button`
+  flex: 0 1;
+  width: 100%;
   padding: 10px;
-  width: 97%;
-  height: 50px;
+  min-height: 50px;
   border-radius: 10px;
   cursor: pointer;
   color: ${(props) => props.theme.text};

@@ -306,6 +306,7 @@ const AddEventPage: FC = () => {
               borderLeft: 'none',
               borderRight: 'none',
               borderRadius: 0,
+              width: '90%',
             }}
             theme={theme}
             value={title}
@@ -320,7 +321,9 @@ const AddEventPage: FC = () => {
             <ClockIconContainer />
             {/* Start date picker Icon*/}
             <InputField
-              style={{ width: '60%' }}
+              style={{
+                minWidth: '60%',
+              }}
               type="datetime-local"
               theme={theme}
               value={startDate}
@@ -333,16 +336,15 @@ const AddEventPage: FC = () => {
             to
           </HorizontalContainer>
           {/* Pick end date*/}
-          <HorizontalContainer style={{ flex: '0 1', paddingBottom: '30px' }}>
+          <HorizontalContainer style={{ paddingBottom: '30px' }}>
             {/* Clock Icon*/}
             <ClockIconContainer
               style={{ height: '35px', fill: theme.background }}
             />
             {/* End date picker */}
-            <VerticalContainer>
+            <VerticalContainer style={{ display: 'flex' }}>
               <InputField
                 style={{
-                  flexDirection: 'column',
                   width: 'calc((100% + 30px + 35px) * 0.6)',
                 }}
                 type="datetime-local"
@@ -358,7 +360,7 @@ const AddEventPage: FC = () => {
           <HorizontalContainer>
             <DescriptionIconContainer />
             <InputField
-              style={{ width: '60%', fontSize: '15px' }}
+              style={{ minWidth: '60%', fontSize: '15px' }}
               theme={theme}
               value={description}
               placeholder="Add a description"
@@ -379,7 +381,11 @@ const AddEventPage: FC = () => {
             />
           </HorizontalContainer>
           <HorizontalContainer
-            style={{ paddingLeft: '60px', paddingRight: '60px' }}
+            style={{
+              paddingLeft: '60px',
+              paddingRight: '60px',
+              flexDirection: 'column',
+            }}
           >
             <SubmitButton
               title="Save"

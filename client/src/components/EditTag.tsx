@@ -14,7 +14,7 @@ const FormContainer = styled.div`
   background-color: ${(props) => props.theme.background};
   border: 2px solid #e0e0e0;
   border-radius: 10px;
-  width: 80%;
+  width: 100%;
 `
 
 const Label = styled.label`
@@ -45,7 +45,6 @@ interface EditTagProps {
 }
 
 export default function EditTag(props: EditTagProps) {
-  const theme = useTheme()
   const [tagName, setTagName] = useState(props.currentTag?.name ?? '')
   const [selectedColor, setSelectedColor] = useState<string>(
     props.currentTag?.color ?? colors[0].color
@@ -62,14 +61,14 @@ export default function EditTag(props: EditTagProps) {
   const handleSubmit = (e: any) => {
     e.preventDefault()
 
-    if (tagName === '') {
+    if (tagName.trim() === '') {
       setError(true)
       return
     }
 
     setError(false)
 
-    createTag(tagName, selectedColor).then((t) => {
+    createTag(tagName.trim(), selectedColor).then((t) => {
       props.tags.push(t)
       props.setTagState(sortTags(props.tags))
       props.changeDropdownState('')
@@ -78,25 +77,27 @@ export default function EditTag(props: EditTagProps) {
 
   const handleUpdate = (tag: Tag | undefined) => {
     if (tag) {
-      if (tagName === '') {
+      if (tagName.trim() === '') {
         setError(true)
         return
       }
 
       setError(false)
 
-      updateTag({ ...tag, name: tagName, color: selectedColor }).then(() => {
-        props.setTagState((prev) => {
-          return sortTags(
-            prev.map((item) =>
-              item._id === tag._id
-                ? { ...item, name: tagName, color: selectedColor }
-                : item
+      updateTag({ ...tag, name: tagName.trim(), color: selectedColor }).then(
+        () => {
+          props.setTagState((prev) => {
+            return sortTags(
+              prev.map((item) =>
+                item._id === tag._id
+                  ? { ...item, name: tagName.trim(), color: selectedColor }
+                  : item
+              )
             )
-          )
-        })
-        props.changeDropdownState('')
-      })
+          })
+          props.changeDropdownState('')
+        }
+      )
     }
   }
 
@@ -135,15 +136,23 @@ export default function EditTag(props: EditTagProps) {
       />
 
       {props.currentTag && (
-        <>
-          <SubmitButton onClick={() => handleUpdate(props.currentTag)}>
+        <div style={{ display: 'flex', gap: '5px' }}>
+          <SubmitButton
+            style={{ flex: 1 }}
+            onClick={() => handleUpdate(props.currentTag)}
+          >
             Save
           </SubmitButton>
-          <SubmitButton onClick={() => handleDelete(props.currentTag)}>
+          <SubmitButton
+            style={{ flex: 1 }}
+            onClick={() => handleDelete(props.currentTag)}
+          >
             Delete
           </SubmitButton>
-          <SubmitButton onClick={handleCancel}>Cancel</SubmitButton>
-        </>
+          <SubmitButton style={{ flex: 1 }} onClick={handleCancel}>
+            Cancel
+          </SubmitButton>
+        </div>
       )}
       {!props.currentTag && (
         <SubmitButton onClick={handleSubmit}>OK</SubmitButton>

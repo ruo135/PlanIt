@@ -12,7 +12,7 @@ const FormContainer = styled.div`
   background-color: ${(props) => props.theme.background};
   border: 2px solid #e0e0e0;
   border-radius: 10px;
-  width: 80%;
+  width: 100%;
 `
 
 const Label = styled.label`
@@ -60,14 +60,14 @@ export default function EditTodo(props: EditTodoProps) {
   const handleSubmit = (e: any) => {
     e.preventDefault()
 
-    if (todoString === '') {
+    if (todoString.trim() === '') {
       setError(true)
       return
     }
 
     setError(false)
 
-    createTodo(todoString).then((t) => {
+    createTodo(todoString.trim()).then((t) => {
       props.todos.push(t)
       props.setTodoState(sortTodos(props.todos))
       props.changeDropdownState('')
@@ -76,17 +76,19 @@ export default function EditTodo(props: EditTodoProps) {
 
   const handleUpdate = (todo: Todo | undefined) => {
     if (todo) {
-      if (todoString === '') {
+      if (todoString.trim() === '') {
         setError(true)
         return
       }
 
       setError(false)
-      updateTodo({ ...todo, todo: todoString }).then(() => {
+      updateTodo({ ...todo, todo: todoString.trim() }).then(() => {
         props.setTodoState((prev) => {
           return sortTodos(
             prev.map((item) =>
-              item._id === todo._id ? { ...item, todo: todoString } : item
+              item._id === todo._id
+                ? { ...item, todo: todoString.trim() }
+                : item
             )
           )
         })
@@ -121,15 +123,23 @@ export default function EditTodo(props: EditTodoProps) {
       />
 
       {props.currentTodo && (
-        <>
-          <SubmitButton onClick={() => handleUpdate(props.currentTodo)}>
+        <div style={{ display: 'flex', gap: '2px' }}>
+          <SubmitButton
+            style={{ flex: 1 }}
+            onClick={() => handleUpdate(props.currentTodo)}
+          >
             Save
           </SubmitButton>
-          <SubmitButton onClick={() => handleDelete(props.currentTodo)}>
+          <SubmitButton
+            style={{ flex: 1 }}
+            onClick={() => handleDelete(props.currentTodo)}
+          >
             Delete
           </SubmitButton>
-          <SubmitButton onClick={handleCancel}>Cancel</SubmitButton>
-        </>
+          <SubmitButton style={{ flex: 1 }} onClick={handleCancel}>
+            Cancel
+          </SubmitButton>
+        </div>
       )}
       {!props.currentTodo && (
         <SubmitButton onClick={handleSubmit}>OK</SubmitButton>

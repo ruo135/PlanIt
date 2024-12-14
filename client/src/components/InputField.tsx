@@ -14,13 +14,14 @@ type InputFieldProps = {
   name?: string
   checked?: boolean
   height?: string
+  handleKeyDown?: React.KeyboardEventHandler<HTMLInputElement>
 }
 
 const TextField = styled.input<{ $error?: boolean; height?: string }>`
   padding: 10px;
-  width: 90%;
+  flex: 0 1;
   font-size: 15px;
-  height: ${(props) => props.height ?? '35px'};
+  min-height: ${(props) => props.height ?? '35px'};
   border-radius: 10px;
   background-color: ${(props) => props.theme.background};
   color: ${(props) => props.theme.calendarText};
@@ -33,10 +34,6 @@ const TextField = styled.input<{ $error?: boolean; height?: string }>`
   &:focus {
     outline: none;
     border-color: ${(props) => props.theme.primary};
-  }
-
-  @media (max-width: 700px) {
-    width: 100%;
   }
 `
 
@@ -53,6 +50,7 @@ export default function InputField(props: InputFieldProps) {
         name={props.name ?? ''}
         checked={props.checked ?? false}
         height={props.height}
+        onKeyDown={props.handleKeyDown}
       />
       {props.error && props.errorMessage && (
         <ErrorMessage message={props.errorMessage} />

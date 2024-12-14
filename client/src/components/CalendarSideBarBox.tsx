@@ -11,6 +11,7 @@ import { toggleTagVisibility } from '../api/tags'
 import { checkTodo } from '../api/todos'
 import EditTag from './EditTag'
 import EditTodo from './EditTodo'
+import { useNavigate } from 'react-router-dom'
 
 interface CalendarSideBarBoxProps {
   theme: Theme
@@ -105,7 +106,7 @@ const TagColorCircle = styled(winterIcon)`
 const TagPlusContainer = styled(plusIcon)``
 
 const TodoEditContainer = styled(editIcon)`
-  stroke: ${(props) => props.theme.calendarText};
+  stroke: ${(props) => props.theme.text};
 `
 
 const OptionText = styled.div<{ selected?: boolean }>`
@@ -137,6 +138,8 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
 
     toggleTagVisibility(tag)
   }
+
+  const navigate = useNavigate()
 
   const renderTags = () => {
     let curRows = []
@@ -240,6 +243,24 @@ export default function CalendarSideBarBox(props: CalendarSideBarBoxProps) {
 
   const renderTodos = () => {
     let curRows = []
+
+    curRows.push(
+      <OptionContainer
+        key={'view-all'}
+        onClick={() => {
+          navigate('/todo')
+        }}
+        style={{
+          position: 'sticky',
+          top: 0,
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center',
+        }}
+      >
+        <OptionText>View All</OptionText>
+      </OptionContainer>
+    )
 
     curRows.push(
       <span key={'add-new'}>

@@ -1,8 +1,6 @@
 import React, { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
-import theme from '../styles/theme'
-import styled from 'styled-components'
 import LoadingComponent from '../components/LoadingComponent'
 
 // const Page = lazy(() => import("../pages/___"))
@@ -12,16 +10,7 @@ const RegisterPage = lazy(() => import('../pages/RegisterPage'))
 const CalendarPage = lazy(() => import('../pages/CalendarPage'))
 const CreateEventPage = lazy(() => import('../pages/CreateEventPage'))
 const SettingsPage = lazy(() => import('../pages/SettingsPage'))
-
-const LoadingPage = styled.div`
-  background-color: ${theme.header};
-  min-height: 100vh;
-  min-width: 100vw;
-
-  justify-content: center;
-  align-items: center;
-  display: flex;
-`
+const TodoPage = lazy(() => import('../pages/TodoPage'))
 
 export default function AppRoutes() {
   return (
@@ -34,6 +23,7 @@ export default function AppRoutes() {
           <Route path="/calendar" Component={CalendarPage} />
           <Route path="/createEvent" Component={CreateEventPage} />
           <Route path="/settings" Component={SettingsPage} />
+          <Route path="/todo" Component={TodoPage} />
           <Route path="*" Component={() => <Navigate to="/" />} />
         </Routes>
       </Suspense>

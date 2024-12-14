@@ -30,8 +30,6 @@ const FormBody = styled.div`
   border-radius: 15px;
   display: flex;
   flex-direction: column;
-  justify-content: top;
-  align-items: left;
   width: 350px;
   height: 500px;
   background-color: ${defaultTheme.background};
@@ -113,6 +111,12 @@ const LoginPage: FC = () => {
     }
   }
 
+  const handleEnterPress = (e: any) => {
+    if (e.key === 'Enter') {
+      handleSubmit(e)
+    }
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <NavBar type={'login'} theme={theme} />
@@ -126,7 +130,8 @@ const LoginPage: FC = () => {
             onChange={handleEmailChange}
             error={emailError}
             errorMessage={emailErrorMessage}
-          ></InputField>
+            handleKeyDown={handleEnterPress}
+          />
 
           <Label>Password</Label>
           <InputField
@@ -135,7 +140,8 @@ const LoginPage: FC = () => {
             onChange={handlePasswordChange}
             error={passwordError}
             errorMessage={passwordErrorMessage}
-          ></InputField>
+            handleKeyDown={handleEnterPress}
+          />
           <Label>
             New to PlanIt?{' '}
             <a href="/register" onClick={handleRedirectToRegister}>

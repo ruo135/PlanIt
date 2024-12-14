@@ -135,6 +135,12 @@ const RegisterPage: FC = () => {
     }
   }
 
+  const handleEnterPress = (e: any) => {
+    if (e.key === 'Enter') {
+      handleSubmit(e)
+    }
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <NavBar type={'login'} theme={theme} />
@@ -148,7 +154,8 @@ const RegisterPage: FC = () => {
             onChange={handleEmailChange}
             error={emailError}
             errorMessage={emailErrorMessage}
-          ></InputField>
+            handleKeyDown={handleEnterPress}
+          />
 
           <Label>Password</Label>
           <InputField
@@ -157,7 +164,8 @@ const RegisterPage: FC = () => {
             onChange={handlePasswordChange}
             error={passwordError}
             errorMessage={passwordErrorMessage}
-          ></InputField>
+            handleKeyDown={handleEnterPress}
+          />
 
           <Label>Confirm password</Label>
           <InputField
@@ -166,7 +174,8 @@ const RegisterPage: FC = () => {
             onChange={handleConfirmPasswordChange}
             error={confirmPasswordError}
             errorMessage={confirmPasswordErrorMessage}
-          ></InputField>
+            handleKeyDown={handleEnterPress}
+          />
 
           <Label>
             Already have an account?{' '}
