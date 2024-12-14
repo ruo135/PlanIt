@@ -1,6 +1,9 @@
 import { DefaultTheme } from 'styled-components'
 import { ReactComponent as circleIcon } from '../assets/circle.svg'
 import { ReactComponent as winterIcon } from '../assets/winter.svg'
+import { ReactComponent as springIcon } from '../assets/spring.svg'
+import { ReactComponent as automnIcon } from '../assets/automn.svg'
+import { ReactComponent as summerIcon } from '../assets/summer.svg'
 import { SVGProps } from 'react'
 
 export interface Theme extends DefaultTheme {
