@@ -270,9 +270,9 @@ const CalendarPage: FC = () => {
                   .localeCompare(b.startDate.toISOString())
               })
           )
-        })
 
-        setIsLoading(false)
+          setIsLoading(false)
+        })
       })
   }, [navigate])
 

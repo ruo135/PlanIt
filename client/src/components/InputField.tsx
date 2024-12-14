@@ -42,7 +42,7 @@ const TextField = styled.input<{ $error?: boolean; height?: string }>`
 
 export default function InputField(props: InputFieldProps) {
   return (
-    <ThemeProvider theme={props.theme ?? defaultTheme}>
+    <>
       <TextField
         type={props.type ?? 'text'}
         value={props.value}
@@ -57,6 +57,6 @@ export default function InputField(props: InputFieldProps) {
       {props.error && props.errorMessage && (
         <ErrorMessage message={props.errorMessage} />
       )}
-    </ThemeProvider>
+    </>
   )
 }

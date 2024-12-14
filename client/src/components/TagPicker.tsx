@@ -10,7 +10,7 @@ const DropdownContainer = styled.div`
   width: 100%;
 `
 
-const DropdownButton = styled.div<{ color: string }>`
+const DropdownButton = styled.div`
   display: flex;
   display: inline-block;
   height: 40px;
@@ -21,7 +21,7 @@ const DropdownButton = styled.div<{ color: string }>`
 
   border-radius: 10px;
   border: 1px solid ${(props) => props.theme.header};
-  background-color: ${(props) => props.color};
+  background-color: ${(props) => props.theme.background};
 
   cursor: pointer;
   font-size: 14px;
@@ -118,46 +118,43 @@ export default function TagPicker(props: ColorPickerProps) {
   const selectedTag = props.tags.find((c) => c.tagId === props.selectedId)
 
   return (
-    <ThemeProvider theme={props.theme ?? defaultTheme}>
-      <DropdownContainer>
-        <DropdownButton
-          color={props.theme?.background ?? defaultTheme.background}
-          onClick={() => props.toggleDropdown(!props.isDropdownOpen)}
-        >
-          <DropdownButtonContent>
-            {!selectedTag && <Text>Select a tag</Text>}
-            {selectedTag && (
-              <>
-                <ColorDot color={selectedTag.color} />
-                <Text style={{ paddingRight: '5px' }}>{selectedTag.name}</Text>
-                <CloseIconContainer
-                  $selectedId={props.selectedId}
-                  onClick={() => props.handleIdSelect('')}
-                />
-              </>
-            )}
+    <DropdownContainer>
+      <DropdownButton
+        onClick={() => props.toggleDropdown(!props.isDropdownOpen)}
+      >
+        <DropdownButtonContent>
+          {!selectedTag && <Text>Select a tag</Text>}
+          {selectedTag && (
+            <>
+              <ColorDot color={selectedTag.color} />
+              <Text style={{ paddingRight: '5px' }}>{selectedTag.name}</Text>
+              <CloseIconContainer
+                $selectedId={props.selectedId}
+                onClick={() => props.handleIdSelect('')}
+              />
+            </>
+          )}
 
-            <ArrowDownContainer isDropdownOpen={props.isDropdownOpen} />
-          </DropdownButtonContent>
-        </DropdownButton>
+          <ArrowDownContainer isDropdownOpen={props.isDropdownOpen} />
+        </DropdownButtonContent>
+      </DropdownButton>
 
-        {props.isDropdownOpen && (
-          <DropdownList>
-            {props.tags.map((c) => (
-              <DropdownItem
-                key={c.tagId}
-                onClick={() => {
-                  props.handleIdSelect(c.tagId!)
-                  props.toggleDropdown(false)
-                }}
-              >
-                <ColorDot color={c.color} />
-                {c.name}
-              </DropdownItem>
-            ))}
-          </DropdownList>
-        )}
-      </DropdownContainer>
-    </ThemeProvider>
+      {props.isDropdownOpen && (
+        <DropdownList>
+          {props.tags.map((c) => (
+            <DropdownItem
+              key={c.tagId}
+              onClick={() => {
+                props.handleIdSelect(c.tagId!)
+                props.toggleDropdown(false)
+              }}
+            >
+              <ColorDot color={c.color} />
+              {c.name}
+            </DropdownItem>
+          ))}
+        </DropdownList>
+      )}
+    </DropdownContainer>
   )
 }

@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from 'react'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import InputField from './InputField'
 import { Tag } from '../models/Tag'
 import { createTag, deleteTag, updateTag } from '../api/tags'
@@ -45,6 +45,7 @@ interface EditTagProps {
 }
 
 export default function EditTag(props: EditTagProps) {
+  const theme = useTheme()
   const [tagName, setTagName] = useState(props.currentTag?.name ?? '')
   const [selectedColor, setSelectedColor] = useState<string>(
     props.currentTag?.color ?? colors[0].color

@@ -109,6 +109,7 @@ const HorizontalContainer = styled.div`
   justify-content: flex-start;
   width: 100%;
   box-sizing: border-box;
+  color: ${(props) => props.theme.calendarText};
 `
 const VerticalContainer = styled.div`
   display: flex;
@@ -167,8 +168,6 @@ const AddEventPage: FC = () => {
             setTheme(t)
           })
           getTags()
-
-          setIsLoading(false)
         })
         .catch(() => {
           navigate('/login')
@@ -176,14 +175,19 @@ const AddEventPage: FC = () => {
     }
 
     const getTags = () => {
-      axios.get('/api/tag/getAlltags').then((res) => {
-        let colorList: Color[] = res.data.map(
-          (tag: { _id: string; name: string; color: string }) => {
-            return { tagId: tag._id, name: tag.name, color: tag.color }
-          }
-        )
-        setTagList(colorList)
-      })
+      axios
+        .get('/api/tag/getAlltags')
+        .then((res) => {
+          let colorList: Color[] = res.data.map(
+            (tag: { _id: string; name: string; color: string }) => {
+              return { tagId: tag._id, name: tag.name, color: tag.color }
+            }
+          )
+          setTagList(colorList)
+        })
+        .then(() => {
+          setIsLoading(false)
+        })
     }
 
     getAuthenticated()
