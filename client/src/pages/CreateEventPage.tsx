@@ -7,10 +7,10 @@ import defaultTheme, { Theme } from '../styles/theme'
 import styled, { ThemeProvider } from 'styled-components'
 import { useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import closeIcon from '../assets/closeIcon.svg'
 import InputField from '../components/InputField'
 import { ReactComponent as DescriptionIcon } from '../assets/descriptionIcon.svg'
 import { ReactComponent as clockIcons } from '../assets/clockIcon.svg'
+import { ReactComponent as closeIcon } from '../assets/closeIcon.svg'
 import { ReactComponent as tagIcon } from '../assets/tagIcon.svg'
 import { Color } from '../models/Color'
 import TagPicker from '../components/TagPicker'
@@ -68,15 +68,15 @@ const AddEventForm = styled.div`
     }
   }
 `
-const CloseIconContainer = styled.img`
+const CloseIconContainer = styled(closeIcon)`
   width: 25px;
   height: 25px;
   margin-left: auto;
-  color: ${(props) => props.theme.calendarText};
+  fill: ${(props) => props.theme.calendarText};
   cursor: pointer;
 
   &:hover {
-    background-color: #d7d5eb;
+    background-color: ${(props) => props.theme.secondary};
     border-radius: 50%;
   }
 `
@@ -295,10 +295,7 @@ const AddEventPage: FC = () => {
       <PageContainer>
         <AddEventForm>
           {/* Close Icon*/}
-          <CloseIconContainer
-            src={closeIcon}
-            onClick={(e) => navigate('/calendar')}
-          />
+          <CloseIconContainer onClick={(e) => navigate('/calendar')} />
           {/* Add Title*/}
           <InputField
             style={{
