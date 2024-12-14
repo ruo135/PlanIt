@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import checkValidity from '../helpers/checkValidity'
 import getTheme from '../api/themes'
 import SuccessMessage from '../components/SuccessMessage'
+import LoadingComponent from '../components/LoadingComponent'
 
 // CSS styled components
 const PageContainer = styled.div`
@@ -127,6 +128,7 @@ const ProfilePage: FC = () => {
   const [oldPasswordErrorMessage, setOldPasswordErrorMessage] = useState('')
   const [newPasswordErrorMessage, setNewPasswordErrorMessage] = useState('')
   const [success, setSuccess] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [confirmPasswordErrorMessage, setConfirmPasswordErrorMessage] =
     useState('')
   const [deleteAccount, setDeleteAccount] = useState(false)
@@ -142,6 +144,7 @@ const ProfilePage: FC = () => {
           setEmail(res.data.email)
           getTheme().then((t) => {
             setTheme(t)
+            setIsLoading(false)
           })
         })
         .catch(() => {
@@ -238,6 +241,7 @@ const ProfilePage: FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      {isLoading && <LoadingComponent />}
       <NavBar type={'back'} theme={theme} hideProfile={true} />
       <PageContainer>
         <FormBody>
