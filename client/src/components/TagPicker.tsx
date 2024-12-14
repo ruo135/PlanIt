@@ -10,8 +10,7 @@ const DropdownContainer = styled.div`
 `
 
 const DropdownButton = styled.div`
-  display: flex;
-  display: inline-block;
+  display: inline-flex;
   height: 40px;
   justify-content: flex-start;
   align-items: center;
@@ -25,8 +24,6 @@ const DropdownButton = styled.div`
   cursor: pointer;
   font-size: 14px;
   position: relative;
-
-  max-width: 55%;
 `
 
 const DropdownButtonContent = styled.div`
