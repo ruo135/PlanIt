@@ -17,10 +17,10 @@ const PageContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: calc(100vh - max(8vh, 60px));
+  min-height: calc(100vh - max(8vh, 60px));
   background-color: ${(props) => props.theme.background};
 
-  @media (max-width: 400px) {
+  @media (max-width: 900px) {
     align-items: flex-start;
   }
 `
@@ -34,16 +34,17 @@ const FormBody = styled.div`
   width: 500px;
   background-color: ${(props) => props.theme.background};
   color: ${(props) => props.theme.calendarText};
-  @media (max-width: 400px) {
-    padding-left: 10px;
-    padding-right: 10px;
+  @media (max-width: 900px) {
+    padding-left: 30px;
+    padding-right: 30px;
   }
 `
 const Title = styled.h2`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-bottom: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 5px;
   color: ${(props) => props.theme.calendarText};
   border-bottom: 1px solid ${(props) => props.theme.calendarText};
 `
@@ -248,15 +249,22 @@ const ProfilePage: FC = () => {
           <h1 style={{ color: theme.calendarText }}>Profile</h1>
           <Title>Email</Title>
           {email}
+          <br />
+          <br />
           <Title>
             Password
             <SubmitButton
               style={{ minHeight: '8px', whiteSpace: 'nowrap' }}
-              title="Change password"
+              title={changePassword ? 'Hide' : 'Change password'}
               theme={theme}
               handleClick={toggleChangePassword}
             />
           </Title>
+          {!changePassword && (
+            <p color={theme.calendarText} style={{ margin: '0' }}>
+              Strengthen your account by ensuring your password is strong.
+            </p>
+          )}
           {changePassword && (
             <>
               <Label>Old password</Label>
@@ -306,14 +314,19 @@ const ProfilePage: FC = () => {
               {success && <SuccessMessage message="Password changed!" />}
             </>
           )}
-          <Title>Delete account </Title>
-          This action cannot be reversed
+          <br />
+          <Title style={{ color: theme.error }}>Delete account </Title>
+          Once you delete your account, you cannot get it back.
           <br />
           <br />
           <SubmitButton
             theme={theme}
-            style={{ minHeight: '50px', width: '50%' }}
-            title="DELETE ACCOUNT"
+            style={{
+              minHeight: '50px',
+              width: '50%',
+              backgroundColor: theme.error,
+            }}
+            title="Delete your account"
             handleClick={(e) => setDeleteAccount(true)}
           />
           {deleteAccount && (
@@ -322,7 +335,12 @@ const ProfilePage: FC = () => {
                 <PopupTitle>Are you sure?</PopupTitle>
                 <PopupBodyContainer>
                   <PopupBodyContainerRow>
-                    <PopupButton onClick={handleDeleteAccount}>Yes</PopupButton>
+                    <PopupButton
+                      style={{ backgroundColor: theme.error }}
+                      onClick={handleDeleteAccount}
+                    >
+                      Yes
+                    </PopupButton>
                     <PopupButton onClick={() => setDeleteAccount(false)}>
                       No
                     </PopupButton>
