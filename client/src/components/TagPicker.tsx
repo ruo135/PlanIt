@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction } from 'react'
-import styled, { ThemeProvider } from 'styled-components'
+import styled from 'styled-components'
 import { Color } from '../models/Color'
-import defaultTheme, { Theme } from '../styles/theme'
 import { ReactComponent as arrowDown } from '../assets/arrowDownIcon.svg'
 import { ReactComponent as closeIcon } from '../assets/closeIcon.svg'
 
@@ -66,6 +65,7 @@ const DropdownItem = styled.li`
 `
 
 const ColorDot = styled.span`
+  min-width: 12px;
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -91,6 +91,7 @@ const ArrowDownContainer = styled(arrowDown).attrs<{ isDropdownOpen: boolean }>(
 const CloseIconContainer = styled(closeIcon)<{ $selectedId: string }>`
   padding: 5px;
   border-radius: 50%;
+  min-width: 15px;
   width: 15px;
   height: 15px;
   fill: ${(props) => props.theme.calendarText};
@@ -107,7 +108,6 @@ const Text = styled.p`
 
 interface ColorPickerProps {
   selectedId: string
-  theme?: Theme
   tags: Color[]
   toggleDropdown: Dispatch<SetStateAction<boolean>>
   isDropdownOpen: boolean

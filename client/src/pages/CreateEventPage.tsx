@@ -96,7 +96,8 @@ const DescriptionIconContainer = styled(DescriptionIcon)`
 `
 
 const TagIconContainer = styled(tagIcon)`
-  width: 40px;
+  min-width: 35px;
+  width: 35px;
   height: 40px;
   stroke: ${(props) => props.theme.calendarText};
   padding-right: 30px;
