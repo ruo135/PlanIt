@@ -85,8 +85,22 @@ const matchaTheme = {
   background: '#e9e2d5',
 }
 
+const beachTheme = {
+  header: '#238496',
+  headerIcons: '#FFFFFF',
+
+  primary: '#77c3c3',
+  secondary: '#238496',
+  indent: '#106070',
+  error: '#b64949',
+
+  text: '#FFFFFF',
+  calendarText: '#106070',
+  background: '#d6d3c5',
+}
+
 //Dark themes
-const darkTheme = {
+const darkThemeDefunct = {
   header: '#54527a', //dark purple
   headerIcons: '#FFFFFF',
 
@@ -100,7 +114,7 @@ const darkTheme = {
   background: '#353535',
 }
 
-const allDarkTheme = {
+const darkTheme = {
   header: '#202020',
   headerIcons: '#FFFFFF',
 
@@ -126,6 +140,34 @@ const safariDarkTheme = {
   text: '#FFFFFF', //white
   calendarText: '#FFFFFF', //white
   background: '#353535',
+}
+
+const deepSeaTheme = {
+  header: '#065a68',
+  headerIcons: '#FFFFFF',
+
+  primary: '#042637',
+  secondary: '#065a68',
+  indent: '#064954',
+  error: '#b64949',
+
+  text: '#FFFFFF',
+  calendarText: '#FFFFFF',
+  background: '#040e15',
+}
+
+const midnightTheme = {
+  header: '#182439',
+  headerIcons: '#FFFFFF',
+
+  primary: '#4b5271',
+  secondary: '#182439',
+  indent: '#3d4059',
+  error: '#b64949',
+
+  text: '#FFFFFF',
+  calendarText: '#182439',
+  background: '#8e9fb3',
 }
 
 export { darkTheme }
