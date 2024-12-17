@@ -149,6 +149,7 @@ const AddEventPage: FC = () => {
   )
   const [tagId, setTagId] = useState(state?.prevEvent?.tagId ?? '')
   const [tagList, setTagList] = useState<Color[]>([])
+  const [noTags, setNoTags] = useState(false)
   const [isDropdownOpen, setDropdownOpen] = useState(false)
   const [titleError, setTitleError] = useState(false)
   const [titleErrorMessage, setTitleErrorMessage] = useState('')
@@ -187,6 +188,7 @@ const AddEventPage: FC = () => {
             }
           )
           setTagList(colorList)
+          if (tagList.length == 0) setNoTags(true)
         })
         .then(() => {
           setIsLoading(false)
@@ -357,7 +359,7 @@ const AddEventPage: FC = () => {
             </VerticalContainer>
           </HorizontalContainer>
           {/* Description*/}
-          <HorizontalContainer>
+          <HorizontalContainer style={{ paddingBottom: '30px' }}>
             <DescriptionIconContainer />
             <InputField
               style={{ minWidth: '60%', fontSize: '15px' }}
@@ -368,18 +370,19 @@ const AddEventPage: FC = () => {
             />
           </HorizontalContainer>
           {/* Tag picker*/}
-          <HorizontalContainer
-            style={{ paddingTop: '30px', paddingBottom: '30px' }}
-          >
-            <TagIconContainer />
-            <TagPicker
-              selectedId={tagId}
-              tags={tagList}
-              isDropdownOpen={isDropdownOpen}
-              toggleDropdown={setDropdownOpen}
-              handleIdSelect={setTagId}
-            />
-          </HorizontalContainer>
+          {!noTags && (
+            <HorizontalContainer style={{ paddingBottom: '30px' }}>
+              <TagIconContainer />
+              <TagPicker
+                selectedId={tagId}
+                tags={tagList}
+                isDropdownOpen={isDropdownOpen}
+                toggleDropdown={setDropdownOpen}
+                handleIdSelect={setTagId}
+              />
+            </HorizontalContainer>
+          )}
+
           <HorizontalContainer
             style={{
               paddingLeft: '60px',
