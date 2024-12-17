@@ -23,7 +23,7 @@ const Label = styled.label`
 `
 
 const SubmitButton = styled.button`
-  padding: 8px min(16px, 1vw);
+  padding: 8px min(16px, 0.5vw);
 
   background-color: ${(props) => props.theme.secondary};
   border: none;
