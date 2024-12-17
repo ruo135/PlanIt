@@ -203,6 +203,7 @@ const CalendarCellDate = styled.span`
 const CalendarPage: FC = () => {
   const [theme, setTheme] = useState<Theme>(defaultTheme)
   const [isLoading, setIsLoading] = useState(true)
+  const [initialLoading, setInitialLoading] = useState(true)
 
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -244,7 +245,7 @@ const CalendarPage: FC = () => {
         )
 
         // Get Todos and Sort by whether it is checked, then by alphabetical
-        getAllTodos().then((d) =>
+        getAllTodos().then((d) => {
           setTodos(
             d.sort((a, b) => {
               const checkedCompare = Number(a.isChecked) - Number(b.isChecked)
@@ -255,28 +256,55 @@ const CalendarPage: FC = () => {
               return a.todo.localeCompare(b.todo)
             })
           )
-        )
 
-        // Set Events
-        getAllEvents().then((d) => {
-          setEvents(
-            d
-              .map((e) => ({
-                ...e,
-                startDate: fixTimeOffset(new Date(e.startDate), false),
-                endDate: fixTimeOffset(new Date(e.endDate), false),
-              }))
-              .sort((a, b) => {
-                return a.startDate
-                  .toISOString()
-                  .localeCompare(b.startDate.toISOString())
-              })
-          )
+          // Set Events
+          getAllEvents().then((d) => {
+            setEvents(
+              d
+                .map((e) => ({
+                  ...e,
+                  startDate: fixTimeOffset(new Date(e.startDate), false),
+                  endDate: fixTimeOffset(new Date(e.endDate), false),
+                }))
+                .sort((a, b) => {
+                  return a.startDate
+                    .toISOString()
+                    .localeCompare(b.startDate.toISOString())
+                })
+            )
 
-          setIsLoading(false)
+            setInitialLoading(false)
+            setIsLoading(false)
+          })
         })
       })
   }, [navigate])
+
+  useEffect(() => {
+    // If it isnt the first time loading, update events when tags update
+    if (!initialLoading) {
+      setIsLoading(true)
+
+      // Set Events
+      getAllEvents().then((d) => {
+        setEvents(
+          d
+            .map((e) => ({
+              ...e,
+              startDate: fixTimeOffset(new Date(e.startDate), false),
+              endDate: fixTimeOffset(new Date(e.endDate), false),
+            }))
+            .sort((a, b) => {
+              return a.startDate
+                .toISOString()
+                .localeCompare(b.startDate.toISOString())
+            })
+        )
+
+        setIsLoading(false)
+      })
+    }
+  }, [tags])
 
   const goToToday = () => {
     setYear(new Date().getFullYear())
