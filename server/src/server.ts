@@ -13,6 +13,7 @@ const app = express()
 app.use(express.json())
 
 // Setup cors based on node type
+console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === 'production')
   app.use(
     cors({
@@ -21,7 +22,14 @@ if (process.env.NODE_ENV === 'production')
       credentials: true, // Include cookies if necessary
     })
   )
-else app.use(cors())
+else
+  app.use(
+    cors({
+      origin: 'http://localhost:3000',
+      methods: 'GET,POST,PATCH,DELETE',
+      credentials: true, // Include cookies if necessary
+    })
+  )
 
 // Connect to mongoose
 const clientP = mongoose
