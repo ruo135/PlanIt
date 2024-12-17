@@ -14,7 +14,7 @@ const FormContainer = styled.div`
   background-color: ${(props) => props.theme.background};
   border: 2px solid #e0e0e0;
   border-radius: 10px;
-  width: 100%;
+  width: -webkit-fill-available;
 `
 
 const Label = styled.label`
