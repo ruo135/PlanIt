@@ -149,7 +149,7 @@ const AddEventPage: FC = () => {
   )
   const [tagId, setTagId] = useState(state?.prevEvent?.tagId ?? '')
   const [tagList, setTagList] = useState<Color[]>([])
-  const [noTags, setNoTags] = useState(false)
+  const [tagsFound, setTagsFound] = useState(true)
   const [isDropdownOpen, setDropdownOpen] = useState(false)
   const [titleError, setTitleError] = useState(false)
   const [titleErrorMessage, setTitleErrorMessage] = useState('')
@@ -182,13 +182,15 @@ const AddEventPage: FC = () => {
       axios
         .get('/api/tag/getAlltags')
         .then((res) => {
-          let colorList: Color[] = res.data.map(
-            (tag: { _id: string; name: string; color: string }) => {
-              return { tagId: tag._id, name: tag.name, color: tag.color }
-            }
-          )
-          setTagList(colorList)
-          if (tagList.length == 0) setNoTags(true)
+          if (res.data.length == 0) setTagsFound(false)
+          else {
+            let colorList: Color[] = res.data.map(
+              (tag: { _id: string; name: string; color: string }) => {
+                return { tagId: tag._id, name: tag.name, color: tag.color }
+              }
+            )
+            setTagList(colorList)
+          }
         })
         .then(() => {
           setIsLoading(false)
@@ -370,7 +372,7 @@ const AddEventPage: FC = () => {
             />
           </HorizontalContainer>
           {/* Tag picker*/}
-          {!noTags && (
+          {tagsFound && (
             <HorizontalContainer style={{ paddingBottom: '30px' }}>
               <TagIconContainer />
               <TagPicker
