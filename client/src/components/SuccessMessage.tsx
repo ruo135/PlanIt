@@ -25,7 +25,7 @@ const SuccessMessage = (props: SuccessMessageProps) => {
   return (
     <ThemeProvider theme={props.theme ?? defaultTheme}>
       <SuccessContainer className="SuccessContainer">
-        <IconContainers src={SuccessIcon} />
+        <IconContainers style={{ paddingRight: '10px' }} src={SuccessIcon} />
         {props.message}
       </SuccessContainer>
     </ThemeProvider>

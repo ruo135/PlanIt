@@ -16,13 +16,14 @@ import LoadingComponent from '../components/LoadingComponent'
 const PageContainer = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  padding-top: 60px;
   width: 100%;
   min-height: calc(100vh - max(8vh, 60px));
   background-color: ${(props) => props.theme.background};
 
   @media (max-width: 900px) {
-    align-items: flex-start;
+    padding-top: 0;
   }
 `
 
