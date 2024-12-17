@@ -73,6 +73,15 @@ app.use('/api/todo', requireAuth, TodoRoute)
 app.use('/api/theme', requireAuth, ThemeRoute)
 
 // More Middleware
+
+//Sets the landing page to the api docs
+app.get('/', (req, res) => {
+  res.send(`
+    <h1>Welcome to the PlanIt API!</h1>
+    <p>For more information, check out the <a href="https://docs.google.com/document/d/1GIYxOdDdsm5uYbpB8FaRAuf55Qzk0M4fPMpoYcl41Sg/edit?usp=sharing" target="_blank">documentation</a>.</p>
+  `)
+})
+
 // Handles wrong endpoint
 app.use((req, res, next) => {
   next(createHttpError(404, 'Endpoint not found ( ╹ -╹)?'))
