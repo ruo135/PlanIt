@@ -8,7 +8,7 @@ export default function App() {
 
   // Set proxy based on node env
   process.env.NODE_ENV === 'production'
-    ? (axios.defaults.baseURL = 'planit-bc9a.onrender.com')
+    ? (axios.defaults.baseURL = 'https://planit-bc9a.onrender.com')
     : (axios.defaults.baseURL = 'http://localhost:4000')
 
   return <AppRoutes />
