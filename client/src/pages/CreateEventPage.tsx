@@ -26,7 +26,7 @@ const PageContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: calc(100vh - max(8vh, 60px));
+  min-height: calc(100vh - max(8vh, 60px));
   display: flex;
   background-color: ${(props) => props.theme.primary};
 `
