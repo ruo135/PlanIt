@@ -1,5 +1,4 @@
 {
-  "proxy": "https://planit-bc9a.onrender.com",
   "name": "client",
   "version": "0.1.0",
   "private": true,

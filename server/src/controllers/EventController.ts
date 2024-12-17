@@ -96,7 +96,6 @@ export const updateEvent: RequestHandler<UpdateEventParams, unknown, UpdateEvent
     const month = (startDate_dateObject.getMonth() + 1).toString().padStart(2, "0");
     const year = startDate_dateObject.getFullYear();
     const monthAndYearDate = `${month}/${year}`;
-    console.log(monthAndYearDate)
 
     const updatedTodo = await EventModel.findByIdAndUpdate(
       eventId,

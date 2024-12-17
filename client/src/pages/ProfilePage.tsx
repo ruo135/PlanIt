@@ -220,7 +220,6 @@ const ProfilePage: FC = () => {
           setSuccess(true)
         })
         .catch((e) => {
-          console.log(e.message)
           setOldPasswordError(true)
           setOldPasswordErrorMessage('Invalid old password')
         })

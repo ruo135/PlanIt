@@ -11,7 +11,17 @@ import MongoStore from 'connect-mongo'
 // Create express app
 const app = express()
 app.use(express.json())
-app.use(cors())
+
+// Setup cors based on node type
+if (process.env.NODE_ENV === 'production')
+  app.use(
+    cors({
+      origin: 'https://plan-it-sandy.vercel.app',
+      methods: 'GET,POST,PATCH,DELETE',
+      credentials: true, // Include cookies if necessary
+    })
+  )
+else app.use(cors())
 
 // Connect to mongoose
 const clientP = mongoose
@@ -40,22 +50,46 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next()
 })
 
-// Handles login session
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET as string,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      maxAge: 60 * 60 * 1000,
-    },
-    rolling: true,
-    store: MongoStore.create({
-      clientPromise: clientP,
-      dbName: 'PlanItDB',
-    }),
-  })
-)
+// Handles login session based on node type
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+  app.use(
+    session({
+      name: 'connect.sid',
+      secret: process.env.SESSION_SECRET as string,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        secure: true,
+        httpOnly: false,
+        sameSite: 'none',
+        domain: 'planit-bc9a.onrender.com',
+        maxAge: 60 * 60 * 1000,
+      },
+      rolling: true,
+      store: MongoStore.create({
+        clientPromise: clientP,
+        dbName: 'PlanItDB',
+      }),
+    })
+  )
+} else {
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET as string,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        maxAge: 60 * 60 * 1000,
+      },
+      rolling: true,
+      store: MongoStore.create({
+        clientPromise: clientP,
+        dbName: 'PlanItDB',
+      }),
+    })
+  )
+}
 
 // Import routes from routes folder
 import { requireAuth } from './middleware/auth'
