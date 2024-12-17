@@ -7,9 +7,9 @@ export default function App() {
   axios.defaults.withCredentials = true
 
   // Set proxy based on node env
-  if (process.env.NODE_ENV === 'production')
-    axios.defaults.baseURL = 'https://mcgill-planit.onrender.com'
-  else axios.defaults.baseURL = 'http://localhost:4000'
+  process.env.NODE_ENV === 'production'
+    ? (axios.defaults.baseURL = 'planit-bc9a.onrender.com')
+    : (axios.defaults.baseURL = 'http://localhost:4000')
 
   return <AppRoutes />
 }
