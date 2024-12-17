@@ -111,6 +111,7 @@ const InputContainer = styled.div`
   display: flex;
   padding: 10px;
   background-color: ${(props) => props.theme.primary};
+  bottom: env(safe-area-inset-bottom);
   justify-content: space-around;
 `
 
