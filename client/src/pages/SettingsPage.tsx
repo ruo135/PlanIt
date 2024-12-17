@@ -7,29 +7,51 @@ import styled, { ThemeProvider } from 'styled-components'
 import axios from 'axios'
 import LoadingComponent from '../components/LoadingComponent'
 import getTheme from '../api/themes'
+import calDefault from '../assets/Calendar_Default.png'
+import calDark from '../assets/Calendar_Dark.png'
 
 const PageContainer = styled.div`
-  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
   height: calc(100vh - max(8vh, 60px));
-  float: left;
   background-color: ${(props) => props.theme.background};
   background-size: cover;
-  display: block;
-  display: inline-block;
   overflow-y: auto;
 `
 const Grid = styled.div`
-  min-width: 300px;
-  width: 40%;
-  height: 40%;
+  width: auto;
+  min-width: 75vh;
+  height: 100%;
+  min-height: 40vh;
   display: block;
-  display: inline-block;
-  clear: left;
-  left: 30%;
   position: relative;
   margin-top: 5%;
-  background-color: ${(props) => props.theme.primary};
+  background-size: cover;
+  background-color: ${(props) => props.theme.background};
+
+  @media (max-width: 700px) {
+    width: auto;
+    min-width: 80%;
+    height: 30%;
+    min-height: 20%;
+`
+
+const GridDefault = styled.div`
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url(${calDefault});
+`
+
+const GridDark = styled.div`
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url(${calDark});
 `
 
 const SettingsPage: FC = () => {
@@ -77,14 +99,15 @@ const SettingsPage: FC = () => {
 
       <NavBar type={'back'} theme={theme} hideSettings={true} />
       <PageContainer>
-        <button onClick={toggleTheme}>Toggle</button>
         <br></br>
         <Grid>
           <button onClick={() => changeTheme('light')}>Light</button>
+          <GridDefault></GridDefault>
         </Grid>
         <br></br>
         <Grid>
           <button onClick={() => changeTheme('dark')}>Dark</button>
+          <GridDark></GridDark>
         </Grid>
         <br></br>
         <Grid>
