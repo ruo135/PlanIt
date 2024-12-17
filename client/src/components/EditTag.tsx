@@ -17,6 +17,7 @@ const FormContainer = styled.div`
   border: 2px solid #e0e0e0;
   border-radius: 10px;
   width: -webkit-fill-available;
+  // height: inherit;
 `
 
 const Label = styled.label`
@@ -25,7 +26,7 @@ const Label = styled.label`
 `
 
 const SubmitButton = styled.button`
-  padding: 8px 16px;
+  padding: 8px min(16px, 1vw);
 
   background-color: ${(props) => props.theme.secondary};
   border: none;
