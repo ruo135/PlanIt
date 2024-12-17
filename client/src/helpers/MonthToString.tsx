@@ -1,3 +1,5 @@
+// Lucas Chew 260971542
+
 export default function getMonthName(monthIndex: number): string {
   const months = [
     'January',

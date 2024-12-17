@@ -1,3 +1,5 @@
+// Lucas Chew 260971542
+
 import { Color } from '../models/Color'
 
 export const colors: Color[] = [

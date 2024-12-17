@@ -1,3 +1,5 @@
+// Ruo Yang Jiang
+
 import styled, { ThemeProvider } from 'styled-components'
 import defaultTheme, { Theme } from '../styles/theme'
 import ErrorIcon from '../assets/errorIcon.svg'

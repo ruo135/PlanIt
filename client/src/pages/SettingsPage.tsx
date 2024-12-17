@@ -1,3 +1,5 @@
+// Zi Xin Chen
+
 import { FC, useEffect, useState } from 'react'
 import NavBar from '../components/NavBar'
 import defaultTheme, { darkTheme, Theme } from '../styles/theme'

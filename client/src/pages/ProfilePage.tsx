@@ -1,3 +1,5 @@
+// Ruo Yang Jiang
+
 import { FC, useEffect, useState } from 'react'
 import NavBar from '../components/NavBar'
 import defaultTheme, { Theme } from '../styles/theme'
@@ -6,7 +8,6 @@ import InputField from '../components/InputField'
 import SubmitButton from '../components/SubmitButton'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import checkValidity from '../helpers/checkValidity'
 import getTheme from '../api/themes'
 import SuccessMessage from '../components/SuccessMessage'
 import LoadingComponent from '../components/LoadingComponent'

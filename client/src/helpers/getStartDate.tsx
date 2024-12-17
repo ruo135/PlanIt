@@ -1,3 +1,5 @@
+// Ruo Yang Jiang
+
 import fixTimeOffset from './fixTimeOffset'
 
 export default function getStartDate() {

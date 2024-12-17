@@ -1,3 +1,5 @@
+// Lucas Chew 260971542
+
 export type Event = {
   _id?: string
   userId: string

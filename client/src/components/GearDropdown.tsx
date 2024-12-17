@@ -1,3 +1,5 @@
+// Lucas Chew 260971542
+
 import styled, { ThemeProvider } from 'styled-components'
 import { ReactComponent as SettingsIcon } from '../assets/settings.svg'
 import { useEffect, useRef, useState } from 'react'

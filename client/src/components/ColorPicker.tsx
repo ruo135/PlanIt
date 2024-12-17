@@ -1,5 +1,7 @@
+// Ruo Yang Jiang
+
 import { Dispatch, SetStateAction } from 'react'
-import styled, { ThemeProvider } from 'styled-components'
+import styled from 'styled-components'
 import { Color } from '../models/Color'
 import { ReactComponent as arrowDown } from '../assets/arrowDownIcon.svg'
 import defaultTheme, { Theme } from '../styles/theme'

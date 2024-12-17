@@ -1,14 +1,16 @@
-import createHttpError from "http-errors";
-import { RequestHandler } from "express";
-import TagModel from "../models/TagModel";
-import { assertIsDefined } from "../util/assertIsDefined";
-import mongoose from "mongoose";
-import EventModel from "../models/EventModel";
+// Ruo Yang Jiang
+
+import createHttpError from 'http-errors'
+import { RequestHandler } from 'express'
+import TagModel from '../models/TagModel'
+import { assertIsDefined } from '../util/assertIsDefined'
+import mongoose from 'mongoose'
+import EventModel from '../models/EventModel'
 
 interface CreateTagBody {
-  name?: string;
-  color?: string;
-  isVisible?: boolean;
+  name?: string
+  color?: string
+  isVisible?: boolean
 }
 // prettier-ignore
 export const createTag: RequestHandler<unknown,unknown,CreateTagBody,unknown> = async (req, res, next) => {
@@ -41,25 +43,25 @@ export const createTag: RequestHandler<unknown,unknown,CreateTagBody,unknown> = 
 };
 
 export const getAllTags: RequestHandler = async (req, res, next) => {
-  const authenticatedUserId = req.session.userId;
+  const authenticatedUserId = req.session.userId
 
   try {
-    assertIsDefined(authenticatedUserId);
+    assertIsDefined(authenticatedUserId)
 
-    const tags = await TagModel.find({ userId: authenticatedUserId });
-    res.status(200).json(tags);
+    const tags = await TagModel.find({ userId: authenticatedUserId })
+    res.status(200).json(tags)
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
+}
 
 interface UpdateTagParams {
-  tagId: string;
+  tagId: string
 }
 
 interface UpdateTagBody {
-  name?: string;
-  color?: string;
+  name?: string
+  color?: string
 }
 
 // prettier-ignore
@@ -102,23 +104,23 @@ export const updateTag: RequestHandler<UpdateTagParams, unknown, UpdateTagBody, 
 };
 
 export const toggleVisibility: RequestHandler = async (req, res, next) => {
-  const { tagId } = req.params;
-  const authenticatedUserId = req.session.userId;
+  const { tagId } = req.params
+  const authenticatedUserId = req.session.userId
 
   try {
-    assertIsDefined(authenticatedUserId);
+    assertIsDefined(authenticatedUserId)
     if (!mongoose.isValidObjectId(tagId)) {
-      throw createHttpError(400, "Invalid tag id");
+      throw createHttpError(400, 'Invalid tag id')
     }
 
-    const tag = await TagModel.findById(tagId).exec();
+    const tag = await TagModel.findById(tagId).exec()
 
     if (!tag) {
-      throw createHttpError(404, "Tag not found");
+      throw createHttpError(404, 'Tag not found')
     }
 
     if (!tag.userId.equals(authenticatedUserId)) {
-      throw createHttpError(401, "You cannot access this tag");
+      throw createHttpError(401, 'You cannot access this tag')
     }
 
     const updatedTag = await TagModel.findByIdAndUpdate(
@@ -127,43 +129,43 @@ export const toggleVisibility: RequestHandler = async (req, res, next) => {
         isVisible: !tag.isVisible,
       },
       { new: true }
-    );
+    )
 
-    res.status(200).json(updatedTag);
+    res.status(200).json(updatedTag)
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
+}
 
 export const deleteTag: RequestHandler = async (req, res, next) => {
-  const { tagId } = req.params;
-  const authenticatedUserId = req.session.userId;
+  const { tagId } = req.params
+  const authenticatedUserId = req.session.userId
 
   try {
-    assertIsDefined(authenticatedUserId);
+    assertIsDefined(authenticatedUserId)
 
     if (!mongoose.isValidObjectId(tagId)) {
-      throw createHttpError(400, "Invalid tag id");
+      throw createHttpError(400, 'Invalid tag id')
     }
 
-    const tag = await TagModel.findById(tagId).exec();
+    const tag = await TagModel.findById(tagId).exec()
 
     if (!tag) {
-      throw createHttpError(404, "Tag not found");
+      throw createHttpError(404, 'Tag not found')
     }
 
     if (!tag.userId.equals(authenticatedUserId)) {
-      throw createHttpError(401, "You cannot access this tag");
+      throw createHttpError(401, 'You cannot access this tag')
     }
 
-    await TagModel.findByIdAndDelete(tagId);
+    await TagModel.findByIdAndDelete(tagId)
 
     await EventModel.updateMany(
       { tagId: tagId }, // Find events where the `tagId` matches the deleted tag
       { $unset: { tagId: 1 } } // Remove the `tagId` field
-    );
-    res.sendStatus(204);
+    )
+    res.sendStatus(204)
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
+}

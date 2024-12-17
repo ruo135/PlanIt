@@ -1,3 +1,5 @@
+// Ruo Yang Jiang
+
 /**
  * The mongoDB model for the Events collection.
  * This defines the structure and types expected by each field.

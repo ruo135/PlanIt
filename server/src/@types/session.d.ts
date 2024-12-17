@@ -1,7 +1,9 @@
-import mongoose from "mongoose";
+// Ruo Yang Jiang
 
-declare module "express-session" {
+import mongoose from 'mongoose'
+
+declare module 'express-session' {
   interface SessionData {
-    userId: mongoose.Types.ObjectId;
+    userId: mongoose.Types.ObjectId
   }
 }

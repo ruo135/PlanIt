@@ -1,3 +1,5 @@
+// Ruo Yang Jiang
+
 import UserModel from '../models/UserModel'
 import bcrypt from 'bcrypt'
 import { RequestHandler } from 'express'
