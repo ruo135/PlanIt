@@ -256,27 +256,32 @@ const CalendarPage: FC = () => {
             })
           )
         )
-
-        // Set Events
-        getAllEvents().then((d) => {
-          setEvents(
-            d
-              .map((e) => ({
-                ...e,
-                startDate: fixTimeOffset(new Date(e.startDate), false),
-                endDate: fixTimeOffset(new Date(e.endDate), false),
-              }))
-              .sort((a, b) => {
-                return a.startDate
-                  .toISOString()
-                  .localeCompare(b.startDate.toISOString())
-              })
-          )
-
-          setIsLoading(false)
-        })
       })
   }, [navigate])
+
+  // Get Events on page start and when Tags update
+  useEffect(() => {
+    setIsLoading(true)
+
+    // Set Events
+    getAllEvents().then((d) => {
+      setEvents(
+        d
+          .map((e) => ({
+            ...e,
+            startDate: fixTimeOffset(new Date(e.startDate), false),
+            endDate: fixTimeOffset(new Date(e.endDate), false),
+          }))
+          .sort((a, b) => {
+            return a.startDate
+              .toISOString()
+              .localeCompare(b.startDate.toISOString())
+          })
+      )
+
+      setIsLoading(false)
+    })
+  }, [tags])
 
   const goToToday = () => {
     setYear(new Date().getFullYear())

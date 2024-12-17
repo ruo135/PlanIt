@@ -201,7 +201,7 @@ const AddEventPage: FC = () => {
   }, [])
 
   useEffect(() => {
-    if (startDate) {
+    if (startDate.localeCompare(endDate) >= 0) {
       setEndDate(getEndDate(startDate))
     }
   }, [startDate])
