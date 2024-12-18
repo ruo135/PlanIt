@@ -70,7 +70,7 @@ const Article = styled.div`
   margin-top: 100px;
   margin-bottom: 0px;
   padding-top: 30px;
-  padding-bottom: 30px;
+  padding-bottom: 50px;
   padding-left: 5%;
   padding-right: 5%;
   background-color: ${defaultTheme.background};
@@ -80,7 +80,7 @@ const Article = styled.div`
 
   @media (max-width: 1200px) {
     min-height: 70%;
-    display: block;
+    display: inline-block;
     margin-top: 75px;
     margin-left: 50px;
     padding-top: 30px;
@@ -91,10 +91,10 @@ const Article = styled.div`
   }
 
   @media (max-width: 760px) {
-    flex-direction: column;
+    display: inline-block;
     align-items: center;
     left: 0%;
-    position: relative;
+    position: sticky;
     padding-top: 50px;
     padding-right: 50px;
     width: 100%;
@@ -162,6 +162,7 @@ const Side = styled.div`
   max-width: 30%;
   min-width: 30%;
   text-align: justify;
+  flex-shrink: 0;
   span {
     line-height: 2;
   }
@@ -187,7 +188,7 @@ const Side = styled.div`
     margin-left: 50px;
     width: 100%;
     max-width: 80%;
-    height: 25%;
+    height: 15%;
     span {
       font-size: 12px;
       line-height: 1.5;
@@ -195,10 +196,12 @@ const Side = styled.div`
   }
 
   @media (max-width: 800px) {
+    display: inline;
     margin-top: 30px;
     margin-left: 10px;
-    width: 100%;
-    max-width: 80%;
+    margin-right: 10px;
+    width: 90%;
+    max-width: 75%;
     height: 50%;
     span {
       font-size: 12px;
