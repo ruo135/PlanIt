@@ -283,8 +283,6 @@ const CalendarPage: FC = () => {
   useEffect(() => {
     // If it isnt the first time loading, update events when tags update
     if (!initialLoading) {
-      setIsLoading(true)
-
       // Set Events
       getAllEvents().then((d) => {
         setEvents(
@@ -300,8 +298,6 @@ const CalendarPage: FC = () => {
                 .localeCompare(b.startDate.toISOString())
             })
         )
-
-        setIsLoading(false)
       })
     }
   }, [tags])
@@ -429,8 +425,6 @@ const CalendarPage: FC = () => {
 
     return res
   }
-
-  console.log(events)
 
   return (
     <ThemeProvider theme={theme}>

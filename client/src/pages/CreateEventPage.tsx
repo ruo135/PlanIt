@@ -29,6 +29,10 @@ const PageContainer = styled.div`
   min-height: calc(100vh - max(8vh, 60px));
   display: flex;
   background-color: ${(props) => props.theme.primary};
+  @media (max-width: 900px) {
+    padding-top: 10px;
+    align-items: start;
+  }
 `
 
 const AddEventForm = styled.div`
@@ -43,20 +47,14 @@ const AddEventForm = styled.div`
   border-radius: 15px;
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
 
-  @media (max-width: 900px) {
-    margin-top: auto;
+  @media (max-width: 800px) {
     align-items: flex-start;
     width: 100%;
-    height: 90%;
+    height: calc(100vh - max(8vh, 60px));
+    min-height: calc(100vh - max(8vh, 60px));
     border-radius: 15px 15px 0 0;
     animation: slideUp 0.2s ease-in-out forwards;
-  }
-
-  @media (max-width: 400px) {
-    align-items: flex-start;
-    width: 100%;
-    height: 90%;
-    border-radius: 15px 15px 0 0;
+    margin: 0;
   }
 
   @keyframes slideUp {
@@ -153,6 +151,8 @@ const AddEventPage: FC = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false)
   const [titleError, setTitleError] = useState(false)
   const [titleErrorMessage, setTitleErrorMessage] = useState('')
+  const [startDateError, setStartDateError] = useState(false)
+  const [startDateErrorMessage, setStartDateErrorMessage] = useState('')
   const [endDateError, setEndDateError] = useState(false)
   const [endDateErrorMessage, setEndDateErrorMessage] = useState('')
 
@@ -201,7 +201,8 @@ const AddEventPage: FC = () => {
   }, [])
 
   useEffect(() => {
-    if (startDate.localeCompare(endDate) >= 0) {
+    if (!startDate) setEndDate('')
+    else if (startDate.localeCompare(endDate) >= 0) {
       setEndDate(getEndDate(startDate))
     }
   }, [startDate])
@@ -240,10 +241,24 @@ const AddEventPage: FC = () => {
     event.preventDefault()
     setTitleError(false)
     setTitleErrorMessage('')
+    setStartDateError(false)
+    setStartDateErrorMessage('')
+    setEndDateError(false)
+    setEndDateErrorMessage('')
 
-    if (!title) {
-      setTitleError(true)
-      setTitleErrorMessage('Event must have a title')
+    if (!title || !startDate || !endDate) {
+      if (!title) {
+        setTitleError(true)
+        setTitleErrorMessage('Event must have a title')
+      }
+      if (!startDate) {
+        setStartDateError(true)
+        setStartDateErrorMessage('Event must have a start date')
+      }
+      if (!endDate) {
+        setEndDateError(true)
+        setEndDateErrorMessage('Event must have an end date')
+      }
     } else if (endDateError) {
     } else {
       const event = {
@@ -270,10 +285,24 @@ const AddEventPage: FC = () => {
   ) => {
     event.preventDefault()
     setTitleError(false)
+    setStartDateError(false)
+    setStartDateErrorMessage('')
+    setEndDateError(false)
+    setEndDateErrorMessage('')
 
-    if (!title) {
-      setTitleError(true)
-      setTitleErrorMessage('Event must have a title')
+    if (!title || !startDate || !endDate) {
+      if (!title) {
+        setTitleError(true)
+        setTitleErrorMessage('Event must have a title')
+      }
+      if (!startDate) {
+        setStartDateError(true)
+        setStartDateErrorMessage('Event must have a start date')
+      }
+      if (!endDate) {
+        setEndDateError(true)
+        setEndDateErrorMessage('Event must have an end date')
+      }
     } else {
       const event = {
         title,
@@ -324,15 +353,19 @@ const AddEventPage: FC = () => {
             {/* Clock Icon*/}
             <ClockIconContainer />
             {/* Start date picker Icon*/}
-            <InputField
-              style={{
-                minWidth: '60%',
-              }}
-              type="datetime-local"
-              theme={theme}
-              value={startDate}
-              onChange={handleDateChange}
-            />
+            <VerticalContainer style={{ display: 'flex' }}>
+              <InputField
+                style={{
+                  width: 'calc((100% + 30px + 35px) * 0.6)',
+                }}
+                type="datetime-local"
+                theme={theme}
+                value={startDate}
+                onChange={handleDateChange}
+                error={startDateError}
+                errorMessage={startDateErrorMessage}
+              />
+            </VerticalContainer>
           </HorizontalContainer>
           {/* Checkbox*/}
           <HorizontalContainer style={{ padding: '10px', paddingLeft: '0' }}>

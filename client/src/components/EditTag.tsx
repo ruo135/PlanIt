@@ -54,6 +54,7 @@ export default function EditTag(props: EditTagProps) {
   )
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [error, setError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const sortTags = (tags: Tag[]) => {
     return tags.sort((a, b) => {
@@ -64,7 +65,14 @@ export default function EditTag(props: EditTagProps) {
   const handleSubmit = (e: any) => {
     e.preventDefault()
 
+    // If tag name exists or tag is empty, give error
     if (tagName.trim() === '') {
+      setErrorMessage('Tag Name Required')
+      setError(true)
+      return
+    }
+    if (props.tags.find((t) => t.name === tagName.trim())) {
+      setErrorMessage('Tag Name Exists')
       setError(true)
       return
     }
@@ -125,7 +133,7 @@ export default function EditTag(props: EditTagProps) {
         onChange={(e) => setTagName(e.target.value)}
         placeholder="Enter tag name"
         error={error}
-        errorMessage={'Tag Name Required'}
+        errorMessage={errorMessage}
         height={'1vh'}
       />
 

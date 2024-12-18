@@ -13,7 +13,6 @@ const app = express()
 app.use(express.json())
 
 // Setup cors based on node type
-console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV === 'production')
   app.use(
     cors({
