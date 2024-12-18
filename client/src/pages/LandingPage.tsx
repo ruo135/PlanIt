@@ -10,12 +10,12 @@ import cal from '../assets/Calendar_Default.png'
 import axios from 'axios'
 
 const PageContainer = styled.div`
-  align-items: stretch;
   width: 100%;
   min-width: 375px;
-  height: calc(100vh - max(8vh, 60px));
+  height: calc(100vh - max(8vh, 60px)); // Adjust for navbar and top spacing
   display: flex;
-  float: left;
+  flex-direction: column;
+  align-items: center;
   background-image: linear-gradient(
       to top,
       ${defaultTheme.primary} -15%,
@@ -23,74 +23,190 @@ const PageContainer = styled.div`
     ),
     url(${bg});
   background-size: cover;
-  display: block;
-  display: inline-block;
   overflow-y: auto;
+  html,
+  body {
+    min-width: 375px;
+  }
 `
+
+// Grid container for slogan and sign up button
 const Grid = styled.div`
   min-width: 300px;
   width: 40%;
   height: 40%;
   display: block;
   display: inline-block;
-  left: 15%;
+  left: -15%;
   position: relative;
   padding-top: 5%;
   padding-left: 5%;
+
+  @media (max-width: 1200px) {
+    margin-bottom: 50px;
+    left: -11%;
+  }
+
+  @media (max-width: 760px) {
+    margin-bottom: 50px;
+    width: 70%;
+    left: -5%;
+  }
+
+  @media (max-width: 425px) {
+    margin-bottom: 125px;
+    left: 0%;
+  }
 `
+
+// Main article styling that holds the calendar and description
 const Article = styled.div`
-  left: 15%;
   width: 60%;
   height: 80%;
+  min-height: 60vh;
   display: flex;
-  position: relative;
-  margin-top: 50px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 100px;
+  margin-bottom: 0px;
   padding-top: 30px;
+  padding-bottom: 30px;
   padding-left: 5%;
   padding-right: 5%;
   background-color: ${defaultTheme.background};
+  h1 {
+    display: block;
+  }
 
-  @media (max-width: 700px) {
+  @media (max-width: 1200px) {
+    min-height: 70%;
+    display: block;
+    margin-top: 75px;
+    margin-left: 50px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    h1 {
+      display: block;
+    }
+  }
+
+  @media (max-width: 760px) {
     flex-direction: column;
     align-items: center;
     left: 0%;
     position: relative;
-    align-items: flex-start;
+    padding-top: 50px;
+    padding-right: 50px;
     width: 100%;
     height: 90%;
+    h1 {
+      display: block;
+    }
+  }
+
+  @media (max-width: 400px) {
+    flex-direction: column;
+    align-items: center;
+    left: 0%;
+    position: relative;
+    padding-top: 30px;
+    width: 100%;
+    height: 90%;
+    h1 {
+      display: block;
+    }
   }
 `
+
+// Footer for the article, for the reviews
 const ArticleFooter = styled.div`
-  margin-top: 50px;
-  min-width: 100%;
+  margin-top: 25px;
+  min-width: 80%;
   display: block;
+  @media (max-width: 1200px) {
+    display: none;
+  }
 `
 
+// Mock calendar image
 const Calendar_mock = styled.div`
-  margin-top: 75px;
+  margin-top: 25px;
   min-width: 65%;
   height: 60%;
-  display: inline;
   background-size: contain;
   background-repeat: no-repeat;
   background-image: url(${cal});
-`
 
-const Side = styled.div`
-  margin-top: 75px;
-  margin-left: 75px;
-  height: 60%;
-  max-width: 28%;
-  min-width: 28%;
-  text-align: justify;
+  @media (max-width: 1670px) {
+    min-width: 60%;
+  }
+
+  @media (max-width: 1200px) {
+    margin-top: 30px;
+  }
 
   @media (max-width: 700px) {
-    align-items: flex-start;
-    width: 100%;
-    height: 90%;
-    border-radius: 15px 15px 0 0;
+    flex-direction: column;
+    margin-top: 30px;
+    left: -0%;
+    min-width: 100%;
+    min-height: 15%;
   }
 `
+
+// Side description of the article
+const Side = styled.div`
+  margin-top: 20px;
+  margin-left: 50px;
+  height: 60%;
+  max-width: 30%;
+  min-width: 30%;
+  text-align: justify;
+  span {
+    line-height: 2;
+  }
+
+  @media (max-width: 1750px) {
+    margin-top: 20px;
+    span {
+      font-size: 14px;
+      line-height: 2;
+    }
+  }
+
+  @media (max-width: 1600px) {
+    margin-top: 20px;
+    span {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+  }
+
+  @media (max-width: 1200px) {
+    margin-top: 20px;
+    margin-left: 50px;
+    width: 100%;
+    max-width: 80%;
+    height: 25%;
+    span {
+      font-size: 12px;
+      line-height: 1.5;
+    }
+  }
+
+  @media (max-width: 800px) {
+    margin-top: 30px;
+    margin-left: 10px;
+    width: 100%;
+    max-width: 80%;
+    height: 50%;
+    span {
+      font-size: 12px;
+    }
+  }
+`
+
+//Sign up button in the grid
 const SignUpButton = styled.button`
   display: flex;
   height: 3vw;
@@ -155,13 +271,24 @@ const LandingPage: FC = () => {
           </SignUpButton>
         </Grid>
         <Article>
+          <h1 style={{ font: 'bold 25px Verdana' }}>
+            PlanIt: The all-in-one calendar solution
+          </h1>
           <Calendar_mock></Calendar_mock>
           <Side>
-            PlanIt is not just a calendar app; it's your personal time
-            assistant, designed to simplify the way you organize and manage your
-            day-to-day activities.
+            <span>
+              Introducing <b>PlanIt</b> – the smart, intuitive calendar app that
+              does more than just schedule your events; it helps you plan your
+              life. In today’s fast-paced world, staying organized is crucial,
+              but managing multiple calendars, to-do lists, and reminders can be
+              overwhelming. PlanIt consolidates everything you need into one
+              seamless experience, giving you more time to focus on what truly
+              matters.
+            </span>
           </Side>
-          <br></br>
+          <ArticleFooter>
+            <h3>Reviews</h3>
+          </ArticleFooter>
         </Article>
       </PageContainer>
     </ThemeProvider>

@@ -135,6 +135,7 @@ const darkTheme = {
   text: '#FFFFFF', //white
   calendarText: '#FFFFFF',
   background: '#101010',
+  icon: circleIcon,
 }
 
 const safariDarkTheme = {
