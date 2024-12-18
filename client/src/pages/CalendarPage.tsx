@@ -377,13 +377,13 @@ const CalendarPage: FC = () => {
           {events
             .filter((e) => {
               const startBeforeOrToday =
-                (e.startDate.getFullYear() == year &&
+                (e.startDate.getFullYear() === year &&
                   e.startDate.getMonth() <= month &&
                   e.startDate.getDate() <= day) ||
                 e.startDate.getFullYear() < year
 
               const endAfterOrToday =
-                (e.endDate.getFullYear() == year &&
+                (e.endDate.getFullYear() === year &&
                   e.endDate.getMonth() >= month &&
                   e.endDate.getDate() >= day) ||
                 e.endDate.getFullYear() > year

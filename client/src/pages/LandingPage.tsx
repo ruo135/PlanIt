@@ -117,7 +117,7 @@ const Article = styled.div`
 `
 
 // Mock calendar image
-const Calendar_mock = styled.div`
+const Calendar_Mock = styled.div`
   margin-top: 25px;
   min-width: 65%;
   height: 60%;
@@ -302,7 +302,7 @@ const LandingPage: FC = () => {
           <h1 style={{ font: 'bold 25px Verdana' }}>
             PlanIt: The all-in-one calendar solution
           </h1>
-          <Calendar_mock></Calendar_mock>
+          <Calendar_Mock />
           <Side>
             <span>
               Introducing <b>PlanIt</b> – the smart, intuitive calendar app that

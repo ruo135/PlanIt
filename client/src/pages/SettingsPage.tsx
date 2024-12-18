@@ -2,7 +2,7 @@
 
 import { FC, useEffect, useState } from 'react'
 import NavBar from '../components/NavBar'
-import defaultTheme, { Theme, darkTheme, winterTheme } from '../styles/theme'
+import defaultTheme, { darkTheme, winterTheme } from '../styles/theme'
 import { useNavigate } from 'react-router-dom'
 import getAuthenticated from '../api/auth'
 import styled, { ThemeProvider } from 'styled-components'

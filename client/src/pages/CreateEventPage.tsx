@@ -182,7 +182,7 @@ const AddEventPage: FC = () => {
       axios
         .get('/api/tag/getAlltags')
         .then((res) => {
-          if (res.data.length == 0) setTagsFound(false)
+          if (res.data.length === 0) setTagsFound(false)
           else {
             let colorList: Color[] = res.data.map(
               (tag: { _id: string; name: string; color: string }) => {
@@ -198,7 +198,7 @@ const AddEventPage: FC = () => {
     }
 
     getAuthenticated()
-  }, [])
+  }, [navigate])
 
   useEffect(() => {
     if (!startDate) setEndDate('')
