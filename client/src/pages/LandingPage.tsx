@@ -36,7 +36,7 @@ const Grid = styled.div`
   height: 40%;
   display: block;
   display: inline-block;
-  left: -15%;
+  left: -12%;
   position: relative;
   padding-top: 5%;
   padding-left: 5%;
@@ -72,7 +72,6 @@ const Article = styled.div`
   padding-bottom: 50px;
   padding-left: 5%;
   padding-right: 5%;
-  background-color: ${defaultTheme.background};
   h1 {
     display: block;
   }
@@ -219,11 +218,12 @@ const ArticleFooter = styled.div`
   display: grid;
   grid-template-columns: auto auto auto;
   column-gap: 15px;
-  padding: 15px;
   padding: 25px 15px 25px 15px;
+  margin-bottom: 25px;
   border-style: solid;
-  border-color: ${defaultTheme.primary};
+  border-color: ${defaultTheme.text};
   span {
+    color: ${defaultTheme.text};
     font-style: italic;
     font-size: 16px;
     font-family: 'Times New Roman';
@@ -286,7 +286,7 @@ const LandingPage: FC = () => {
           >
             PlanIt, View it, Do it.
           </h1>
-          <p style={{ color: '#FFFFFF' }}>
+          <p style={{ color: theme.text }}>
             {' '}
             PlanIt is not just a calendar app; it's your personal time
             assistant, designed to simplify the way you organize and manage your
@@ -298,12 +298,12 @@ const LandingPage: FC = () => {
           </SignUpButton>
         </Grid>
         <Article>
-          <h1 style={{ font: 'bold 25px Verdana' }}>
+          <h1 style={{ font: 'bold 25px Verdana', color: theme.text }}>
             PlanIt: The all-in-one calendar solution
           </h1>
           <Calendar_Mock />
           <Side>
-            <span>
+            <span style={{ color: theme.text }}>
               Introducing <b>PlanIt</b> – the smart, intuitive calendar app that
               does more than just schedule your events; it helps you plan your
               life. In today’s fast-paced world, staying organized is crucial,
@@ -314,7 +314,7 @@ const LandingPage: FC = () => {
             </span>
           </Side>
           <Title>
-            <h3>Reviews</h3>
+            <h3 style={{ color: theme.text }}>Reviews</h3>
           </Title>
           <ArticleFooter>
             <span>
