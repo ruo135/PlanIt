@@ -89,6 +89,7 @@ const SettingsPage: FC = () => {
   const changeTheme = (newtheme: string) => {
     if (newtheme === 'light') setTheme(defaultTheme)
     if (newtheme === 'dark') setTheme(darkTheme)
+    if (newtheme === 'winter') setTheme(winterTheme)
     axios.patch('/api/theme/', { theme: newtheme }).catch((e) => {
       setTitleError(true)
       setTitleErrorMessage('Theme could not be changed')

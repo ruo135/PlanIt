@@ -62,6 +62,7 @@ const winterTheme = {
 
   text: '#FFFFFF', //white
   calendarText: '#192b4c',
+  background: '#FFFFFF',
   icon: winterIcon,
 }
 
