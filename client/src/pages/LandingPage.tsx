@@ -11,7 +11,6 @@ import axios from 'axios'
 
 const PageContainer = styled.div`
   width: 100%;
-  min-width: 375px;
   height: calc(100vh - max(8vh, 60px)); // Adjust for navbar and top spacing
   display: flex;
   flex-direction: column;
