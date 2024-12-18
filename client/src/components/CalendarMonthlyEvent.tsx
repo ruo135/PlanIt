@@ -13,6 +13,7 @@ const EventContainer = styled.div<{ $backgroundColor: string }>`
   align-items: center;
   justify-content: space-around;
 
+  gap: 10px;
   background-color: ${(props) => props.$backgroundColor};
   border-radius: 1vh;
   margin: 2px;
@@ -34,16 +35,20 @@ const Time = styled.div`
   font-size: 0.625rem;
   min-width: 25%;
 
-  @media only screen and (max-width: 700px) {
+  @media only screen and (max-width: 1000px) {
     display: none;
   }
 `
 
 const Title = styled.div`
-  font-size: 0.75rem;
+  font-size: max(10px, 0.75rem);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  @media only screen and (max-width: 1000px) {
+    text-overflow: clip;
+  }
 `
 
 const Overlay = styled.div`
