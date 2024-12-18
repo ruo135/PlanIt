@@ -80,7 +80,7 @@ const Article = styled.div`
 
   @media (max-width: 1200px) {
     min-height: 70%;
-    display: inline-block;
+    display: block;
     margin-top: 75px;
     margin-left: 50px;
     padding-top: 30px;
@@ -91,14 +91,13 @@ const Article = styled.div`
   }
 
   @media (max-width: 760px) {
-    display: inline-block;
+    display: grid;
+    grid-template-rows: 30px 49% 20%;
     align-items: center;
-    left: 0%;
-    position: sticky;
     padding-top: 50px;
     padding-right: 50px;
     width: 100%;
-    height: 90%;
+    height: 80%;
     h1 {
       display: block;
     }
@@ -107,7 +106,6 @@ const Article = styled.div`
   @media (max-width: 400px) {
     flex-direction: column;
     align-items: center;
-    left: 0%;
     position: relative;
     padding-top: 30px;
     width: 100%;
@@ -115,16 +113,6 @@ const Article = styled.div`
     h1 {
       display: block;
     }
-  }
-`
-
-// Footer for the article, for the reviews
-const ArticleFooter = styled.div`
-  margin-top: 25px;
-  min-width: 80%;
-  display: block;
-  @media (max-width: 1200px) {
-    display: none;
   }
 `
 
@@ -206,6 +194,43 @@ const Side = styled.div`
     span {
       font-size: 12px;
     }
+  }
+
+  @media (max-width: 800px) {
+    margin-top: 30px;
+    margin-left: 10px;
+    width: 100%;
+    min-width: 90%;
+    height: 50%;
+    span {
+      font-size: 12px;
+    }
+  }
+`
+const Title = styled.div`
+  margin-top: 20px;
+  @media (max-width: 1200px) {
+    display: none;
+  }
+`
+
+// Footer for the article, for the reviews
+const ArticleFooter = styled.div`
+  min-width: 80%;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  column-gap: 15px;
+  padding: 15px;
+  padding: 25px 15px 25px 15px;
+  border-style: solid;
+  border-color: ${defaultTheme.primary};
+  span {
+    font-style: italic;
+    font-size: 16px;
+    font-family: 'Times New Roman';
+  }
+  @media (max-width: 1200px) {
+    display: none;
   }
 `
 
@@ -289,8 +314,19 @@ const LandingPage: FC = () => {
               matters.
             </span>
           </Side>
-          <ArticleFooter>
+          <Title>
             <h3>Reviews</h3>
+          </Title>
+          <ArticleFooter>
+            <span>
+              "Revolutionary groundbreaking product. I cant live without it.
+              Literally."
+            </span>
+            <span>
+              "I'm never using Google Calendar again after discovering this
+              gem."
+            </span>
+            <span>"This is a student project? I think it deserves an A+."</span>
           </ArticleFooter>
         </Article>
       </PageContainer>
