@@ -11,6 +11,7 @@ import LoadingComponent from '../components/LoadingComponent'
 import getTheme from '../api/themes'
 import calDefault from '../assets/Calendar_Default.png'
 import calDark from '../assets/Calendar_Dark.png'
+import calWinter from '../assets/Calendar_Winter.png'
 
 const PageContainer = styled.div`
   display: flex;
@@ -54,6 +55,14 @@ const GridDark = styled.div`
   background-size: contain;
   background-repeat: no-repeat;
   background-image: url(${calDark});
+`
+
+const GridWinter = styled.div`
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-image: url(${calWinter});
 `
 
 const SettingsPage: FC = () => {
@@ -105,16 +114,17 @@ const SettingsPage: FC = () => {
         <br></br>
         <Grid>
           <button onClick={() => changeTheme('light')}>Light</button>
-          <GridDefault></GridDefault>
+          <GridDefault />
         </Grid>
         <br></br>
         <Grid>
           <button onClick={() => changeTheme('dark')}>Dark</button>
-          <GridDark></GridDark>
+          <GridDark />
         </Grid>
         <br></br>
         <Grid>
           <button onClick={() => changeTheme('winter')}>Winter</button>
+          <GridWinter />
         </Grid>
       </PageContainer>
     </ThemeProvider>

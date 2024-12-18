@@ -65,6 +65,7 @@ const SideBarBoxBody = styled.div`
   overflow-y: auto;
   padding: 20px;
   display: block;
+  height: -webkit-fill-available;
 `
 
 const OptionContainer = styled.div<{ $hidehovercolor?: boolean }>`
