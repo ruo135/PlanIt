@@ -1,8 +1,8 @@
-// Zi Xin Chen
+// Zi Xin Chen 260754924
 
 import { FC, useEffect, useState } from 'react'
 import NavBar from '../components/NavBar'
-import defaultTheme, { darkTheme, Theme } from '../styles/theme'
+import defaultTheme, { Theme, darkTheme, winterTheme } from '../styles/theme'
 import { useNavigate } from 'react-router-dom'
 import getAuthenticated from '../api/auth'
 import styled, { ThemeProvider } from 'styled-components'
@@ -113,7 +113,7 @@ const SettingsPage: FC = () => {
         </Grid>
         <br></br>
         <Grid>
-          <button onClick={() => changeTheme('dark')}>Test</button>
+          <button onClick={() => changeTheme('winter')}>Winter</button>
         </Grid>
       </PageContainer>
     </ThemeProvider>

@@ -51,6 +51,20 @@ const defaultThemeHS = {
   background: '#FFFFFF',
 }
 
+const winterTheme = {
+  header: '#6282d7',
+  headerIcons: '#FFFFFF',
+
+  primary: '#a3bcf2',
+  secondary: '#6282d7',
+  indent: '#90a0de',
+  error: '#b64949',
+
+  text: '#FFFFFF', //white
+  calendarText: '#192b4c',
+  icon: winterIcon,
+}
+
 const safariLightTheme = {
   header: '#818076',
   headerIcons: '#FFFFFF',
@@ -180,5 +194,5 @@ const midnightTheme = {
   background: '#8e9fb3',
 }
 
-export { darkTheme }
+export { darkTheme, winterTheme }
 export default defaultTheme

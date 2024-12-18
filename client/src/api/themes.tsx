@@ -1,7 +1,7 @@
 // Lucas Chew 260971542
 
 import axios from 'axios'
-import defaultTheme, { Theme, darkTheme } from '../styles/theme'
+import defaultTheme, { Theme, darkTheme, winterTheme } from '../styles/theme'
 import { ThemeDb } from '../models/ThemeDb'
 
 export default async function getTheme(): Promise<Theme> {
@@ -12,8 +12,8 @@ export default async function getTheme(): Promise<Theme> {
         return defaultTheme
       case 'dark':
         return darkTheme
-      case 'summer':
-        return defaultTheme
+      case 'winter':
+        return winterTheme
       default:
         return defaultTheme
     }
