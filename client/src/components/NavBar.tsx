@@ -24,13 +24,12 @@ const StyledSpan = styled.span`
   height: max(8vh, 60px);
   padding: 0 5vw;
 
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 `
 
 const LoginButton = styled.button`
   display: flex;
-  margin-left: auto;
   margin-right: 1vw;
   height: 50%;
   padding: 0 15px;
@@ -54,7 +53,6 @@ const LoginButton = styled.button`
 
 const Logo = styled.img`
   height: 100%;
-  margin-right: auto;
 
   &:hover {
     cursor: pointer;

@@ -108,6 +108,7 @@ const DateControllerContainer = styled.div`
   justify-content: center;
   align-content: center;
 
+  padding-left: 10vw;
   height: 7vh;
   background-color: ${(props) => props.theme.primary};
 `
