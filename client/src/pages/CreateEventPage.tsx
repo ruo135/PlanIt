@@ -1,6 +1,5 @@
-/**
- * Author: Ruo Yang Jiang
- */
+// Ruo Yang Jiang 261055118
+
 import { FC, useEffect, useState } from 'react'
 import NavBar from '../components/NavBar'
 import defaultTheme, { Theme } from '../styles/theme'

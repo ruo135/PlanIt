@@ -1,5 +1,5 @@
 // Lucas Chew 260971542
-// Zi Xin Chen
+// Zi Xin Chen 260754924
 
 import styled, { ThemeProvider } from 'styled-components'
 import { Theme } from '../styles/theme'

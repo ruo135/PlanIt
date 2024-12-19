@@ -1,4 +1,4 @@
-// Ruo Yang Jiang
+// Ruo Yang Jiang 261055118
 
 import UserModel from '../models/UserModel'
 import bcrypt from 'bcrypt'
